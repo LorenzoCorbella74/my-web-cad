@@ -3,13 +3,19 @@ const CANVAS_DIMENSIONS = {
     HEIGHT: 3000
 }
 
+const SNAP_GRID = {
+    'X': 10,
+    'XX': 25,
+    'V': 50
+};
+const CURRENT_SNAP = SNAP_GRID.XX;
+let SNAP_TO_GRID = true;
+
 const pointerStatus = {
     PAN: "PAN",
     SELECT: "SELECT",
     DEFAULT: "DEFAULT"
 };
-
-let SNAP_TO_GRID = true;
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext('2d');
@@ -28,16 +34,16 @@ function resizeCanvas() {
 function drawPointer() {
     // TODO: distinguere il cursore in funzione dell'operazione
     ctx.strokeStyle = "rgb(0,103,28)"; // green
-    ctx.strokeRect(mouse.x - 4.5, mouse.y - 5.5, 10, 10);
+    ctx.strokeRect(mouse.x - 4.5 - netPanningX, mouse.y - 5.5 - netPanningY, 10, 10);
     ctx.lineWidth = 0.5;
     ctx.beginPath();
-    ctx.moveTo(mouse.x, 0);
-    ctx.lineTo(mouse.x, CANVAS_DIMENSIONS.HEIGHT);
-    ctx.moveTo(0, mouse.y);
-    ctx.lineTo(CANVAS_DIMENSIONS.WIDTH, mouse.y);
+    ctx.moveTo(mouse.x - netPanningX, 0);
+    ctx.lineTo(mouse.x - netPanningX, CANVAS_DIMENSIONS.HEIGHT);
+    ctx.moveTo(0, mouse.y - netPanningY);
+    ctx.lineTo(CANVAS_DIMENSIONS.WIDTH, mouse.y - netPanningY);
     ctx.stroke();
     ctx.fillStyle = "grey";
-    ctx.fillText(`x: ${mouse.x} - y: ${mouse.y}`, mouse.x + 10, mouse.y + 10)
+    ctx.fillText(`x: ${mouse.x- netPanningX} - y: ${mouse.y-netPanningY}`, mouse.x + 10 - netPanningX, mouse.y + 10 - netPanningY)
     ctx.closePath();
 }
 
@@ -45,7 +51,7 @@ function drawCanvas() {
     ctx.fillStyle = "rgb(31,40,49)";
     ctx.fillRect(0, 0, CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT);
     // colonne
-    for (let i = 0; i < CANVAS_DIMENSIONS.WIDTH; i += 20) {
+    for (let i = 0; i < CANVAS_DIMENSIONS.WIDTH; i += CURRENT_SNAP) {
         ctx.beginPath();
         ctx.moveTo(i + 0.5, 0);
         ctx.lineTo(i + 0.5, CANVAS_DIMENSIONS.HEIGHT);
@@ -61,11 +67,11 @@ function drawCanvas() {
             ctx.font = "11px Arial";
             ctx.fillStyle = "grey";
             // ctx.textAlign = "center";
-            ctx.fillText(i.toString(), i + 2.5, 10 - netPanningY);
+            ctx.fillText(i.toString(), i + 2.5, 10 - netPanningY); // TODO: fix se netPanningX >0
         }
     }
     // righe
-    for (let i = 0; i < CANVAS_DIMENSIONS.HEIGHT; i += 20) {
+    for (let i = 0; i < CANVAS_DIMENSIONS.HEIGHT; i += CURRENT_SNAP) {
         ctx.beginPath();
         ctx.moveTo(0, i + 0.5);
         ctx.lineTo(CANVAS_DIMENSIONS.WIDTH, i + 0.5);
@@ -152,15 +158,15 @@ window.onload = function () {
         let y = parseInt(event.clientY);
 
         if (SNAP_TO_GRID) {
-            let restoH = x % 20;
-            if (restoH >= 20) {
-                x = x - restoH + 20
+            let restoH = x % CURRENT_SNAP;
+            if (restoH >= CURRENT_SNAP) {
+                x = x - restoH + CURRENT_SNAP
             } else {
                 x -= restoH;
             }
-            let restoV = y % 20;
-            if (restoV >= 20) {
-                y = y - restoV + 20
+            let restoV = y % CURRENT_SNAP;
+            if (restoV >= CURRENT_SNAP) {
+                y = y - restoV + CURRENT_SNAP
             } else {
                 y -= restoV;
             }
@@ -168,12 +174,12 @@ window.onload = function () {
         // only do this code if the mouse is being dragged
         if (isDown) {
             // dx & dy are the distance the mouse has moved since the last mousemove event
-            var dx = mouse.x - startX;
-            var dy = mouse.y - startY;
+            var dx = x - startX;
+            var dy = y - startY;
 
             // reset the vars for next mousemove
-            startX = mouse.x;
-            startY = mouse.y;
+            startX = x;
+            startY = y;
 
             // accumulate the net panning done
             netPanningX += dx;
@@ -192,9 +198,27 @@ window.onload = function () {
         e.preventDefault();
         e.stopPropagation();
 
+        let x = parseInt(event.clientX);
+        let y = parseInt(event.clientY);
+
+        if (SNAP_TO_GRID) {
+            let restoH = x % CURRENT_SNAP;
+            if (restoH >= CURRENT_SNAP) {
+                x = x - restoH + CURRENT_SNAP
+            } else {
+                x -= restoH;
+            }
+            let restoV = y % CURRENT_SNAP;
+            if (restoV >= CURRENT_SNAP) {
+                y = y - restoV + CURRENT_SNAP
+            } else {
+                y -= restoV;
+            }
+        }
+
         // calc the starting mouse X,Y for the drag
-        startX = parseInt(e.clientX);
-        startY = parseInt(e.clientY);
+        startX = x;
+        startY = y;
 
         console.log(startX, startY);
 
