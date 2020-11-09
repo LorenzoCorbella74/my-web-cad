@@ -27,14 +27,14 @@ const captureMouse = function (element) {
 
         if (SNAP_TO_GRID) {
             let restoH = x % 20;
-            if (restoH > 10) {
-                x - restoH + 10
+            if (restoH >= 10) {
+                x = x - restoH + 10
             } else {
                 x -= restoH;
             }
             let restoV = y % 20;
-            if (restoV > 10) {
-                y - restoV + 10
+            if (restoV >= 10) {
+                y = y - restoV + 10
             } else {
                 y -= restoV;
             }
@@ -58,15 +58,8 @@ function resizeCanvas () {
     drawAll();
 }
 
-function drawAll () {
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    drawCanvas();
-    drawPointer();
-}
-
 function drawPointer () {
-    // TODO: distinguere il cursore i funzione dell'operazione
+    // TODO: distinguere il cursore in funzione dell'operazione
     ctx.strokeStyle = "rgb(0,103,28)";    // green
     ctx.strokeRect(mouse.x - 4.5, mouse.y - 5.5, 10, 10);
     ctx.lineWidth = 0.5;
@@ -75,10 +68,10 @@ function drawPointer () {
     ctx.lineTo(mouse.x, CANVAS_DIMENSIONS.HEIGHT);
     ctx.moveTo(0, mouse.y);
     ctx.lineTo(CANVAS_DIMENSIONS.WIDTH, mouse.y);
-    ctx.closePath();
     ctx.stroke();
     ctx.fillStyle = "grey";
     ctx.fillText(`x: ${mouse.x} - y: ${mouse.y}`, mouse.x + 10, mouse.y + 10)
+    ctx.closePath();
 }
 
 function drawCanvas () {
@@ -149,7 +142,25 @@ function applyScale () {
 }
 
 function applyTranslation () {
-    ctx.translate(netPanningX, netPanningY);
+    let xFixed = netPanningX < 0 ? netPanningX : 0
+    let yFixed = netPanningY < 0 ? netPanningY : 0
+    ctx.translate(xFixed, yFixed);
+}
+
+function drawAll () {
+    // ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);    // CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT
+    begin()
+    drawCanvas();
+    drawPointer();
+    end()
+}
+
+function loop () {
+    drawAll();
+    requestAnimationFrame(() => {
+        loop()
+    });
 }
 
 window.onload = function () {
@@ -185,9 +196,7 @@ window.onload = function () {
         e.preventDefault();
         e.stopPropagation();
 
-        // begin()
-        drawAll();
-        // end()
+
     }, false);
 
     canvas.addEventListener('mousedown', function (e) {
@@ -195,9 +204,13 @@ window.onload = function () {
         e.preventDefault();
         e.stopPropagation();
 
+        console.log(e.clientX, e.clientY);
+
         // calc the starting mouse X,Y for the drag
         startX = parseInt(e.clientX);
         startY = parseInt(e.clientY);
+
+        console.log(startX, startY);
 
         // set the isDragging flag
         isDown = true;
@@ -210,10 +223,7 @@ window.onload = function () {
 
         // clear the isDragging flag
         isDown = false;
-        netPanningX = 0;
-        netPanningY = 0;
     }, false);
-
 
     canvas.addEventListener('mouseout', function (e) {
         // tell the browser we're handling this event
@@ -222,11 +232,10 @@ window.onload = function () {
 
         // clear the isDragging flag
         isDown = false;
-        netPanningX = 0;
-        netPanningY = 0;
+
+
     }, false);
 
-
     resizeCanvas();
+    loop()
 };
-
