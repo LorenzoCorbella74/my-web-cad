@@ -9,7 +9,9 @@
         * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
+
         /* to remove the top and left whitespace */
         html,
         body {
@@ -18,45 +20,17 @@
             overflow: hidden;
         }
 
-        .container {
-            display: flex;
-        }
-
-        .sidebar {
-            width: 20%;
-            background-color: black;
-            border: 1px solid grey;
-        }
-
-        .column-container {
-            display: flex;
-            flex-direction: column;
-        }
-
         canvas {
             border: 1px solid rgb(62, 62, 62);
             /* cursor: none; */
-        }
-
-        #footer {
-            height: 34px;
-            background-color: black;
-            border: 1px solid grey;
-            color: white;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <aside class="sidebar"></aside>
-        <div class="column-container">
-            <canvas id="canvas"></canvas>
-            <div id="footer"> > </div>
-        </div>
-    </div>
+    <canvas id="canvas"></canvas>
 </body>
 
-<script src="app.js"></script>
+<script src="app.js" type="module"></script>
 
 </html>
