@@ -3,9 +3,6 @@ const CANVAS_DIMENSIONS = {
     HEIGHT: 3000
 }
 
-let windowWidth = 0;
-let windowHeight = 0;
-
 const pointerStatus = {
     PAN: "PAN",
     SELECT: "SELECT",
@@ -16,51 +13,21 @@ let SNAP_TO_GRID = true;
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext('2d');
-
-const captureMouse = function (element) {
-    var mouse = { x: 0, y: 0, event: null };
-
-    element.addEventListener('mousemove', function (event) {
-
-        let x = parseInt(event.clientX);
-        let y = parseInt(event.clientY);
-
-        if (SNAP_TO_GRID) {
-            let restoH = x % 20;
-            if (restoH >= 10) {
-                x = x - restoH + 10
-            } else {
-                x -= restoH;
-            }
-            let restoV = y % 20;
-            if (restoV >= 10) {
-                y = y - restoV + 10
-            } else {
-                y -= restoV;
-            }
-        }
-
-        mouse.x = x;
-        mouse.y = y;
-        mouse.event = event;
-    }, false);
-
-    return mouse;
+const mouse = {
+    x: 0,
+    y: 0,
+    event: null
 };
 
-let mouse = captureMouse(canvas);
-
-function resizeCanvas () {
+function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    windowWidth = canvas.width;
-    windowHeight = canvas.height;
     drawAll();
 }
 
-function drawPointer () {
+function drawPointer() {
     // TODO: distinguere il cursore in funzione dell'operazione
-    ctx.strokeStyle = "rgb(0,103,28)";    // green
+    ctx.strokeStyle = "rgb(0,103,28)"; // green
     ctx.strokeRect(mouse.x - 4.5, mouse.y - 5.5, 10, 10);
     ctx.lineWidth = 0.5;
     ctx.beginPath();
@@ -74,9 +41,9 @@ function drawPointer () {
     ctx.closePath();
 }
 
-function drawCanvas () {
+function drawCanvas() {
     ctx.fillStyle = "rgb(31,40,49)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT);
     // colonne
     for (let i = 0; i < CANVAS_DIMENSIONS.WIDTH; i += 20) {
         ctx.beginPath();
@@ -91,17 +58,17 @@ function drawCanvas () {
         ctx.closePath()
         ctx.stroke();
         if (i % 100 === 0) {
-            ctx.font = "10px Arial";
+            ctx.font = "11px Arial";
             ctx.fillStyle = "grey";
             // ctx.textAlign = "center";
-            ctx.fillText(i.toString(), i + 2.5, 10);
+            ctx.fillText(i.toString(), i + 2.5, 10 - netPanningY);
         }
     }
     // righe
     for (let i = 0; i < CANVAS_DIMENSIONS.HEIGHT; i += 20) {
         ctx.beginPath();
         ctx.moveTo(0, i + 0.5);
-        ctx.lineTo(windowWidth, i + 0.5);
+        ctx.lineTo(CANVAS_DIMENSIONS.WIDTH, i + 0.5);
         if (i % 100 === 0) {
             ctx.strokeStyle = "rgb(48,55,71)";
         } else {
@@ -111,10 +78,10 @@ function drawCanvas () {
         ctx.closePath()
         ctx.stroke();
         if (i % 100 === 0) {
-            ctx.font = "10px Arial";
+            ctx.font = "11px Arial";
             ctx.fillStyle = "grey";
             // ctx.textAlign = "center";
-            ctx.fillText(i.toString(), 2.5, i - 2.5);
+            ctx.fillText(i.toString(), 2.5 - netPanningX, i - 2.5);
         }
     }
 }
@@ -127,40 +94,48 @@ var startX, startY;
 var netPanningX = 0;
 var netPanningY = 0;
 
-function begin () {
+function begin() {
     ctx.save();
     applyScale();
     applyTranslation();
 }
 
-function end () {
+function end() {
     ctx.restore();
 }
 
-function applyScale () {
-    ctx.scale(1, 1/* this.viewport.scale[0], this.viewport.scale[1] */);
+function applyScale() {
+    ctx.scale(1, 1 /* this.viewport.scale[0], this.viewport.scale[1] */ );
 }
 
-function applyTranslation () {
-    let xFixed = netPanningX < 0 ? netPanningX : 0
+function applyTranslation() {
+    let xFixed = netPanningX < 0 ? netPanningX : 0; // TODO: FIX estremo dx
     let yFixed = netPanningY < 0 ? netPanningY : 0
     ctx.translate(xFixed, yFixed);
 }
 
-function drawAll () {
+function drawAll() {
     // ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);    // CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT
+    ctx.fillRect(0, 0, canvas.width, canvas.height); // CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT
     begin()
     drawCanvas();
     drawPointer();
     end()
 }
 
-function loop () {
+function loop() {
     drawAll();
     requestAnimationFrame(() => {
         loop()
     });
+}
+
+function afterDragging(e) {
+    // tell the browser we're handling this event
+    e.preventDefault();
+    e.stopPropagation();
+    // clear the isDragging flag
+    isDown = false;
 }
 
 window.onload = function () {
@@ -169,21 +144,36 @@ window.onload = function () {
     window.addEventListener('resize', resizeCanvas, false);
 
     canvas.addEventListener('mousemove', (e) => {
+        // tell the browser we're handling this event
+        e.preventDefault();
+        e.stopPropagation();
 
+        let x = parseInt(event.clientX);
+        let y = parseInt(event.clientY);
+
+        if (SNAP_TO_GRID) {
+            let restoH = x % 20;
+            if (restoH >= 20) {
+                x = x - restoH + 20
+            } else {
+                x -= restoH;
+            }
+            let restoV = y % 20;
+            if (restoV >= 20) {
+                y = y - restoV + 20
+            } else {
+                y -= restoV;
+            }
+        }
         // only do this code if the mouse is being dragged
         if (isDown) {
-            // get the current mouse position
-            let mouseX = parseInt(e.clientX);
-            let mouseY = parseInt(e.clientY);
-
-            // dx & dy are the distance the mouse has moved since
-            // the last mousemove event
-            var dx = mouseX - startX;
-            var dy = mouseY - startY;
+            // dx & dy are the distance the mouse has moved since the last mousemove event
+            var dx = mouse.x - startX;
+            var dy = mouse.y - startY;
 
             // reset the vars for next mousemove
-            startX = mouseX;
-            startY = mouseY;
+            startX = mouse.x;
+            startY = mouse.y;
 
             // accumulate the net panning done
             netPanningX += dx;
@@ -191,11 +181,9 @@ window.onload = function () {
             console.clear()
             console.log(`Net change in panning: x:${netPanningX}px, y:${netPanningY}px`);
         }
-
-        // tell the browser we're handling this event
-        e.preventDefault();
-        e.stopPropagation();
-
+        mouse.x = x;
+        mouse.y = y;
+        mouse.event = event;
 
     }, false);
 
@@ -203,8 +191,6 @@ window.onload = function () {
         // tell the browser we're handling this event
         e.preventDefault();
         e.stopPropagation();
-
-        console.log(e.clientX, e.clientY);
 
         // calc the starting mouse X,Y for the drag
         startX = parseInt(e.clientX);
@@ -216,25 +202,8 @@ window.onload = function () {
         isDown = true;
     }, false);
 
-    canvas.addEventListener('mouseup', function (e) {
-        // tell the browser we're handling this event
-        e.preventDefault();
-        e.stopPropagation();
-
-        // clear the isDragging flag
-        isDown = false;
-    }, false);
-
-    canvas.addEventListener('mouseout', function (e) {
-        // tell the browser we're handling this event
-        e.preventDefault();
-        e.stopPropagation();
-
-        // clear the isDragging flag
-        isDown = false;
-
-
-    }, false);
+    canvas.addEventListener('mouseup', afterDragging, false);
+    canvas.addEventListener('mouseout', afterDragging, false);
 
     resizeCanvas();
     loop()
