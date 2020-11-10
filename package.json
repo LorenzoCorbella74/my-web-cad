@@ -1,0 +1,20 @@
+{
+  "name": "my-web-cad",
+  "version": "1.0.0",
+  "description": "A simple CAD for the web",
+  "main": "app.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LorenzoCorbella74/my-web-cad.git"
+  },
+  "keywords": [
+    "CAD"
+  ],
+  "author": "Lorenzo Corbella",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LorenzoCorbella74/my-web-cad/issues"
+  },
+  "homepage": "https://github.com/LorenzoCorbella74/my-web-cad#readme"
+}
