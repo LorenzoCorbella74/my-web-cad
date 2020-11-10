@@ -85,6 +85,7 @@ const CANVAS_DIMENSIONS = {
 }
 
 const canvas = document.getElementById("canvas");
+canvas.style.cursor = "none"
 const ctx = canvas.getContext('2d');
 const mouse = {
     x: 0,
