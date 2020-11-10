@@ -95,11 +95,11 @@ const mouse = {
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    canvas.style.cursor = "none"
     drawAll();
 }
 
 function drawPointer() {
-    // TODO: distinguere il cursore in funzione dell'operazione
     ctx.strokeStyle = "rgb(0,103,28)"; // green
     ctx.strokeRect(mouse.x - 4.5 - netPanningX, mouse.y - 5.5 - netPanningY, 10, 10);
     ctx.lineWidth = 0.5;
@@ -137,7 +137,7 @@ function drawCanvas() {
             ctx.font = "11px Arial";
             ctx.fillStyle = "grey";
             // ctx.textAlign = "center";
-            ctx.fillText(i.toString(), i + 2.5, 10 - netPanningY); // TODO: fix se netPanningX >0
+            ctx.fillText(i.toString(), i + 2.5, 10 - (netPanningY > 0 ? 0 : netPanningY)); // TODO: fix se netPanningX >0
         }
     }
     // righe
@@ -159,7 +159,7 @@ function drawCanvas() {
             ctx.font = "11px Arial";
             ctx.fillStyle = "grey";
             // ctx.textAlign = "center";
-            ctx.fillText(i.toString(), 2.5 - netPanningX, i - 2.5); // TODO: fix se netPanningX >0
+            ctx.fillText(i.toString(), 2.5 - (netPanningX > 0 ? 0 : netPanningX), i - 2.5); // TODO: fix se netPanningX >0
         }
     }
 }
@@ -187,9 +187,10 @@ function applyScale() {
 }
 
 function applyTranslation() {
-    let xFixed = netPanningX < 0 ? netPanningX : 0; // TODO: FIX estremo dx
+    /* let xFixed = netPanningX < 0 ? netPanningX : 0; // TODO: FIX estremo dx
     let yFixed = netPanningY < 0 ? netPanningY : 0
-    ctx.translate(xFixed, yFixed);
+    ctx.translate(xFixed, yFixed); */
+    ctx.translate(netPanningX, netPanningY);
 }
 
 function drawAll() {
