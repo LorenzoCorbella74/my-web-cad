@@ -1,209 +1,232 @@
 import KeyboardEvents from './keyboards_events';
-import { CANVAS_DIMENSIONS } from './constants';
+import { CANVAS_DIMENSIONS, OPERATIONS } from './constants';
 
-
-let keys = {};
-
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext('2d');
-const mouse = {
-    x: 0,
-    y: 0,
-    event: null
-};
-
-// mouse drag related variables
-let isDown = false;
-let startX, startY;
-
-// the accumulated horizontal(X) & vertical(Y) panning the user has done in total
-let netPanningX = 0;
-let netPanningY = 0;
-
-function resizeCanvas () {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    canvas.style.cursor = "none"
-    drawAll();
+window.onload = () => {
+    const cad = new WebCAD();
+    document.getElementById('canvas').replaceWith(cad.canvas);
+    cad.start();
+    window.cad = cad;
 }
 
-function drawPointer () {
-    ctx.strokeStyle = "rgb(0,103,28)"; // green
-    ctx.strokeRect(mouse.x - 4.5 - netPanningX, mouse.y - 5.5 - netPanningY, 10, 10);
-    ctx.lineWidth = 0.5;
-    ctx.beginPath();
-    ctx.moveTo(mouse.x - netPanningX, 0);
-    ctx.lineTo(mouse.x - netPanningX, CANVAS_DIMENSIONS.HEIGHT);
-    ctx.moveTo(0, mouse.y - netPanningY);
-    ctx.lineTo(CANVAS_DIMENSIONS.WIDTH, mouse.y - netPanningY);
-    ctx.stroke();
-    ctx.fillStyle = "grey";
-    ctx.fillText(`${keys.currentCommand.toUpperCase()}`, mouse.x + 12.5 - netPanningX, mouse.y - 4.5 - netPanningY)
-    ctx.fillText(`x: ${mouse.x - netPanningX} - y: ${mouse.y - netPanningY}`, mouse.x + 12.5 - netPanningX, mouse.y + 12.5 - netPanningY)
-    ctx.closePath();
-}
+export class WebCAD {
 
-function drawCanvas () {
-    ctx.fillStyle = "rgb(31,40,49)";
-    ctx.fillRect(0, 0, CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT);
-    // colonne
-    for (let i = 0; i < CANVAS_DIMENSIONS.WIDTH; i += keys.currentSnap) {
-        if (keys.hasSnap) {
-            ctx.beginPath();
-            ctx.moveTo(i + 0.5, 0);
-            ctx.lineTo(i + 0.5, CANVAS_DIMENSIONS.HEIGHT);
-            if (i % 100 === 0) {
-                ctx.strokeStyle = "rgb(48,55,71)";
-            } else {
-                ctx.strokeStyle = "rgb(36,45,56)";
-            }
-            ctx.lineWidth = 0.5;
-            ctx.closePath()
-            ctx.stroke();
+    constructor() {
+        this.canvas = document.getElementById("canvas");
+        this.ctx = canvas.getContext('2d');
+        this.keys = new KeyboardEvents();
+
+        this.commands = {
+            'PAN': {},
+            'SELECT': {}
         }
-        if (i % 100 === 0) {
-            ctx.font = "11px Arial";
-            ctx.fillStyle = "grey";
-            // ctx.textAlign = "center";
-            ctx.fillText(i.toString(), i + 2.5, 10 - (netPanningY > 0 ? 0 : netPanningY));
-        }
+        this.currentCommand = OPERATIONS.SELECT
+
+        this.mouse = {
+            x: 0,
+            y: 0,
+            event: null
+        };
+
+        // this.mouse drag related variables
+        this.isDown = false;
+        this.startX, this.startY;
+
+        // the accumulated horizontal(X) & vertical(Y) panning the user has done in total
+        this.netPanningX = 0;
+        this.netPanningY = 0;
+
+        this.startListening()
+        this.resizeCanvas()
     }
-    // righe
-    for (let i = 0; i < CANVAS_DIMENSIONS.HEIGHT; i += keys.currentSnap) {
-        if (keys.hasSnap) {
-            ctx.beginPath();
-            ctx.moveTo(0, i + 0.5);
-            ctx.lineTo(CANVAS_DIMENSIONS.WIDTH, i + 0.5);
-            if (i % 100 === 0) {
-                ctx.strokeStyle = "rgb(48,55,71)";
-            } else {
-                ctx.strokeStyle = "rgb(36,45,56)";
-            }
-            ctx.lineWidth = 0.5;
-            ctx.closePath()
-            ctx.stroke();
-        }
-        if (i % 100 === 0) {
-            ctx.font = "11px Arial";
-            ctx.fillStyle = "grey";
-            // ctx.textAlign = "center";
-            ctx.fillText(i.toString(), 2.5 - (netPanningX > 0 ? 0 : netPanningX), i - 2.5);
-        }
+
+    resizeCanvas () {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        this.canvas.style.cursor = "none"
+        this.drawAll();
     }
-}
 
-function drawAll () {
-    // ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvas.width, canvas.height); // CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT
-    ctx.save();
-    ctx.scale(1, 1 /* this.viewport.scale[0], this.viewport.scale[1] */); // apply scale
-    ctx.translate(netPanningX, netPanningY); // apply translation
-    drawCanvas();
-    drawPointer();
-    ctx.restore();
-    console.log(keys);
-}
+    startListening () {
+        // resize the canvas to fill browser window dynamically
+        window.addEventListener('resize', this.resizeCanvas.bind(this), false);
 
-function loop () {
-    drawAll();
-    requestAnimationFrame(() => {
-        loop()
-    });
-}
+        this.canvas.addEventListener('mousemove', (e) => {
+            // tell the browser we're handling this event
+            e.preventDefault();
+            e.stopPropagation();
 
-function afterAll (e) {
-    // tell the browser we're handling this event
-    e.preventDefault();
-    e.stopPropagation();
-    // clear the isDragging flag
-    isDown = false;
-}
+            let x = parseInt(e.clientX);
+            let y = parseInt(e.clientY);
 
-window.onload = function () {
+            if (this.keys.hasSnap) {
+                let restoH = x % this.keys.currentSnap;
+                if (restoH >= this.keys.currentSnap) {
+                    x = x - restoH + this.keys.currentSnap
+                } else {
+                    x -= restoH;
+                }
+                let restoV = y % this.keys.currentSnap;
+                if (restoV >= this.keys.currentSnap) {
+                    y = y - restoV + this.keys.currentSnap
+                } else {
+                    y -= restoV;
+                }
+            }
+            // only do this code if the this.mouse is being dragged
+            if (this.isDown) {
+                // dx & dy are the distance the this.mouse has moved since the last this.mousemove event
+                var dx = x - this.startX;
+                var dy = y - this.startY;
 
-    keys = new KeyboardEvents()
+                // reset the vars for next this.mousemove
+                this.startX = x;
+                this.startY = y;
 
-    // resize the canvas to fill browser window dynamically
-    window.addEventListener('resize', resizeCanvas, false);
+                // accumulate the net panning done
+                this.netPanningX += dx;
+                this.netPanningY += dy;
+                console.clear()
+                console.log(`Net change in panning: x:${this.netPanningX}px, y:${this.netPanningY}px`);
+            }
+            this.mouse.x = x;
+            this.mouse.y = y;
+            this.mouse.event = event;
 
-    canvas.addEventListener('mousemove', (e) => {
+        }, false);
+
+        this.canvas.addEventListener('mousedown', (e) => {
+            // tell the browser we're handling this event
+            e.preventDefault();
+            e.stopPropagation();
+
+            let x = parseInt(e.clientX);
+            let y = parseInt(e.clientY);
+
+            if (this.keys.hasSnap) {
+                let restoH = x % this.keys.currentSnap;
+                if (restoH >= this.keys.currentSnap) {
+                    x = x - restoH + this.keys.currentSnap
+                } else {
+                    x -= restoH;
+                }
+                let restoV = y % this.keys.currentSnap;
+                if (restoV >= this.keys.currentSnap) {
+                    y = y - restoV + this.keys.currentSnap
+                } else {
+                    y -= restoV;
+                }
+            }
+
+            // calc the starting this.mouse X,Y for the drag
+            this.startX = x;
+            this.startY = y;
+
+            // set the isDragging flag
+            this.isDown = true;
+        }, false);
+
+        this.canvas.addEventListener('mouseup', this.afterAll.bind(this), false);
+        this.canvas.addEventListener('mouseout', this.afterAll.bind(this), false);
+    }
+
+    loop () {
+        this.drawAll();
+        requestAnimationFrame(() => {
+            this.loop()
+        });
+    }
+
+    start () {
+        this.loop();
+    }
+
+    /* --------------------------------------------------------- */
+
+    afterAll (e) {
         // tell the browser we're handling this event
         e.preventDefault();
         e.stopPropagation();
+        // clear the isDragging flag
+        this.isDown = false;
+    }
 
-        let x = parseInt(e.clientX);
-        let y = parseInt(e.clientY);
+    drawPointer () {
+        this.ctx.strokeStyle = "rgb(0,103,28)"; // green
+        this.ctx.strokeRect(this.mouse.x - 4.5 - this.netPanningX, this.mouse.y - 5.5 - this.netPanningY, 10, 10);
+        this.ctx.lineWidth = 0.5;
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.mouse.x - this.netPanningX, 0);
+        this.ctx.lineTo(this.mouse.x - this.netPanningX, CANVAS_DIMENSIONS.HEIGHT);
+        this.ctx.moveTo(0, this.mouse.y - this.netPanningY);
+        this.ctx.lineTo(CANVAS_DIMENSIONS.WIDTH, this.mouse.y - this.netPanningY);
+        this.ctx.stroke();
+        this.ctx.fillStyle = "grey";
+        this.ctx.fillText(`${this.keys.choosenCommand.toUpperCase()}`, this.mouse.x + 12.5 - this.netPanningX, this.mouse.y - 4.5 - this.netPanningY)
+        this.ctx.fillText(`x: ${this.mouse.x - this.netPanningX} - y: ${this.mouse.y - this.netPanningY}`, this.mouse.x + 12.5 - this.netPanningX, this.mouse.y + 12.5 - this.netPanningY)
+        this.ctx.closePath();
+    }
 
-        if (keys.hasSnap) {
-            let restoH = x % keys.currentSnap;
-            if (restoH >= keys.currentSnap) {
-                x = x - restoH + keys.currentSnap
-            } else {
-                x -= restoH;
+    drawCanvas () {
+        this.ctx.fillStyle = "rgb(31,40,49)";
+        this.ctx.fillRect(0, 0, CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT);
+        // colonne
+        for (let i = 0; i < CANVAS_DIMENSIONS.WIDTH; i += this.keys.currentSnap) {
+            if (this.keys.hasSnap) {
+                this.ctx.beginPath();
+                this.ctx.moveTo(i + 0.5, 0);
+                this.ctx.lineTo(i + 0.5, CANVAS_DIMENSIONS.HEIGHT);
+                if (i % 100 === 0) {
+                    this.ctx.strokeStyle = "rgb(48,55,71)";
+                } else {
+                    this.ctx.strokeStyle = "rgb(36,45,56)";
+                }
+                this.ctx.lineWidth = 0.5;
+                this.ctx.closePath()
+                this.ctx.stroke();
             }
-            let restoV = y % keys.currentSnap;
-            if (restoV >= keys.currentSnap) {
-                y = y - restoV + keys.currentSnap
-            } else {
-                y -= restoV;
-            }
-        }
-        // only do this code if the mouse is being dragged
-        if (isDown) {
-            // dx & dy are the distance the mouse has moved since the last mousemove event
-            var dx = x - startX;
-            var dy = y - startY;
-
-            // reset the vars for next mousemove
-            startX = x;
-            startY = y;
-
-            // accumulate the net panning done
-            netPanningX += dx;
-            netPanningY += dy;
-            console.clear()
-            console.log(`Net change in panning: x:${netPanningX}px, y:${netPanningY}px`);
-        }
-        mouse.x = x;
-        mouse.y = y;
-        mouse.event = event;
-
-    }, false);
-
-    canvas.addEventListener('mousedown', function (e) {
-        // tell the browser we're handling this event
-        e.preventDefault();
-        e.stopPropagation();
-
-        let x = parseInt(e.clientX);
-        let y = parseInt(e.clientY);
-
-        if (keys.hasSnap) {
-            let restoH = x % keys.currentSnap;
-            if (restoH >= keys.currentSnap) {
-                x = x - restoH + keys.currentSnap
-            } else {
-                x -= restoH;
-            }
-            let restoV = y % keys.currentSnap;
-            if (restoV >= keys.currentSnap) {
-                y = y - restoV + keys.currentSnap
-            } else {
-                y -= restoV;
+            if (i % 100 === 0) {
+                this.ctx.font = "11px Arial";
+                this.ctx.fillStyle = "grey";
+                // this.ctx.textAlign = "center";
+                this.ctx.fillText(i.toString(), i + 2.5, 10 - (this.netPanningY > 0 ? 0 : this.netPanningY));
             }
         }
+        // righe
+        for (let i = 0; i < CANVAS_DIMENSIONS.HEIGHT; i += this.keys.currentSnap) {
+            if (this.keys.hasSnap) {
+                this.ctx.beginPath();
+                this.ctx.moveTo(0, i + 0.5);
+                this.ctx.lineTo(CANVAS_DIMENSIONS.WIDTH, i + 0.5);
+                if (i % 100 === 0) {
+                    this.ctx.strokeStyle = "rgb(48,55,71)";
+                } else {
+                    this.ctx.strokeStyle = "rgb(36,45,56)";
+                }
+                this.ctx.lineWidth = 0.5;
+                this.ctx.closePath()
+                this.ctx.stroke();
+            }
+            if (i % 100 === 0) {
+                this.ctx.font = "11px Arial";
+                this.ctx.fillStyle = "grey";
+                // this.ctx.textAlign = "center";
+                this.ctx.fillText(i.toString(), 2.5 - (this.netPanningX > 0 ? 0 : this.netPanningX), i - 2.5);
+            }
+        }
+    }
 
-        // calc the starting mouse X,Y for the drag
-        startX = x;
-        startY = y;
+    drawAll () {
+        // this.ctx.fillStyle = "black";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height); // CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT
+        this.ctx.save();
+        this.ctx.scale(1, 1 /* this.viewport.scale[0], this.viewport.scale[1] */); // apply scale
+        this.ctx.translate(this.netPanningX, this.netPanningY); // apply translation
+        this.drawCanvas();
+        this.drawPointer();
+        this.ctx.restore();
+    }
 
-        // set the isDragging flag
-        isDown = true;
-    }, false);
+}
 
-    canvas.addEventListener('mouseup', afterAll, false);
-    canvas.addEventListener('mouseout', afterAll, false);
 
-    resizeCanvas();
-    loop()
-};
+

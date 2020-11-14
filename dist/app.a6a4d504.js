@@ -179,7 +179,7 @@ var KeyboardEvents = /*#__PURE__*/function () {
     _classCallCheck(this, KeyboardEvents);
 
     // DEFAULTS
-    this.currentCommand = _constants.OPERATIONS.SELECT;
+    this.choosenCommand = _constants.OPERATIONS.SELECT;
     this.currentSnap = _constants.SNAP_GRID.M;
     this.hasSnap = true;
     this.startListenDocumentKeyup();
@@ -188,45 +188,49 @@ var KeyboardEvents = /*#__PURE__*/function () {
   _createClass(KeyboardEvents, [{
     key: "startListenDocumentKeyup",
     value: function startListenDocumentKeyup() {
+      var _this = this;
+
       document.onkeyup = function (e) {
         if (e.key == 'Escape' || e.key == 's') {
-          this.currentCommand = _constants.OPERATIONS.SELECT;
+          _this.choosenCommand = _constants.OPERATIONS.SELECT;
         } else if (e.key == 'd') {
-          this.currentCommand = _constants.OPERATIONS.DELETE;
+          _this.choosenCommand = _constants.OPERATIONS.DELETE;
         } else if (e.key == 'c') {
-          this.currentCommand = _constants.OPERATIONS.COPY;
+          _this.choosenCommand = _constants.OPERATIONS.COPY;
         } else if (e.key == 'm') {
-          this.currentCommand = _constants.OPERATIONS.MOVE;
+          _this.choosenCommand = _constants.OPERATIONS.MOVE;
         } else if (e.key == 'r') {
-          this.currentCommand = _constants.OPERATIONS.ROTATE;
+          _this.choosenCommand = _constants.OPERATIONS.ROTATE;
         } else if (e.key == 'p') {
-          this.currentCommand = _constants.OPERATIONS.PULL;
+          _this.choosenCommand = _constants.OPERATIONS.PULL;
         } else if (e.key == 's') {
-          this.currentCommand = _constants.OPERATIONS.SCALE;
+          _this.choosenCommand = _constants.OPERATIONS.SCALE;
         } else if (e.key == 'l') {
-          this.currentCommand = _constants.OPERATIONS.LINE;
+          _this.choosenCommand = _constants.OPERATIONS.LINE;
         } else if (e.key == 'q') {
-          this.currentCommand = _constants.OPERATIONS.RECT;
+          _this.choosenCommand = _constants.OPERATIONS.RECT;
         } else if (e.key == 'o') {
-          this.currentCommand = _constants.OPERATIONS.CIRCLE;
+          _this.choosenCommand = _constants.OPERATIONS.CIRCLE;
         } else if (e.key == 'a') {
-          this.currentCommand = _constants.OPERATIONS.ARC;
+          _this.choosenCommand = _constants.OPERATIONS.ARC;
         } else if (e.key == 'f') {
-          this.currentCommand = _constants.OPERATIONS.FILL;
+          _this.choosenCommand = _constants.OPERATIONS.FILL;
+        } else if (e.key == 't') {
+          _this.choosenCommand = _constants.OPERATIONS.PAN;
         } else if (e.key == 0) {
-          this.hasSnap = false;
+          _this.hasSnap = false;
         } else if (e.key == "1") {
-          this.hasSnap = true;
-          this.currentSnap = _constants.SNAP_GRID.L;
+          _this.hasSnap = true;
+          _this.currentSnap = _constants.SNAP_GRID.L;
         } else if (e.key == "2") {
-          this.hasSnap = true;
-          this.currentSnap = _constants.SNAP_GRID.M;
+          _this.hasSnap = true;
+          _this.currentSnap = _constants.SNAP_GRID.M;
         } else if (e.key == "3") {
-          this.hasSnap = true;
-          this.currentSnap = _constants.SNAP_GRID.S;
+          _this.hasSnap = true;
+          _this.currentSnap = _constants.SNAP_GRID.S;
         } else if (e.key == "4") {
-          this.hasSnap = true;
-          this.currentSnap = _constants.SNAP_GRID.XS;
+          _this.hasSnap = true;
+          _this.currentSnap = _constants.SNAP_GRID.XS;
         } else if (e.ctrlKey && e.key == 'z') {
           alert("Ctrl + Z shortcut combination was pressed");
         } else if (e.ctrlKey && e.key == 'y') {
@@ -243,223 +247,274 @@ exports.default = KeyboardEvents;
 },{"./constants":"src/constants.js"}],"src/app.js":[function(require,module,exports) {
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.WebCAD = void 0;
+
 var _keyboards_events = _interopRequireDefault(require("./keyboards_events"));
 
 var _constants = require("./constants");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var keys = {};
-var canvas = document.getElementById("canvas");
-var ctx = canvas.getContext('2d');
-var mouse = {
-  x: 0,
-  y: 0,
-  event: null
-}; // mouse drag related variables
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var isDown = false;
-var startX, startY; // the accumulated horizontal(X) & vertical(Y) panning the user has done in total
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-var netPanningX = 0;
-var netPanningY = 0;
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  canvas.style.cursor = "none";
-  drawAll();
-}
-
-function drawPointer() {
-  ctx.strokeStyle = "rgb(0,103,28)"; // green
-
-  ctx.strokeRect(mouse.x - 4.5 - netPanningX, mouse.y - 5.5 - netPanningY, 10, 10);
-  ctx.lineWidth = 0.5;
-  ctx.beginPath();
-  ctx.moveTo(mouse.x - netPanningX, 0);
-  ctx.lineTo(mouse.x - netPanningX, _constants.CANVAS_DIMENSIONS.HEIGHT);
-  ctx.moveTo(0, mouse.y - netPanningY);
-  ctx.lineTo(_constants.CANVAS_DIMENSIONS.WIDTH, mouse.y - netPanningY);
-  ctx.stroke();
-  ctx.fillStyle = "grey";
-  ctx.fillText("".concat(keys.currentCommand.toUpperCase()), mouse.x + 12.5 - netPanningX, mouse.y - 4.5 - netPanningY);
-  ctx.fillText("x: ".concat(mouse.x - netPanningX, " - y: ").concat(mouse.y - netPanningY), mouse.x + 12.5 - netPanningX, mouse.y + 12.5 - netPanningY);
-  ctx.closePath();
-}
-
-function drawCanvas() {
-  ctx.fillStyle = "rgb(31,40,49)";
-  ctx.fillRect(0, 0, _constants.CANVAS_DIMENSIONS.WIDTH, _constants.CANVAS_DIMENSIONS.HEIGHT); // colonne
-
-  for (var i = 0; i < _constants.CANVAS_DIMENSIONS.WIDTH; i += keys.currentSnap) {
-    if (keys.hasSnap) {
-      ctx.beginPath();
-      ctx.moveTo(i + 0.5, 0);
-      ctx.lineTo(i + 0.5, _constants.CANVAS_DIMENSIONS.HEIGHT);
-
-      if (i % 100 === 0) {
-        ctx.strokeStyle = "rgb(48,55,71)";
-      } else {
-        ctx.strokeStyle = "rgb(36,45,56)";
-      }
-
-      ctx.lineWidth = 0.5;
-      ctx.closePath();
-      ctx.stroke();
-    }
-
-    if (i % 100 === 0) {
-      ctx.font = "11px Arial";
-      ctx.fillStyle = "grey"; // ctx.textAlign = "center";
-
-      ctx.fillText(i.toString(), i + 2.5, 10 - (netPanningY > 0 ? 0 : netPanningY));
-    }
-  } // righe
-
-
-  for (var _i = 0; _i < _constants.CANVAS_DIMENSIONS.HEIGHT; _i += keys.currentSnap) {
-    if (keys.hasSnap) {
-      ctx.beginPath();
-      ctx.moveTo(0, _i + 0.5);
-      ctx.lineTo(_constants.CANVAS_DIMENSIONS.WIDTH, _i + 0.5);
-
-      if (_i % 100 === 0) {
-        ctx.strokeStyle = "rgb(48,55,71)";
-      } else {
-        ctx.strokeStyle = "rgb(36,45,56)";
-      }
-
-      ctx.lineWidth = 0.5;
-      ctx.closePath();
-      ctx.stroke();
-    }
-
-    if (_i % 100 === 0) {
-      ctx.font = "11px Arial";
-      ctx.fillStyle = "grey"; // ctx.textAlign = "center";
-
-      ctx.fillText(_i.toString(), 2.5 - (netPanningX > 0 ? 0 : netPanningX), _i - 2.5);
-    }
-  }
-}
-
-function drawAll() {
-  // ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, canvas.width, canvas.height); // CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT
-
-  ctx.save();
-  ctx.scale(1, 1
-  /* this.viewport.scale[0], this.viewport.scale[1] */
-  ); // apply scale
-
-  ctx.translate(netPanningX, netPanningY); // apply translation
-
-  drawCanvas();
-  drawPointer();
-  ctx.restore();
-  console.log(keys);
-}
-
-function loop() {
-  drawAll();
-  requestAnimationFrame(function () {
-    loop();
-  });
-}
-
-function afterAll(e) {
-  // tell the browser we're handling this event
-  e.preventDefault();
-  e.stopPropagation(); // clear the isDragging flag
-
-  isDown = false;
-}
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 window.onload = function () {
-  keys = new _keyboards_events.default(); // resize the canvas to fill browser window dynamically
-
-  window.addEventListener('resize', resizeCanvas, false);
-  canvas.addEventListener('mousemove', function (e) {
-    // tell the browser we're handling this event
-    e.preventDefault();
-    e.stopPropagation();
-    var x = parseInt(e.clientX);
-    var y = parseInt(e.clientY);
-
-    if (keys.hasSnap) {
-      var restoH = x % keys.currentSnap;
-
-      if (restoH >= keys.currentSnap) {
-        x = x - restoH + keys.currentSnap;
-      } else {
-        x -= restoH;
-      }
-
-      var restoV = y % keys.currentSnap;
-
-      if (restoV >= keys.currentSnap) {
-        y = y - restoV + keys.currentSnap;
-      } else {
-        y -= restoV;
-      }
-    } // only do this code if the mouse is being dragged
-
-
-    if (isDown) {
-      // dx & dy are the distance the mouse has moved since the last mousemove event
-      var dx = x - startX;
-      var dy = y - startY; // reset the vars for next mousemove
-
-      startX = x;
-      startY = y; // accumulate the net panning done
-
-      netPanningX += dx;
-      netPanningY += dy;
-      console.clear();
-      console.log("Net change in panning: x:".concat(netPanningX, "px, y:").concat(netPanningY, "px"));
-    }
-
-    mouse.x = x;
-    mouse.y = y;
-    mouse.event = event;
-  }, false);
-  canvas.addEventListener('mousedown', function (e) {
-    // tell the browser we're handling this event
-    e.preventDefault();
-    e.stopPropagation();
-    var x = parseInt(e.clientX);
-    var y = parseInt(e.clientY);
-
-    if (keys.hasSnap) {
-      var restoH = x % keys.currentSnap;
-
-      if (restoH >= keys.currentSnap) {
-        x = x - restoH + keys.currentSnap;
-      } else {
-        x -= restoH;
-      }
-
-      var restoV = y % keys.currentSnap;
-
-      if (restoV >= keys.currentSnap) {
-        y = y - restoV + keys.currentSnap;
-      } else {
-        y -= restoV;
-      }
-    } // calc the starting mouse X,Y for the drag
-
-
-    startX = x;
-    startY = y; // set the isDragging flag
-
-    isDown = true;
-  }, false);
-  canvas.addEventListener('mouseup', afterAll, false);
-  canvas.addEventListener('mouseout', afterAll, false);
-  resizeCanvas();
-  loop();
+  var cad = new WebCAD();
+  document.getElementById('canvas').replaceWith(cad.canvas);
+  cad.start();
+  window.cad = cad;
 };
+
+var WebCAD = /*#__PURE__*/function () {
+  function WebCAD() {
+    _classCallCheck(this, WebCAD);
+
+    this.canvas = document.getElementById("canvas");
+    this.ctx = canvas.getContext('2d');
+    this.keys = new _keyboards_events.default();
+    this.commands = {
+      'PAN': {},
+      'SELECT': {}
+    };
+    this.currentCommand = _constants.OPERATIONS.SELECT;
+    this.mouse = {
+      x: 0,
+      y: 0,
+      event: null
+    }; // this.mouse drag related variables
+
+    this.isDown = false;
+    this.startX, this.startY; // the accumulated horizontal(X) & vertical(Y) panning the user has done in total
+
+    this.netPanningX = 0;
+    this.netPanningY = 0;
+    this.startListening();
+    this.resizeCanvas();
+  }
+
+  _createClass(WebCAD, [{
+    key: "resizeCanvas",
+    value: function resizeCanvas() {
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = window.innerHeight;
+      this.canvas.style.cursor = "none";
+      this.drawAll();
+    }
+  }, {
+    key: "startListening",
+    value: function startListening() {
+      var _this = this;
+
+      // resize the canvas to fill browser window dynamically
+      window.addEventListener('resize', this.resizeCanvas.bind(this), false);
+      this.canvas.addEventListener('mousemove', function (e) {
+        // tell the browser we're handling this event
+        e.preventDefault();
+        e.stopPropagation();
+        var x = parseInt(e.clientX);
+        var y = parseInt(e.clientY);
+
+        if (_this.keys.hasSnap) {
+          var restoH = x % _this.keys.currentSnap;
+
+          if (restoH >= _this.keys.currentSnap) {
+            x = x - restoH + _this.keys.currentSnap;
+          } else {
+            x -= restoH;
+          }
+
+          var restoV = y % _this.keys.currentSnap;
+
+          if (restoV >= _this.keys.currentSnap) {
+            y = y - restoV + _this.keys.currentSnap;
+          } else {
+            y -= restoV;
+          }
+        } // only do this code if the this.mouse is being dragged
+
+
+        if (_this.isDown) {
+          // dx & dy are the distance the this.mouse has moved since the last this.mousemove event
+          var dx = x - _this.startX;
+          var dy = y - _this.startY; // reset the vars for next this.mousemove
+
+          _this.startX = x;
+          _this.startY = y; // accumulate the net panning done
+
+          _this.netPanningX += dx;
+          _this.netPanningY += dy;
+          console.clear();
+          console.log("Net change in panning: x:".concat(_this.netPanningX, "px, y:").concat(_this.netPanningY, "px"));
+        }
+
+        _this.mouse.x = x;
+        _this.mouse.y = y;
+        _this.mouse.event = event;
+      }, false);
+      this.canvas.addEventListener('mousedown', function (e) {
+        // tell the browser we're handling this event
+        e.preventDefault();
+        e.stopPropagation();
+        var x = parseInt(e.clientX);
+        var y = parseInt(e.clientY);
+
+        if (_this.keys.hasSnap) {
+          var restoH = x % _this.keys.currentSnap;
+
+          if (restoH >= _this.keys.currentSnap) {
+            x = x - restoH + _this.keys.currentSnap;
+          } else {
+            x -= restoH;
+          }
+
+          var restoV = y % _this.keys.currentSnap;
+
+          if (restoV >= _this.keys.currentSnap) {
+            y = y - restoV + _this.keys.currentSnap;
+          } else {
+            y -= restoV;
+          }
+        } // calc the starting this.mouse X,Y for the drag
+
+
+        _this.startX = x;
+        _this.startY = y; // set the isDragging flag
+
+        _this.isDown = true;
+      }, false);
+      this.canvas.addEventListener('mouseup', this.afterAll.bind(this), false);
+      this.canvas.addEventListener('mouseout', this.afterAll.bind(this), false);
+    }
+  }, {
+    key: "loop",
+    value: function loop() {
+      var _this2 = this;
+
+      this.drawAll();
+      requestAnimationFrame(function () {
+        _this2.loop();
+      });
+    }
+  }, {
+    key: "start",
+    value: function start() {
+      this.loop();
+    }
+    /* --------------------------------------------------------- */
+
+  }, {
+    key: "afterAll",
+    value: function afterAll(e) {
+      // tell the browser we're handling this event
+      e.preventDefault();
+      e.stopPropagation(); // clear the isDragging flag
+
+      this.isDown = false;
+    }
+  }, {
+    key: "drawPointer",
+    value: function drawPointer() {
+      this.ctx.strokeStyle = "rgb(0,103,28)"; // green
+
+      this.ctx.strokeRect(this.mouse.x - 4.5 - this.netPanningX, this.mouse.y - 5.5 - this.netPanningY, 10, 10);
+      this.ctx.lineWidth = 0.5;
+      this.ctx.beginPath();
+      this.ctx.moveTo(this.mouse.x - this.netPanningX, 0);
+      this.ctx.lineTo(this.mouse.x - this.netPanningX, _constants.CANVAS_DIMENSIONS.HEIGHT);
+      this.ctx.moveTo(0, this.mouse.y - this.netPanningY);
+      this.ctx.lineTo(_constants.CANVAS_DIMENSIONS.WIDTH, this.mouse.y - this.netPanningY);
+      this.ctx.stroke();
+      this.ctx.fillStyle = "grey";
+      this.ctx.fillText("".concat(this.keys.choosenCommand.toUpperCase()), this.mouse.x + 12.5 - this.netPanningX, this.mouse.y - 4.5 - this.netPanningY);
+      this.ctx.fillText("x: ".concat(this.mouse.x - this.netPanningX, " - y: ").concat(this.mouse.y - this.netPanningY), this.mouse.x + 12.5 - this.netPanningX, this.mouse.y + 12.5 - this.netPanningY);
+      this.ctx.closePath();
+    }
+  }, {
+    key: "drawCanvas",
+    value: function drawCanvas() {
+      this.ctx.fillStyle = "rgb(31,40,49)";
+      this.ctx.fillRect(0, 0, _constants.CANVAS_DIMENSIONS.WIDTH, _constants.CANVAS_DIMENSIONS.HEIGHT); // colonne
+
+      for (var i = 0; i < _constants.CANVAS_DIMENSIONS.WIDTH; i += this.keys.currentSnap) {
+        if (this.keys.hasSnap) {
+          this.ctx.beginPath();
+          this.ctx.moveTo(i + 0.5, 0);
+          this.ctx.lineTo(i + 0.5, _constants.CANVAS_DIMENSIONS.HEIGHT);
+
+          if (i % 100 === 0) {
+            this.ctx.strokeStyle = "rgb(48,55,71)";
+          } else {
+            this.ctx.strokeStyle = "rgb(36,45,56)";
+          }
+
+          this.ctx.lineWidth = 0.5;
+          this.ctx.closePath();
+          this.ctx.stroke();
+        }
+
+        if (i % 100 === 0) {
+          this.ctx.font = "11px Arial";
+          this.ctx.fillStyle = "grey"; // this.ctx.textAlign = "center";
+
+          this.ctx.fillText(i.toString(), i + 2.5, 10 - (this.netPanningY > 0 ? 0 : this.netPanningY));
+        }
+      } // righe
+
+
+      for (var _i = 0; _i < _constants.CANVAS_DIMENSIONS.HEIGHT; _i += this.keys.currentSnap) {
+        if (this.keys.hasSnap) {
+          this.ctx.beginPath();
+          this.ctx.moveTo(0, _i + 0.5);
+          this.ctx.lineTo(_constants.CANVAS_DIMENSIONS.WIDTH, _i + 0.5);
+
+          if (_i % 100 === 0) {
+            this.ctx.strokeStyle = "rgb(48,55,71)";
+          } else {
+            this.ctx.strokeStyle = "rgb(36,45,56)";
+          }
+
+          this.ctx.lineWidth = 0.5;
+          this.ctx.closePath();
+          this.ctx.stroke();
+        }
+
+        if (_i % 100 === 0) {
+          this.ctx.font = "11px Arial";
+          this.ctx.fillStyle = "grey"; // this.ctx.textAlign = "center";
+
+          this.ctx.fillText(_i.toString(), 2.5 - (this.netPanningX > 0 ? 0 : this.netPanningX), _i - 2.5);
+        }
+      }
+    }
+  }, {
+    key: "drawAll",
+    value: function drawAll() {
+      // this.ctx.fillStyle = "black";
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height); // CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT
+
+      this.ctx.save();
+      this.ctx.scale(1, 1
+      /* this.viewport.scale[0], this.viewport.scale[1] */
+      ); // apply scale
+
+      this.ctx.translate(this.netPanningX, this.netPanningY); // apply translation
+
+      this.drawCanvas();
+      this.drawPointer();
+      this.ctx.restore();
+    }
+  }]);
+
+  return WebCAD;
+}();
+
+exports.WebCAD = WebCAD;
 },{"./keyboards_events":"src/keyboards_events.js","./constants":"src/constants.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -488,7 +543,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62258" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52434" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
