@@ -16,7 +16,7 @@ export default class KeyboardEvents {
         document.onkeyup =  (e) => {
             if (e.key == 'Escape' || e.key == 's') {
                 this.choosenCommand = OPERATIONS.SELECT;
-            } else if (e.key == 'd') {
+            /* } else if (e.key == 'd') {
                 this.choosenCommand = OPERATIONS.DELETE;
             } else if (e.key == 'c') {
                 this.choosenCommand = OPERATIONS.COPY;
@@ -37,7 +37,7 @@ export default class KeyboardEvents {
             } else if (e.key == 'a') {
                 this.choosenCommand = OPERATIONS.ARC;
             } else if (e.key == 'f') {
-                this.choosenCommand = OPERATIONS.FILL;
+                this.choosenCommand = OPERATIONS.FILL; */
             } else if (e.key == 't') {
                 this.choosenCommand = OPERATIONS.PAN;
             } else if (e.key == 0) {

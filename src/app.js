@@ -2,8 +2,8 @@ import KeyboardEvents from './keyboards_events';
 import { CANVAS_DIMENSIONS, OPERATIONS } from './constants';
 
 // commands
-import PanCommand from './commands/select';
-import SelectCommand from './commands/pan';
+import PanCommand from './commands/pan';
+import SelectCommand from './commands/select';
 
 window.onload = () => {
     const cad = new WebCAD();
@@ -24,7 +24,7 @@ export class WebCAD {
             'SELECT': new SelectCommand(this)
         }
         // DEFAULT
-        this.currentCommand = this.commands[OPERATIONS.SELECT]
+        /* this.currentCommand = this.commands[this.keys.choosenCommand] */
 
         this.mouse = {
             x: 0,

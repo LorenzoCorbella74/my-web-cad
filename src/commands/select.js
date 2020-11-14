@@ -8,6 +8,9 @@ export default class SelectCommand extends Command {
 
     mousemove (e) {
         console.log('SelectCommand: mousemove', e, this)
+        this.main.mouse.x = e._x;
+        this.main.mouse.y = e._y;
+        this.main.mouse.event = e;
     }
 
     mousedown (e) {

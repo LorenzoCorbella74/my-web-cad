@@ -193,28 +193,28 @@ var KeyboardEvents = /*#__PURE__*/function () {
       document.onkeyup = function (e) {
         if (e.key == 'Escape' || e.key == 's') {
           _this.choosenCommand = _constants.OPERATIONS.SELECT;
-        } else if (e.key == 'd') {
-          _this.choosenCommand = _constants.OPERATIONS.DELETE;
-        } else if (e.key == 'c') {
-          _this.choosenCommand = _constants.OPERATIONS.COPY;
-        } else if (e.key == 'm') {
-          _this.choosenCommand = _constants.OPERATIONS.MOVE;
-        } else if (e.key == 'r') {
-          _this.choosenCommand = _constants.OPERATIONS.ROTATE;
-        } else if (e.key == 'p') {
-          _this.choosenCommand = _constants.OPERATIONS.PULL;
-        } else if (e.key == 's') {
-          _this.choosenCommand = _constants.OPERATIONS.SCALE;
-        } else if (e.key == 'l') {
-          _this.choosenCommand = _constants.OPERATIONS.LINE;
-        } else if (e.key == 'q') {
-          _this.choosenCommand = _constants.OPERATIONS.RECT;
-        } else if (e.key == 'o') {
-          _this.choosenCommand = _constants.OPERATIONS.CIRCLE;
-        } else if (e.key == 'a') {
-          _this.choosenCommand = _constants.OPERATIONS.ARC;
-        } else if (e.key == 'f') {
-          _this.choosenCommand = _constants.OPERATIONS.FILL;
+          /* } else if (e.key == 'd') {
+              this.choosenCommand = OPERATIONS.DELETE;
+          } else if (e.key == 'c') {
+              this.choosenCommand = OPERATIONS.COPY;
+          } else if (e.key == 'm') {
+              this.choosenCommand = OPERATIONS.MOVE;
+          } else if (e.key == 'r') {
+              this.choosenCommand = OPERATIONS.ROTATE;
+          } else if (e.key == 'p') {
+              this.choosenCommand = OPERATIONS.PULL;
+          } else if (e.key == 's') {
+              this.choosenCommand = OPERATIONS.SCALE;
+          } else if (e.key == 'l') {
+              this.choosenCommand = OPERATIONS.LINE;
+          } else if (e.key == 'q') {
+              this.choosenCommand = OPERATIONS.RECT;
+          } else if (e.key == 'o') {
+              this.choosenCommand = OPERATIONS.CIRCLE;
+          } else if (e.key == 'a') {
+              this.choosenCommand = OPERATIONS.ARC;
+          } else if (e.key == 'f') {
+              this.choosenCommand = OPERATIONS.FILL; */
         } else if (e.key == 't') {
           _this.choosenCommand = _constants.OPERATIONS.PAN;
         } else if (e.key == 0) {
@@ -262,78 +262,7 @@ var Command = function Command(main) {
 };
 
 exports.default = Command;
-},{}],"src/commands/select.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _command = _interopRequireDefault(require("./command"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-var SelectCommand = /*#__PURE__*/function (_Command) {
-  _inherits(SelectCommand, _Command);
-
-  var _super = _createSuper(SelectCommand);
-
-  function SelectCommand(state) {
-    _classCallCheck(this, SelectCommand);
-
-    return _super.call(this, state);
-  }
-
-  _createClass(SelectCommand, [{
-    key: "mousemove",
-    value: function mousemove(e) {
-      console.log('SelectCommand: mousemove', e, this);
-    }
-  }, {
-    key: "mousedown",
-    value: function mousedown(e) {
-      console.log('SelectCommand: mousedown', e, this);
-    }
-  }, {
-    key: "mouseup",
-    value: function mouseup(event) {
-      console.log('SelectCommand: mouseup', event, this);
-    }
-  }, {
-    key: "mouseout",
-    value: function mouseout(event) {
-      console.log('SelectCommand: mouseout', event, this);
-    }
-  }]);
-
-  return SelectCommand;
-}(_command.default);
-
-exports.default = SelectCommand;
-},{"./command":"src/commands/command.js"}],"src/commands/pan.js":[function(require,module,exports) {
+},{}],"src/commands/pan.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -492,6 +421,80 @@ var PanCommand = /*#__PURE__*/function (_Command) {
 }(_command.default);
 
 exports.default = PanCommand;
+},{"./command":"src/commands/command.js"}],"src/commands/select.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _command = _interopRequireDefault(require("./command"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var SelectCommand = /*#__PURE__*/function (_Command) {
+  _inherits(SelectCommand, _Command);
+
+  var _super = _createSuper(SelectCommand);
+
+  function SelectCommand(state) {
+    _classCallCheck(this, SelectCommand);
+
+    return _super.call(this, state);
+  }
+
+  _createClass(SelectCommand, [{
+    key: "mousemove",
+    value: function mousemove(e) {
+      console.log('SelectCommand: mousemove', e, this);
+      this.main.mouse.x = e._x;
+      this.main.mouse.y = e._y;
+      this.main.mouse.event = e;
+    }
+  }, {
+    key: "mousedown",
+    value: function mousedown(e) {
+      console.log('SelectCommand: mousedown', e, this);
+    }
+  }, {
+    key: "mouseup",
+    value: function mouseup(event) {
+      console.log('SelectCommand: mouseup', event, this);
+    }
+  }, {
+    key: "mouseout",
+    value: function mouseout(event) {
+      console.log('SelectCommand: mouseout', event, this);
+    }
+  }]);
+
+  return SelectCommand;
+}(_command.default);
+
+exports.default = SelectCommand;
 },{"./command":"src/commands/command.js"}],"src/app.js":[function(require,module,exports) {
 "use strict";
 
@@ -504,9 +507,9 @@ var _keyboards_events = _interopRequireDefault(require("./keyboards_events"));
 
 var _constants = require("./constants");
 
-var _select = _interopRequireDefault(require("./commands/select"));
-
 var _pan = _interopRequireDefault(require("./commands/pan"));
+
+var _select = _interopRequireDefault(require("./commands/select"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -531,11 +534,12 @@ var WebCAD = /*#__PURE__*/function () {
     this.ctx = canvas.getContext('2d');
     this.keys = new _keyboards_events.default();
     this.commands = {
-      'PAN': new _select.default(this),
-      'SELECT': new _pan.default(this)
+      'PAN': new _pan.default(this),
+      'SELECT': new _select.default(this)
     }; // DEFAULT
 
-    this.currentCommand = this.commands[_constants.OPERATIONS.SELECT];
+    /* this.currentCommand = this.commands[this.keys.choosenCommand] */
+
     this.mouse = {
       x: 0,
       y: 0,
@@ -690,7 +694,7 @@ var WebCAD = /*#__PURE__*/function () {
 }();
 
 exports.WebCAD = WebCAD;
-},{"./keyboards_events":"src/keyboards_events.js","./constants":"src/constants.js","./commands/select":"src/commands/select.js","./commands/pan":"src/commands/pan.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./keyboards_events":"src/keyboards_events.js","./constants":"src/constants.js","./commands/pan":"src/commands/pan.js","./commands/select":"src/commands/select.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -718,7 +722,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52434" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55044" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
