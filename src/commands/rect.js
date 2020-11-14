@@ -16,8 +16,8 @@ export default class RectCommand extends Command {
         this.main.mouse.event = event;
 
         if (this.started) {
-            this.x = Math.min(event._x, this.start.x) - this.netPanningX,
-                this.y = Math.min(event._y, this.start.y) - this.netPanningY,
+            this.x = Math.min(event._x, this.start.x),
+                this.y = Math.min(event._y, this.start.y),
                 this.w = Math.abs(event._x - this.start.x),
                 this.h = Math.abs(event._y - this.start.y);
             if (!this.w || !this.h) {
