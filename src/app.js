@@ -1,9 +1,11 @@
 import KeyboardEvents from './keyboards_events';
-import { CANVAS_DIMENSIONS, OPERATIONS } from './constants';
+import { CANVAS_DIMENSIONS } from './constants';
 
-// commands
+// Commands
 import PanCommand from './commands/pan';
 import SelectCommand from './commands/select';
+import LineCommand from './commands/line';
+import RectCommand from './commands/rect';
 
 window.onload = () => {
     const cad = new WebCAD();
@@ -21,7 +23,9 @@ export class WebCAD {
 
         this.commands = {
             'PAN': new PanCommand(this),
-            'SELECT': new SelectCommand(this)
+            'SELECT': new SelectCommand(this),
+            'LINE': new LineCommand(this),
+            'RECT': new RectCommand(this)
         }
         // DEFAULT
         /* this.currentCommand = this.commands[this.keys.choosenCommand] */
@@ -32,18 +36,21 @@ export class WebCAD {
             event: null
         };
 
+        this.shapes = [];
+        this.tempShape = []
+
         this.startListening()
         this.resizeCanvas()
     }
 
-    resizeCanvas () {
+    resizeCanvas() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
         this.canvas.style.cursor = "none"
         this.drawAll();
     }
 
-    startListening () {
+    startListening() {
         // resize the canvas to fill browser window dynamically
         window.addEventListener('resize', this.resizeCanvas.bind(this), false);
 
@@ -53,30 +60,49 @@ export class WebCAD {
         this.canvas.addEventListener('mouseout', this.globalHandler.bind(this), false);
     }
 
-    globalHandler (ev) {
+    globalHandler(ev) {
         this.currentCommand = this.commands[this.keys.choosenCommand]
-        ev._x = parseInt(ev.clientX);
-        ev._y = parseInt(ev.clientY);
+        let x = parseInt(ev.clientX);
+        let y = parseInt(ev.clientY);
+
+        /* ----------------- SNAP 2 GRID ----------------- */
+        if (this.keys.hasSnap) {
+            let restoH = x % this.keys.currentSnap;
+            if (restoH >= this.keys.currentSnap) {
+                x = x - restoH + this.keys.currentSnap
+            } else {
+                x -= restoH;
+            }
+            let restoV = y % this.keys.currentSnap;
+            if (restoV >= this.keys.currentSnap) {
+                y = y - restoV + this.keys.currentSnap
+            } else {
+                y -= restoV;
+            }
+        }
+        ev._x = x;
+        ev._y = y;
+
         var func = this.currentCommand[ev.type].bind(this.currentCommand);
         if (func) {
             func(ev);
         }
     }
 
-    loop () {
+    loop() {
         this.drawAll();
         requestAnimationFrame(() => {
             this.loop()
         });
     }
 
-    start () {
+    start() {
         this.loop();
     }
 
     /* --------------------------------------------------------- */
 
-    drawPointer () {
+    drawPointer() {
         this.ctx.strokeStyle = "rgb(0,103,28)"; // green
         this.ctx.strokeRect(this.mouse.x - 4.5 - this.netPanningX, this.mouse.y - 5.5 - this.netPanningY, 10, 10);
         this.ctx.lineWidth = 0.5;
@@ -92,7 +118,7 @@ export class WebCAD {
         this.ctx.closePath();
     }
 
-    drawCanvas () {
+    drawCanvas() {
         this.ctx.fillStyle = "rgb(31,40,49)";
         this.ctx.fillRect(0, 0, CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT);
         // colonne
@@ -141,7 +167,29 @@ export class WebCAD {
         }
     }
 
-    drawAll () {
+    drawShapes() {
+        [...this.shapes, ...this.tempShape].forEach(item => {
+            if (item.w) {
+                this.ctx.save()
+                this.ctx.fillStyle = item.color
+                this.ctx.beginPath()
+                this.ctx.strokeStyle = item.stroke
+                this.ctx.rect(item.x, item.y, item.w, item.h)
+                this.ctx.fill()
+                this.ctx.stroke()
+                this.ctx.restore()
+            } else {
+                this.ctx.strokeStyle = item.color; // green
+                this.ctx.beginPath()
+                this.ctx.moveTo(item.start_x, item.start_y) // sets our starting point
+                this.ctx.lineTo(item.end_x, item.end_y) // create a line from start point to X: 100, Y: 200
+                this.ctx.closePath() // left side and closes the pat
+                this.ctx.stroke()
+            }
+        });
+    }
+
+    drawAll() {
         // this.ctx.fillStyle = "black";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height); // CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT
         this.ctx.save();
@@ -149,6 +197,7 @@ export class WebCAD {
         this.ctx.translate(this.netPanningX, this.netPanningY); // apply translation
         this.drawCanvas();
         this.drawPointer();
+        this.drawShapes();
         this.ctx.restore();
     }
 

@@ -12,32 +12,36 @@ export default class KeyboardEvents {
         this.startListenDocumentKeyup()
     }
 
-    startListenDocumentKeyup () {
-        document.onkeyup =  (e) => {
+    startListenDocumentKeyup() {
+        document.onkeyup = (e) => {
             if (e.key == 'Escape' || e.key == 's') {
                 this.choosenCommand = OPERATIONS.SELECT;
-            /* } else if (e.key == 'd') {
-                this.choosenCommand = OPERATIONS.DELETE;
-            } else if (e.key == 'c') {
-                this.choosenCommand = OPERATIONS.COPY;
-            } else if (e.key == 'm') {
-                this.choosenCommand = OPERATIONS.MOVE;
-            } else if (e.key == 'r') {
-                this.choosenCommand = OPERATIONS.ROTATE;
-            } else if (e.key == 'p') {
-                this.choosenCommand = OPERATIONS.PULL;
-            } else if (e.key == 's') {
-                this.choosenCommand = OPERATIONS.SCALE;
+                /* } else if (e.key == 'd') {
+                    this.choosenCommand = OPERATIONS.DELETE;
+                } else if (e.key == 'c') {
+                    this.choosenCommand = OPERATIONS.COPY;
+                } else if (e.key == 'm') {
+                    this.choosenCommand = OPERATIONS.MOVE;
+                } else if (e.key == 'r') {
+                    this.choosenCommand = OPERATIONS.ROTATE;
+                } else if (e.key == 'p') {
+                    this.choosenCommand = OPERATIONS.PULL;
+                } else if (e.key == 's') {
+                    this.choosenCommand = OPERATIONS.SCALE;
+                } else if (e.key == 'l') {
+                    this.choosenCommand = OPERATIONS.LINE;
+                } else if (e.key == 'q') {
+                    this.choosenCommand = OPERATIONS.RECT;
+                } else if (e.key == 'o') {
+                    this.choosenCommand = OPERATIONS.CIRCLE;
+                } else if (e.key == 'a') {
+                    this.choosenCommand = OPERATIONS.ARC;
+                } else if (e.key == 'f') {
+                    this.choosenCommand = OPERATIONS.FILL; */
             } else if (e.key == 'l') {
                 this.choosenCommand = OPERATIONS.LINE;
-            } else if (e.key == 'q') {
+            } else if (e.key == 'r') {
                 this.choosenCommand = OPERATIONS.RECT;
-            } else if (e.key == 'o') {
-                this.choosenCommand = OPERATIONS.CIRCLE;
-            } else if (e.key == 'a') {
-                this.choosenCommand = OPERATIONS.ARC;
-            } else if (e.key == 'f') {
-                this.choosenCommand = OPERATIONS.FILL; */
             } else if (e.key == 't') {
                 this.choosenCommand = OPERATIONS.PAN;
             } else if (e.key == 0) {

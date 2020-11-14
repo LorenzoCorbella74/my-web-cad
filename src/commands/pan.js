@@ -14,8 +14,7 @@ export default class PanCommand extends Command {
         this.main.netPanningY = 0;
     }
 
-    mousemove (e) {
-        console.log('PanCommand: mousemove', e, this)
+    mousemove(e) {
 
         // tell the browser we're handling this event
         e.preventDefault();
@@ -24,21 +23,7 @@ export default class PanCommand extends Command {
         let x = e._x;
         let y = e._y;
 
-        if (this.main.keys.hasSnap) {
-            let restoH = x % this.main.keys.currentSnap;
-            if (restoH >= this.main.keys.currentSnap) {
-                x = x - restoH + this.main.keys.currentSnap
-            } else {
-                x -= restoH;
-            }
-            let restoV = y % this.main.keys.currentSnap;
-            if (restoV >= this.main.keys.currentSnap) {
-                y = y - restoV + this.main.keys.currentSnap
-            } else {
-                y -= restoV;
-            }
-        }
-        // only do this code if the this.mouse is being dragged
+        // if the this.mouse is being dragged
         if (this.isDown) {
             // dx & dy are the distance the this.mouse has moved since the last this.mousemove event
             var dx = x - this.startX;
@@ -59,39 +44,19 @@ export default class PanCommand extends Command {
         this.main.mouse.event = e;
     }
 
-    mousedown (e) {
-        console.log('PanCommand: mousedown', e, this)
-        // tell the browser we're handling this event
+    mousedown(e) {
         e.preventDefault();
         e.stopPropagation();
 
-        let x = parseInt(e._x);
-        let y = parseInt(e._y);
-
-        if (this.main.keys.hasSnap) {
-            let restoH = x % this.main.keys.currentSnap;
-            if (restoH >= this.main.keys.currentSnap) {
-                x = x - restoH + this.main.keys.currentSnap
-            } else {
-                x -= restoH;
-            }
-            let restoV = y % this.main.keys.currentSnap;
-            if (restoV >= this.main.keys.currentSnap) {
-                y = y - restoV + this.main.keys.currentSnap
-            } else {
-                y -= restoV;
-            }
-        }
-
         // calc the starting this.mouse X,Y for the drag
-        this.startX = x;
-        this.startY = y;
+        this.startX = e._x;
+        this.startY = e._y;
 
         // set the isDragging flag
         this.isDown = true;
     }
 
-    mouseup (e) {
+    mouseup(e) {
         console.log('PanCommand: mouseup', e, this)
         e.preventDefault();
         e.stopPropagation();
@@ -99,7 +64,7 @@ export default class PanCommand extends Command {
         this.isDown = false;
     }
 
-    mouseout (e) {
+    mouseout(e) {
         console.log('PanCommand: mouseout', e, this)
         e.preventDefault();
         e.stopPropagation();
