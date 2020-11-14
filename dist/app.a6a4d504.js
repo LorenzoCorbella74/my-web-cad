@@ -244,7 +244,255 @@ var KeyboardEvents = /*#__PURE__*/function () {
 }();
 
 exports.default = KeyboardEvents;
-},{"./constants":"src/constants.js"}],"src/app.js":[function(require,module,exports) {
+},{"./constants":"src/constants.js"}],"src/commands/command.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Command = function Command(main) {
+  _classCallCheck(this, Command);
+
+  // ref to main class istance
+  this.main = main;
+};
+
+exports.default = Command;
+},{}],"src/commands/select.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _command = _interopRequireDefault(require("./command"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var SelectCommand = /*#__PURE__*/function (_Command) {
+  _inherits(SelectCommand, _Command);
+
+  var _super = _createSuper(SelectCommand);
+
+  function SelectCommand(state) {
+    _classCallCheck(this, SelectCommand);
+
+    return _super.call(this, state);
+  }
+
+  _createClass(SelectCommand, [{
+    key: "mousemove",
+    value: function mousemove(e) {
+      console.log('SelectCommand: mousemove', e, this);
+    }
+  }, {
+    key: "mousedown",
+    value: function mousedown(e) {
+      console.log('SelectCommand: mousedown', e, this);
+    }
+  }, {
+    key: "mouseup",
+    value: function mouseup(event) {
+      console.log('SelectCommand: mouseup', event, this);
+    }
+  }, {
+    key: "mouseout",
+    value: function mouseout(event) {
+      console.log('SelectCommand: mouseout', event, this);
+    }
+  }]);
+
+  return SelectCommand;
+}(_command.default);
+
+exports.default = SelectCommand;
+},{"./command":"src/commands/command.js"}],"src/commands/pan.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _command = _interopRequireDefault(require("./command"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var PanCommand = /*#__PURE__*/function (_Command) {
+  _inherits(PanCommand, _Command);
+
+  var _super = _createSuper(PanCommand);
+
+  function PanCommand(state) {
+    var _this;
+
+    _classCallCheck(this, PanCommand);
+
+    _this = _super.call(this, state); // this.mouse drag related variables
+
+    _this.isDown = false;
+    _this.startX, _this.startY; // the accumulated horizontal(X) & vertical(Y) panning the user has done in total
+
+    _this.main.netPanningX = 0;
+    _this.main.netPanningY = 0;
+    return _this;
+  }
+
+  _createClass(PanCommand, [{
+    key: "mousemove",
+    value: function mousemove(e) {
+      console.log('PanCommand: mousemove', e, this); // tell the browser we're handling this event
+
+      e.preventDefault();
+      e.stopPropagation();
+      var x = e._x;
+      var y = e._y;
+
+      if (this.main.keys.hasSnap) {
+        var restoH = x % this.main.keys.currentSnap;
+
+        if (restoH >= this.main.keys.currentSnap) {
+          x = x - restoH + this.main.keys.currentSnap;
+        } else {
+          x -= restoH;
+        }
+
+        var restoV = y % this.main.keys.currentSnap;
+
+        if (restoV >= this.main.keys.currentSnap) {
+          y = y - restoV + this.main.keys.currentSnap;
+        } else {
+          y -= restoV;
+        }
+      } // only do this code if the this.mouse is being dragged
+
+
+      if (this.isDown) {
+        // dx & dy are the distance the this.mouse has moved since the last this.mousemove event
+        var dx = x - this.startX;
+        var dy = y - this.startY; // reset the vars for next this.mousemove
+
+        this.startX = x;
+        this.startY = y; // accumulate the net panning done
+
+        this.main.netPanningX += dx;
+        this.main.netPanningY += dy;
+        console.clear();
+        console.log("Net change in panning: x:".concat(this.main.netPanningX, "px, y:").concat(this.main.netPanningY, "px"));
+      }
+
+      this.main.mouse.x = x;
+      this.main.mouse.y = y;
+      this.main.mouse.event = e;
+    }
+  }, {
+    key: "mousedown",
+    value: function mousedown(e) {
+      console.log('PanCommand: mousedown', e, this); // tell the browser we're handling this event
+
+      e.preventDefault();
+      e.stopPropagation();
+      var x = parseInt(e._x);
+      var y = parseInt(e._y);
+
+      if (this.main.keys.hasSnap) {
+        var restoH = x % this.main.keys.currentSnap;
+
+        if (restoH >= this.main.keys.currentSnap) {
+          x = x - restoH + this.main.keys.currentSnap;
+        } else {
+          x -= restoH;
+        }
+
+        var restoV = y % this.main.keys.currentSnap;
+
+        if (restoV >= this.main.keys.currentSnap) {
+          y = y - restoV + this.main.keys.currentSnap;
+        } else {
+          y -= restoV;
+        }
+      } // calc the starting this.mouse X,Y for the drag
+
+
+      this.startX = x;
+      this.startY = y; // set the isDragging flag
+
+      this.isDown = true;
+    }
+  }, {
+    key: "mouseup",
+    value: function mouseup(e) {
+      console.log('PanCommand: mouseup', e, this);
+      e.preventDefault();
+      e.stopPropagation(); // clear the isDragging flag
+
+      this.isDown = false;
+    }
+  }, {
+    key: "mouseout",
+    value: function mouseout(e) {
+      console.log('PanCommand: mouseout', e, this);
+      e.preventDefault();
+      e.stopPropagation(); // clear the isDragging flag
+
+      this.isDown = false;
+    }
+  }]);
+
+  return PanCommand;
+}(_command.default);
+
+exports.default = PanCommand;
+},{"./command":"src/commands/command.js"}],"src/app.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -255,6 +503,10 @@ exports.WebCAD = void 0;
 var _keyboards_events = _interopRequireDefault(require("./keyboards_events"));
 
 var _constants = require("./constants");
+
+var _select = _interopRequireDefault(require("./commands/select"));
+
+var _pan = _interopRequireDefault(require("./commands/pan"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -279,21 +531,16 @@ var WebCAD = /*#__PURE__*/function () {
     this.ctx = canvas.getContext('2d');
     this.keys = new _keyboards_events.default();
     this.commands = {
-      'PAN': {},
-      'SELECT': {}
-    };
-    this.currentCommand = _constants.OPERATIONS.SELECT;
+      'PAN': new _select.default(this),
+      'SELECT': new _pan.default(this)
+    }; // DEFAULT
+
+    this.currentCommand = this.commands[_constants.OPERATIONS.SELECT];
     this.mouse = {
       x: 0,
       y: 0,
       event: null
-    }; // this.mouse drag related variables
-
-    this.isDown = false;
-    this.startX, this.startY; // the accumulated horizontal(X) & vertical(Y) panning the user has done in total
-
-    this.netPanningX = 0;
-    this.netPanningY = 0;
+    };
     this.startListening();
     this.resizeCanvas();
   }
@@ -309,96 +556,33 @@ var WebCAD = /*#__PURE__*/function () {
   }, {
     key: "startListening",
     value: function startListening() {
-      var _this = this;
-
       // resize the canvas to fill browser window dynamically
       window.addEventListener('resize', this.resizeCanvas.bind(this), false);
-      this.canvas.addEventListener('mousemove', function (e) {
-        // tell the browser we're handling this event
-        e.preventDefault();
-        e.stopPropagation();
-        var x = parseInt(e.clientX);
-        var y = parseInt(e.clientY);
+      this.canvas.addEventListener('mousemove', this.globalHandler.bind(this), false);
+      this.canvas.addEventListener('mousedown', this.globalHandler.bind(this), false);
+      this.canvas.addEventListener('mouseup', this.globalHandler.bind(this), false);
+      this.canvas.addEventListener('mouseout', this.globalHandler.bind(this), false);
+    }
+  }, {
+    key: "globalHandler",
+    value: function globalHandler(ev) {
+      this.currentCommand = this.commands[this.keys.choosenCommand];
+      ev._x = parseInt(ev.clientX);
+      ev._y = parseInt(ev.clientY);
+      var func = this.currentCommand[ev.type].bind(this.currentCommand);
 
-        if (_this.keys.hasSnap) {
-          var restoH = x % _this.keys.currentSnap;
-
-          if (restoH >= _this.keys.currentSnap) {
-            x = x - restoH + _this.keys.currentSnap;
-          } else {
-            x -= restoH;
-          }
-
-          var restoV = y % _this.keys.currentSnap;
-
-          if (restoV >= _this.keys.currentSnap) {
-            y = y - restoV + _this.keys.currentSnap;
-          } else {
-            y -= restoV;
-          }
-        } // only do this code if the this.mouse is being dragged
-
-
-        if (_this.isDown) {
-          // dx & dy are the distance the this.mouse has moved since the last this.mousemove event
-          var dx = x - _this.startX;
-          var dy = y - _this.startY; // reset the vars for next this.mousemove
-
-          _this.startX = x;
-          _this.startY = y; // accumulate the net panning done
-
-          _this.netPanningX += dx;
-          _this.netPanningY += dy;
-          console.clear();
-          console.log("Net change in panning: x:".concat(_this.netPanningX, "px, y:").concat(_this.netPanningY, "px"));
-        }
-
-        _this.mouse.x = x;
-        _this.mouse.y = y;
-        _this.mouse.event = event;
-      }, false);
-      this.canvas.addEventListener('mousedown', function (e) {
-        // tell the browser we're handling this event
-        e.preventDefault();
-        e.stopPropagation();
-        var x = parseInt(e.clientX);
-        var y = parseInt(e.clientY);
-
-        if (_this.keys.hasSnap) {
-          var restoH = x % _this.keys.currentSnap;
-
-          if (restoH >= _this.keys.currentSnap) {
-            x = x - restoH + _this.keys.currentSnap;
-          } else {
-            x -= restoH;
-          }
-
-          var restoV = y % _this.keys.currentSnap;
-
-          if (restoV >= _this.keys.currentSnap) {
-            y = y - restoV + _this.keys.currentSnap;
-          } else {
-            y -= restoV;
-          }
-        } // calc the starting this.mouse X,Y for the drag
-
-
-        _this.startX = x;
-        _this.startY = y; // set the isDragging flag
-
-        _this.isDown = true;
-      }, false);
-      this.canvas.addEventListener('mouseup', this.afterAll.bind(this), false);
-      this.canvas.addEventListener('mouseout', this.afterAll.bind(this), false);
+      if (func) {
+        func(ev);
+      }
     }
   }, {
     key: "loop",
     value: function loop() {
-      var _this2 = this;
+      var _this = this;
 
       this.drawAll();
       requestAnimationFrame(function () {
-        _this2.loop();
+        _this.loop();
       });
     }
   }, {
@@ -408,15 +592,6 @@ var WebCAD = /*#__PURE__*/function () {
     }
     /* --------------------------------------------------------- */
 
-  }, {
-    key: "afterAll",
-    value: function afterAll(e) {
-      // tell the browser we're handling this event
-      e.preventDefault();
-      e.stopPropagation(); // clear the isDragging flag
-
-      this.isDown = false;
-    }
   }, {
     key: "drawPointer",
     value: function drawPointer() {
@@ -515,7 +690,7 @@ var WebCAD = /*#__PURE__*/function () {
 }();
 
 exports.WebCAD = WebCAD;
-},{"./keyboards_events":"src/keyboards_events.js","./constants":"src/constants.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./keyboards_events":"src/keyboards_events.js","./constants":"src/constants.js","./commands/select":"src/commands/select.js","./commands/pan":"src/commands/pan.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;

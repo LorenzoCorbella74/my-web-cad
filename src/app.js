@@ -1,6 +1,10 @@
 import KeyboardEvents from './keyboards_events';
 import { CANVAS_DIMENSIONS, OPERATIONS } from './constants';
 
+// commands
+import PanCommand from './commands/select';
+import SelectCommand from './commands/pan';
+
 window.onload = () => {
     const cad = new WebCAD();
     document.getElementById('canvas').replaceWith(cad.canvas);
@@ -16,24 +20,17 @@ export class WebCAD {
         this.keys = new KeyboardEvents();
 
         this.commands = {
-            'PAN': {},
-            'SELECT': {}
+            'PAN': new PanCommand(this),
+            'SELECT': new SelectCommand(this)
         }
-        this.currentCommand = OPERATIONS.SELECT
+        // DEFAULT
+        this.currentCommand = this.commands[OPERATIONS.SELECT]
 
         this.mouse = {
             x: 0,
             y: 0,
             event: null
         };
-
-        // this.mouse drag related variables
-        this.isDown = false;
-        this.startX, this.startY;
-
-        // the accumulated horizontal(X) & vertical(Y) panning the user has done in total
-        this.netPanningX = 0;
-        this.netPanningY = 0;
 
         this.startListening()
         this.resizeCanvas()
@@ -50,83 +47,20 @@ export class WebCAD {
         // resize the canvas to fill browser window dynamically
         window.addEventListener('resize', this.resizeCanvas.bind(this), false);
 
-        this.canvas.addEventListener('mousemove', (e) => {
-            // tell the browser we're handling this event
-            e.preventDefault();
-            e.stopPropagation();
+        this.canvas.addEventListener('mousemove', this.globalHandler.bind(this), false);
+        this.canvas.addEventListener('mousedown', this.globalHandler.bind(this), false);
+        this.canvas.addEventListener('mouseup', this.globalHandler.bind(this), false);
+        this.canvas.addEventListener('mouseout', this.globalHandler.bind(this), false);
+    }
 
-            let x = parseInt(e.clientX);
-            let y = parseInt(e.clientY);
-
-            if (this.keys.hasSnap) {
-                let restoH = x % this.keys.currentSnap;
-                if (restoH >= this.keys.currentSnap) {
-                    x = x - restoH + this.keys.currentSnap
-                } else {
-                    x -= restoH;
-                }
-                let restoV = y % this.keys.currentSnap;
-                if (restoV >= this.keys.currentSnap) {
-                    y = y - restoV + this.keys.currentSnap
-                } else {
-                    y -= restoV;
-                }
-            }
-            // only do this code if the this.mouse is being dragged
-            if (this.isDown) {
-                // dx & dy are the distance the this.mouse has moved since the last this.mousemove event
-                var dx = x - this.startX;
-                var dy = y - this.startY;
-
-                // reset the vars for next this.mousemove
-                this.startX = x;
-                this.startY = y;
-
-                // accumulate the net panning done
-                this.netPanningX += dx;
-                this.netPanningY += dy;
-                console.clear()
-                console.log(`Net change in panning: x:${this.netPanningX}px, y:${this.netPanningY}px`);
-            }
-            this.mouse.x = x;
-            this.mouse.y = y;
-            this.mouse.event = event;
-
-        }, false);
-
-        this.canvas.addEventListener('mousedown', (e) => {
-            // tell the browser we're handling this event
-            e.preventDefault();
-            e.stopPropagation();
-
-            let x = parseInt(e.clientX);
-            let y = parseInt(e.clientY);
-
-            if (this.keys.hasSnap) {
-                let restoH = x % this.keys.currentSnap;
-                if (restoH >= this.keys.currentSnap) {
-                    x = x - restoH + this.keys.currentSnap
-                } else {
-                    x -= restoH;
-                }
-                let restoV = y % this.keys.currentSnap;
-                if (restoV >= this.keys.currentSnap) {
-                    y = y - restoV + this.keys.currentSnap
-                } else {
-                    y -= restoV;
-                }
-            }
-
-            // calc the starting this.mouse X,Y for the drag
-            this.startX = x;
-            this.startY = y;
-
-            // set the isDragging flag
-            this.isDown = true;
-        }, false);
-
-        this.canvas.addEventListener('mouseup', this.afterAll.bind(this), false);
-        this.canvas.addEventListener('mouseout', this.afterAll.bind(this), false);
+    globalHandler (ev) {
+        this.currentCommand = this.commands[this.keys.choosenCommand]
+        ev._x = parseInt(ev.clientX);
+        ev._y = parseInt(ev.clientY);
+        var func = this.currentCommand[ev.type].bind(this.currentCommand);
+        if (func) {
+            func(ev);
+        }
     }
 
     loop () {
@@ -141,14 +75,6 @@ export class WebCAD {
     }
 
     /* --------------------------------------------------------- */
-
-    afterAll (e) {
-        // tell the browser we're handling this event
-        e.preventDefault();
-        e.stopPropagation();
-        // clear the isDragging flag
-        this.isDown = false;
-    }
 
     drawPointer () {
         this.ctx.strokeStyle = "rgb(0,103,28)"; // green
