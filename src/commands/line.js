@@ -1,5 +1,7 @@
 import Command from './command';
 
+import { COLORS } from '../constants';
+
 export default class LineCommand extends Command {
 
     constructor(state) {
@@ -24,7 +26,7 @@ export default class LineCommand extends Command {
     }
 
     mousedown(event) {
-        this.main.ctx.beginPath();
+        /*         this.main.ctx.beginPath(); */
         this.start.x = event._x - this.main.netPanningX;
         this.start.y = event._y - this.main.netPanningY;
         this.started = true;
@@ -39,7 +41,7 @@ export default class LineCommand extends Command {
                 start_y: this.start.y,
                 end_x: event._x - this.main.netPanningX,
                 end_y: event._y - this.main.netPanningY,
-                color: "white"
+                color: COLORS.shapes_stroke
             });
         }
     }
@@ -51,9 +53,9 @@ export default class LineCommand extends Command {
             this.main.shapes.push({
                 start_x: this.start.x,
                 start_y: this.start.y,
-                end_x: event._x,
-                end_y: event._y,
-                color: "rgb(0,103,28)"
+                end_x: event._x - this.main.netPanningX,
+                end_y: event._y - this.main.netPanningY,
+                color: COLORS.shapes_stroke
             });
         }
     }

@@ -6,6 +6,7 @@ import PanCommand from './commands/pan';
 import SelectCommand from './commands/select';
 import LineCommand from './commands/line';
 import RectCommand from './commands/rect';
+import CircleCommand from './commands/circle';
 
 window.onload = () => {
     const cad = new WebCAD();
@@ -25,7 +26,8 @@ export class WebCAD {
             'PAN': new PanCommand(this),
             'SELECT': new SelectCommand(this),
             'LINE': new LineCommand(this),
-            'RECT': new RectCommand(this)
+            'RECT': new RectCommand(this),
+            'CIRCLE': new CircleCommand(this)
         }
         // DEFAULT
         /* this.currentCommand = this.commands[this.keys.choosenCommand] */
@@ -172,19 +174,31 @@ export class WebCAD {
             if (item.w) {
                 this.ctx.save()
                 this.ctx.fillStyle = item.color
-                this.ctx.beginPath()
                 this.ctx.strokeStyle = item.stroke
+                this.ctx.beginPath()
                 this.ctx.rect(item.x, item.y, item.w, item.h)
                 this.ctx.fill()
                 this.ctx.stroke()
                 this.ctx.restore()
+            } else if (item.radius) {
+                this.ctx.save()
+                this.ctx.strokeStyle = item.stroke
+                this.ctx.fillStyle = item.color
+                // x, y, radius, startAngle, endAngle, antiClockwise = false by default
+                this.ctx.beginPath()
+                this.ctx.arc(item.start_x, item.start_y, item.radius, 0, 2 * Math.PI, false) // full circle
+                this.ctx.fill()
+                this.ctx.stroke()
+                this.ctx.restore()
             } else {
-                this.ctx.strokeStyle = item.color; // green
+                this.ctx.save()
+                this.ctx.strokeStyle = item.color;
                 this.ctx.beginPath()
                 this.ctx.moveTo(item.start_x, item.start_y) // sets our starting point
                 this.ctx.lineTo(item.end_x, item.end_y) // create a line from start point to X: 100, Y: 200
                 this.ctx.closePath() // left side and closes the pat
                 this.ctx.stroke()
+                this.ctx.restore()
             }
         });
     }

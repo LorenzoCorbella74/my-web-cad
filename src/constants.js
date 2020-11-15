@@ -30,3 +30,8 @@ export const OPERATIONS = {
     // STYLE
     FILL: 'FILL'
 };
+
+export const COLORS = {
+    shapes_fill: 'rgba(0,190,0,0.35)',
+    shapes_stroke: 'white'
+}

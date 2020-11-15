@@ -2,14 +2,13 @@ import Command from './command';
 
 import { COLORS } from '../constants';
 
-export default class RectCommand extends Command {
+export default class CircleCommand extends Command {
 
     constructor(state) {
         super(state)
         this.started = false;
         this.start = {}
-        this.x, this.y
-        this.width, this.height
+        this.radius = 0
     }
 
     mousemove(event) {
@@ -18,27 +17,21 @@ export default class RectCommand extends Command {
         this.main.mouse.event = event;
 
         if (this.started) {
-            this.x = Math.min(event._x, this.start.x),
-                this.y = Math.min(event._y, this.start.y),
-                this.w = Math.abs(event._x - this.start.x),
-                this.h = Math.abs(event._y - this.start.y);
-            if (!this.w || !this.h) {
-                return;
-            }
+            let dx = this.start.x - (event._x - this.main.netPanningX);
+            let dy = this.start.y - (event._y - this.main.netPanningY);
+            this.radius = Math.sqrt(dx * dx + dy * dy);
             this.main.tempShape = [{
-                x: this.x - this.main.netPanningX,
-                y: this.y - this.main.netPanningY,
-                w: this.w,
-                h: this.h
+                start_x: this.start.x,
+                start_y: this.start.y,
+                radius: this.radius
             }]
         }
-
     }
 
     mousedown(event) {
-        this.main.ctx.beginPath();
-        this.start.x = event._x;
-        this.start.y = event._y;
+        /* this.main.ctx.beginPath(); */
+        this.start.x = event._x - this.main.netPanningX;
+        this.start.y = event._y - this.main.netPanningY;
         this.started = true;
     }
 
@@ -47,14 +40,14 @@ export default class RectCommand extends Command {
             this.started = false;
             this.main.tempShape.length = 0;
             this.main.shapes.push({
-                x: this.x - this.main.netPanningX,
-                y: this.y - this.main.netPanningY,
-                w: this.w,
-                h: this.h,
+                start_x: this.start.x,
+                start_y: this.start.y,
+                radius: this.radius,
                 color: COLORS.shapes_fill,
                 stroke: COLORS.shapes_stroke
             });
         }
+        this.radius = 0;
     }
 
     mouseout(event) {
@@ -62,14 +55,14 @@ export default class RectCommand extends Command {
             this.started = false;
             this.main.tempShape.length = 0;
             this.main.shapes.push({
-                x: this.x - this.main.netPanningX,
-                y: this.y - this.main.netPanningY,
-                w: this.w,
-                h: this.h,
+                start_x: this.start.x,
+                start_y: this.start.y,
+                radius: this.radius,
                 color: COLORS.shapes_fill,
                 stroke: COLORS.shapes_stroke
             });
         }
+        this.radius = 0;
     }
 
 }
