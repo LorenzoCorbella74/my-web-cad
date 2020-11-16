@@ -123,7 +123,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.OPERATIONS = exports.SNAP_GRID = exports.CANVAS_DIMENSIONS = void 0;
+exports.COLORS = exports.OPERATIONS = exports.SNAP_GRID = exports.CANVAS_DIMENSIONS = void 0;
 var CANVAS_DIMENSIONS = {
   WIDTH: 4000,
   HEIGHT: 3000
@@ -157,6 +157,11 @@ var OPERATIONS = {
   FILL: 'FILL'
 };
 exports.OPERATIONS = OPERATIONS;
+var COLORS = {
+  shapes_fill: 'rgba(0,190,0,0.35)',
+  shapes_stroke: 'white'
+};
+exports.COLORS = COLORS;
 },{}],"src/keyboards_events.js":[function(require,module,exports) {
 "use strict";
 
@@ -175,10 +180,11 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 // https://css-tricks.com/snippets/javascript/javascript-keycodes/
 var KeyboardEvents = /*#__PURE__*/function () {
-  function KeyboardEvents() {
+  function KeyboardEvents(main) {
     _classCallCheck(this, KeyboardEvents);
 
-    // DEFAULTS
+    this.main = main; // DEFAULTS
+
     this.choosenCommand = _constants.OPERATIONS.SELECT;
     this.currentSnap = _constants.SNAP_GRID.M;
     this.hasSnap = true;
@@ -215,7 +221,13 @@ var KeyboardEvents = /*#__PURE__*/function () {
               this.choosenCommand = OPERATIONS.ARC;
           } else if (e.key == 'f') {
               this.choosenCommand = OPERATIONS.FILL; */
-        } else if (e.key == 't') {
+        } else if (e.key == 'l') {
+          _this.choosenCommand = _constants.OPERATIONS.LINE;
+        } else if (e.key == 'r') {
+          _this.choosenCommand = _constants.OPERATIONS.RECT;
+        } else if (e.key == 'c') {
+          _this.choosenCommand = _constants.OPERATIONS.CIRCLE;
+        } else if (e.key == 'p') {
           _this.choosenCommand = _constants.OPERATIONS.PAN;
         } else if (e.key == 0) {
           _this.hasSnap = false;
@@ -232,9 +244,11 @@ var KeyboardEvents = /*#__PURE__*/function () {
           _this.hasSnap = true;
           _this.currentSnap = _constants.SNAP_GRID.XS;
         } else if (e.ctrlKey && e.key == 'z') {
-          alert("Ctrl + Z shortcut combination was pressed");
+          // alert("Ctrl + Z shortcut combination was pressed");
+          _this.main.HM.undo();
         } else if (e.ctrlKey && e.key == 'y') {
-          alert("Ctrl + Y shortcut combination was pressed");
+          // alert("Ctrl + Y shortcut combination was pressed");
+          _this.main.HM.redo();
         }
       };
     }
@@ -244,7 +258,91 @@ var KeyboardEvents = /*#__PURE__*/function () {
 }();
 
 exports.default = KeyboardEvents;
-},{"./constants":"src/constants.js"}],"src/commands/command.js":[function(require,module,exports) {
+},{"./constants":"src/constants.js"}],"src/history_management.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var HistoryManagement = /*#__PURE__*/function () {
+  function HistoryManagement(main) {
+    _classCallCheck(this, HistoryManagement);
+
+    this.main = main;
+    this.history = [[]];
+    this.position = 0;
+  }
+
+  _createClass(HistoryManagement, [{
+    key: "set",
+    value: function set(value) {
+      if (this.position < this.history.length - 1) {
+        this.history = this.history.slice(0, this.position + 1);
+      }
+
+      this.history.push(_toConsumableArray(value));
+      this.position += 1;
+    }
+  }, {
+    key: "undo",
+    value: function undo() {
+      if (this.position > 0) {
+        this.position--;
+        this.main.shapes = _toConsumableArray(this.value);
+      } else {
+        console.log('No more undo ...');
+      }
+    }
+  }, {
+    key: "redo",
+    value: function redo() {
+      if (this.position < this.history.length - 1) {
+        this.position++;
+        this.main.shapes = _toConsumableArray(this.value);
+      } else {
+        console.log('No more redo ...');
+      }
+    } // toString function to aid in illustrating
+
+  }, {
+    key: "toString",
+    value: function toString() {
+      console.log("Currnent Value: ", this.value);
+      console.log("History: ", this.history);
+      console.log("Position: ", this.position);
+    }
+  }, {
+    key: "value",
+    get: function get() {
+      return this.history[this.position];
+    }
+  }]);
+
+  return HistoryManagement;
+}();
+
+exports.default = HistoryManagement;
+},{}],"src/commands/command.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -319,31 +417,11 @@ var PanCommand = /*#__PURE__*/function (_Command) {
   _createClass(PanCommand, [{
     key: "mousemove",
     value: function mousemove(e) {
-      console.log('PanCommand: mousemove', e, this); // tell the browser we're handling this event
-
+      // tell the browser we're handling this event
       e.preventDefault();
       e.stopPropagation();
       var x = e._x;
-      var y = e._y;
-
-      if (this.main.keys.hasSnap) {
-        var restoH = x % this.main.keys.currentSnap;
-
-        if (restoH >= this.main.keys.currentSnap) {
-          x = x - restoH + this.main.keys.currentSnap;
-        } else {
-          x -= restoH;
-        }
-
-        var restoV = y % this.main.keys.currentSnap;
-
-        if (restoV >= this.main.keys.currentSnap) {
-          y = y - restoV + this.main.keys.currentSnap;
-        } else {
-          y -= restoV;
-        }
-      } // only do this code if the this.mouse is being dragged
-
+      var y = e._y; // if the this.mouse is being dragged
 
       if (this.isDown) {
         // dx & dy are the distance the this.mouse has moved since the last this.mousemove event
@@ -366,34 +444,11 @@ var PanCommand = /*#__PURE__*/function (_Command) {
   }, {
     key: "mousedown",
     value: function mousedown(e) {
-      console.log('PanCommand: mousedown', e, this); // tell the browser we're handling this event
-
       e.preventDefault();
-      e.stopPropagation();
-      var x = parseInt(e._x);
-      var y = parseInt(e._y);
+      e.stopPropagation(); // calc the starting this.mouse X,Y for the drag
 
-      if (this.main.keys.hasSnap) {
-        var restoH = x % this.main.keys.currentSnap;
-
-        if (restoH >= this.main.keys.currentSnap) {
-          x = x - restoH + this.main.keys.currentSnap;
-        } else {
-          x -= restoH;
-        }
-
-        var restoV = y % this.main.keys.currentSnap;
-
-        if (restoV >= this.main.keys.currentSnap) {
-          y = y - restoV + this.main.keys.currentSnap;
-        } else {
-          y -= restoV;
-        }
-      } // calc the starting this.mouse X,Y for the drag
-
-
-      this.startX = x;
-      this.startY = y; // set the isDragging flag
+      this.startX = e._x;
+      this.startY = e._y; // set the isDragging flag
 
       this.isDown = true;
     }
@@ -469,25 +524,22 @@ var SelectCommand = /*#__PURE__*/function (_Command) {
   _createClass(SelectCommand, [{
     key: "mousemove",
     value: function mousemove(e) {
-      console.log('SelectCommand: mousemove', e, this);
+      // console.log('SelectCommand: mousemove', e, this)
       this.main.mouse.x = e._x;
       this.main.mouse.y = e._y;
       this.main.mouse.event = e;
     }
   }, {
     key: "mousedown",
-    value: function mousedown(e) {
-      console.log('SelectCommand: mousedown', e, this);
+    value: function mousedown(e) {// console.log('SelectCommand: mousedown', e, this)
     }
   }, {
     key: "mouseup",
-    value: function mouseup(event) {
-      console.log('SelectCommand: mouseup', event, this);
+    value: function mouseup(event) {// console.log('SelectCommand: mouseup', event, this)
     }
   }, {
     key: "mouseout",
-    value: function mouseout(event) {
-      console.log('SelectCommand: mouseout', event, this);
+    value: function mouseout(event) {// console.log('SelectCommand: mouseout', event, this)
     }
   }]);
 
@@ -495,7 +547,364 @@ var SelectCommand = /*#__PURE__*/function (_Command) {
 }(_command.default);
 
 exports.default = SelectCommand;
-},{"./command":"src/commands/command.js"}],"src/app.js":[function(require,module,exports) {
+},{"./command":"src/commands/command.js"}],"src/commands/line.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _command = _interopRequireDefault(require("./command"));
+
+var _constants = require("../constants");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var LineCommand = /*#__PURE__*/function (_Command) {
+  _inherits(LineCommand, _Command);
+
+  var _super = _createSuper(LineCommand);
+
+  function LineCommand(state) {
+    var _this;
+
+    _classCallCheck(this, LineCommand);
+
+    _this = _super.call(this, state);
+    _this.started = false;
+    _this.start = {};
+    return _this;
+  }
+
+  _createClass(LineCommand, [{
+    key: "mousemove",
+    value: function mousemove(event) {
+      this.main.mouse.x = event._x;
+      this.main.mouse.y = event._y;
+      this.main.mouse.event = event;
+
+      if (this.started) {
+        this.main.tempShape = [{
+          start_x: this.start.x,
+          start_y: this.start.y,
+          end_x: event._x - this.main.netPanningX,
+          end_y: event._y - this.main.netPanningY
+        }];
+      }
+    }
+  }, {
+    key: "mousedown",
+    value: function mousedown(event) {
+      /*         this.main.ctx.beginPath(); */
+      this.start.x = event._x - this.main.netPanningX;
+      this.start.y = event._y - this.main.netPanningY;
+      this.started = true;
+    }
+  }, {
+    key: "mouseup",
+    value: function mouseup(event) {
+      if (this.started) {
+        this.started = false;
+        this.main.tempShape.length = 0;
+        this.main.shapes.push({
+          start_x: this.start.x,
+          start_y: this.start.y,
+          end_x: event._x - this.main.netPanningX,
+          end_y: event._y - this.main.netPanningY,
+          color: _constants.COLORS.shapes_stroke
+        });
+        this.main.HM.set(this.main.shapes);
+      }
+    }
+  }, {
+    key: "mouseout",
+    value: function mouseout(event) {
+      if (this.started) {
+        this.started = false;
+        this.main.tempShape.length = 0;
+        this.main.shapes.push({
+          start_x: this.start.x,
+          start_y: this.start.y,
+          end_x: event._x - this.main.netPanningX,
+          end_y: event._y - this.main.netPanningY,
+          color: _constants.COLORS.shapes_stroke
+        });
+        this.main.HM.set(this.main.shapes);
+      }
+    }
+  }]);
+
+  return LineCommand;
+}(_command.default);
+
+exports.default = LineCommand;
+},{"./command":"src/commands/command.js","../constants":"src/constants.js"}],"src/commands/rect.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _command = _interopRequireDefault(require("./command"));
+
+var _constants = require("../constants");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var RectCommand = /*#__PURE__*/function (_Command) {
+  _inherits(RectCommand, _Command);
+
+  var _super = _createSuper(RectCommand);
+
+  function RectCommand(state) {
+    var _this;
+
+    _classCallCheck(this, RectCommand);
+
+    _this = _super.call(this, state);
+    _this.started = false;
+    _this.start = {};
+    _this.x, _this.y;
+    _this.width, _this.height;
+    return _this;
+  }
+
+  _createClass(RectCommand, [{
+    key: "mousemove",
+    value: function mousemove(event) {
+      this.main.mouse.x = event._x;
+      this.main.mouse.y = event._y;
+      this.main.mouse.event = event;
+
+      if (this.started) {
+        this.x = Math.min(event._x, this.start.x), this.y = Math.min(event._y, this.start.y), this.w = Math.abs(event._x - this.start.x), this.h = Math.abs(event._y - this.start.y);
+
+        if (!this.w || !this.h) {
+          return;
+        }
+
+        this.main.tempShape = [{
+          x: this.x - this.main.netPanningX,
+          y: this.y - this.main.netPanningY,
+          w: this.w,
+          h: this.h
+        }];
+      }
+    }
+  }, {
+    key: "mousedown",
+    value: function mousedown(event) {
+      this.main.ctx.beginPath();
+      this.start.x = event._x;
+      this.start.y = event._y;
+      this.started = true;
+    }
+  }, {
+    key: "mouseup",
+    value: function mouseup(event) {
+      if (this.started) {
+        this.started = false;
+        this.main.tempShape.length = 0;
+        this.main.shapes.push({
+          x: this.x - this.main.netPanningX,
+          y: this.y - this.main.netPanningY,
+          w: this.w,
+          h: this.h,
+          color: _constants.COLORS.shapes_fill,
+          stroke: _constants.COLORS.shapes_stroke
+        });
+        this.main.HM.set(this.main.shapes);
+      }
+    }
+  }, {
+    key: "mouseout",
+    value: function mouseout(event) {
+      if (this.started) {
+        this.started = false;
+        this.main.tempShape.length = 0;
+        this.main.shapes.push({
+          x: this.x - this.main.netPanningX,
+          y: this.y - this.main.netPanningY,
+          w: this.w,
+          h: this.h,
+          color: _constants.COLORS.shapes_fill,
+          stroke: _constants.COLORS.shapes_stroke
+        });
+        this.main.HM.set(this.main.shapes);
+      }
+    }
+  }]);
+
+  return RectCommand;
+}(_command.default);
+
+exports.default = RectCommand;
+},{"./command":"src/commands/command.js","../constants":"src/constants.js"}],"src/commands/circle.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _command = _interopRequireDefault(require("./command"));
+
+var _constants = require("../constants");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var CircleCommand = /*#__PURE__*/function (_Command) {
+  _inherits(CircleCommand, _Command);
+
+  var _super = _createSuper(CircleCommand);
+
+  function CircleCommand(state) {
+    var _this;
+
+    _classCallCheck(this, CircleCommand);
+
+    _this = _super.call(this, state);
+    _this.started = false;
+    _this.start = {};
+    _this.radius = 0;
+    return _this;
+  }
+
+  _createClass(CircleCommand, [{
+    key: "mousemove",
+    value: function mousemove(event) {
+      this.main.mouse.x = event._x;
+      this.main.mouse.y = event._y;
+      this.main.mouse.event = event;
+
+      if (this.started) {
+        var dx = this.start.x - (event._x - this.main.netPanningX);
+        var dy = this.start.y - (event._y - this.main.netPanningY);
+        this.radius = Math.sqrt(dx * dx + dy * dy);
+        this.main.tempShape = [{
+          start_x: this.start.x,
+          start_y: this.start.y,
+          radius: this.radius
+        }];
+      }
+    }
+  }, {
+    key: "mousedown",
+    value: function mousedown(event) {
+      /* this.main.ctx.beginPath(); */
+      this.start.x = event._x - this.main.netPanningX;
+      this.start.y = event._y - this.main.netPanningY;
+      this.started = true;
+    }
+  }, {
+    key: "mouseup",
+    value: function mouseup(event) {
+      if (this.started) {
+        this.started = false;
+        this.main.tempShape.length = 0;
+        this.main.shapes.push({
+          start_x: this.start.x,
+          start_y: this.start.y,
+          radius: this.radius,
+          color: _constants.COLORS.shapes_fill,
+          stroke: _constants.COLORS.shapes_stroke
+        });
+        this.main.HM.set(this.main.shapes);
+        this.radius = 0;
+      }
+    }
+  }, {
+    key: "mouseout",
+    value: function mouseout(event) {
+      if (this.started) {
+        this.started = false;
+        this.main.tempShape.length = 0;
+        this.main.shapes.push({
+          start_x: this.start.x,
+          start_y: this.start.y,
+          radius: this.radius,
+          color: _constants.COLORS.shapes_fill,
+          stroke: _constants.COLORS.shapes_stroke
+        });
+        this.main.HM.set(this.main.shapes);
+        this.radius = 0;
+      }
+    }
+  }]);
+
+  return CircleCommand;
+}(_command.default);
+
+exports.default = CircleCommand;
+},{"./command":"src/commands/command.js","../constants":"src/constants.js"}],"src/app.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -505,13 +914,33 @@ exports.WebCAD = void 0;
 
 var _keyboards_events = _interopRequireDefault(require("./keyboards_events"));
 
+var _history_management = _interopRequireDefault(require("./history_management"));
+
 var _constants = require("./constants");
 
 var _pan = _interopRequireDefault(require("./commands/pan"));
 
 var _select = _interopRequireDefault(require("./commands/select"));
 
+var _line = _interopRequireDefault(require("./commands/line"));
+
+var _rect = _interopRequireDefault(require("./commands/rect"));
+
+var _circle = _interopRequireDefault(require("./commands/circle"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -532,19 +961,22 @@ var WebCAD = /*#__PURE__*/function () {
 
     this.canvas = document.getElementById("canvas");
     this.ctx = canvas.getContext('2d');
-    this.keys = new _keyboards_events.default();
+    this.keys = new _keyboards_events.default(this);
     this.commands = {
       'PAN': new _pan.default(this),
-      'SELECT': new _select.default(this)
-    }; // DEFAULT
-
-    /* this.currentCommand = this.commands[this.keys.choosenCommand] */
-
+      'SELECT': new _select.default(this),
+      'LINE': new _line.default(this),
+      'RECT': new _rect.default(this),
+      'CIRCLE': new _circle.default(this)
+    };
     this.mouse = {
       x: 0,
       y: 0,
       event: null
     };
+    this.shapes = [];
+    this.tempShape = [];
+    this.HM = new _history_management.default(this);
     this.startListening();
     this.resizeCanvas();
   }
@@ -571,8 +1003,30 @@ var WebCAD = /*#__PURE__*/function () {
     key: "globalHandler",
     value: function globalHandler(ev) {
       this.currentCommand = this.commands[this.keys.choosenCommand];
-      ev._x = parseInt(ev.clientX);
-      ev._y = parseInt(ev.clientY);
+      var x = parseInt(ev.clientX);
+      var y = parseInt(ev.clientY);
+      /* ----------------- SNAP 2 GRID ----------------- */
+
+      if (this.keys.hasSnap) {
+        var restoH = x % this.keys.currentSnap;
+
+        if (restoH >= this.keys.currentSnap) {
+          x = x - restoH + this.keys.currentSnap;
+        } else {
+          x -= restoH;
+        }
+
+        var restoV = y % this.keys.currentSnap;
+
+        if (restoV >= this.keys.currentSnap) {
+          y = y - restoV + this.keys.currentSnap;
+        } else {
+          y -= restoV;
+        }
+      }
+
+      ev._x = x;
+      ev._y = y;
       var func = this.currentCommand[ev.type].bind(this.currentCommand);
 
       if (func) {
@@ -672,6 +1126,65 @@ var WebCAD = /*#__PURE__*/function () {
       }
     }
   }, {
+    key: "drawShapes",
+    value: function drawShapes() {
+      var _this2 = this;
+
+      [].concat(_toConsumableArray(this.HM.value), _toConsumableArray(this.tempShape)).forEach(function (item) {
+        if (item.w) {
+          _this2.ctx.save();
+
+          _this2.ctx.fillStyle = item.color;
+          _this2.ctx.strokeStyle = item.stroke;
+
+          _this2.ctx.beginPath();
+
+          _this2.ctx.rect(item.x, item.y, item.w, item.h);
+
+          _this2.ctx.fill();
+
+          _this2.ctx.stroke();
+
+          _this2.ctx.restore();
+        } else if (item.radius) {
+          _this2.ctx.save();
+
+          _this2.ctx.strokeStyle = item.stroke;
+          _this2.ctx.fillStyle = item.color; // x, y, radius, startAngle, endAngle, antiClockwise = false by default
+
+          _this2.ctx.beginPath();
+
+          _this2.ctx.arc(item.start_x, item.start_y, item.radius, 0, 2 * Math.PI, false); // full circle
+
+
+          _this2.ctx.fill();
+
+          _this2.ctx.stroke();
+
+          _this2.ctx.restore();
+        } else {
+          _this2.ctx.save();
+
+          _this2.ctx.strokeStyle = item.color;
+
+          _this2.ctx.beginPath();
+
+          _this2.ctx.moveTo(item.start_x, item.start_y); // sets our starting point
+
+
+          _this2.ctx.lineTo(item.end_x, item.end_y); // create a line from start point to X: 100, Y: 200
+
+
+          _this2.ctx.closePath(); // left side and closes the pat
+
+
+          _this2.ctx.stroke();
+
+          _this2.ctx.restore();
+        }
+      });
+    }
+  }, {
     key: "drawAll",
     value: function drawAll() {
       // this.ctx.fillStyle = "black";
@@ -686,6 +1199,7 @@ var WebCAD = /*#__PURE__*/function () {
 
       this.drawCanvas();
       this.drawPointer();
+      this.drawShapes();
       this.ctx.restore();
     }
   }]);
@@ -694,7 +1208,7 @@ var WebCAD = /*#__PURE__*/function () {
 }();
 
 exports.WebCAD = WebCAD;
-},{"./keyboards_events":"src/keyboards_events.js","./constants":"src/constants.js","./commands/pan":"src/commands/pan.js","./commands/select":"src/commands/select.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./keyboards_events":"src/keyboards_events.js","./history_management":"src/history_management.js","./constants":"src/constants.js","./commands/pan":"src/commands/pan.js","./commands/select":"src/commands/select.js","./commands/line":"src/commands/line.js","./commands/rect":"src/commands/rect.js","./commands/circle":"src/commands/circle.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -722,7 +1236,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55044" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53087" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

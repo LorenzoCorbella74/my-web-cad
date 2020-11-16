@@ -3,7 +3,9 @@ import { OPERATIONS, SNAP_GRID } from './constants';
 // https://css-tricks.com/snippets/javascript/javascript-keycodes/
 export default class KeyboardEvents {
 
-    constructor() {
+    constructor(main) {
+
+        this.main = main;
         // DEFAULTS
         this.choosenCommand = OPERATIONS.SELECT
         this.currentSnap = SNAP_GRID.M;
@@ -61,9 +63,11 @@ export default class KeyboardEvents {
                 this.hasSnap = true;
                 this.currentSnap = SNAP_GRID.XS
             } else if (e.ctrlKey && e.key == 'z') {
-                alert("Ctrl + Z shortcut combination was pressed");
+                // alert("Ctrl + Z shortcut combination was pressed");
+                this.main.HM.undo()
             } else if (e.ctrlKey && e.key == 'y') {
-                alert("Ctrl + Y shortcut combination was pressed");
+                // alert("Ctrl + Y shortcut combination was pressed");
+                this.main.HM.redo()
             }
         }
     }

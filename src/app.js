@@ -1,4 +1,6 @@
 import KeyboardEvents from './keyboards_events';
+import HistoryManagement from './history_management';
+
 import { CANVAS_DIMENSIONS } from './constants';
 
 // Commands
@@ -20,8 +22,8 @@ export class WebCAD {
     constructor() {
         this.canvas = document.getElementById("canvas");
         this.ctx = canvas.getContext('2d');
-        this.keys = new KeyboardEvents();
-
+        this.keys = new KeyboardEvents(this);
+        
         this.commands = {
             'PAN': new PanCommand(this),
             'SELECT': new SelectCommand(this),
@@ -29,17 +31,16 @@ export class WebCAD {
             'RECT': new RectCommand(this),
             'CIRCLE': new CircleCommand(this)
         }
-        // DEFAULT
-        /* this.currentCommand = this.commands[this.keys.choosenCommand] */
-
+        
         this.mouse = {
             x: 0,
             y: 0,
             event: null
         };
-
+        
         this.shapes = [];
         this.tempShape = []
+        this.HM = new HistoryManagement(this);
 
         this.startListening()
         this.resizeCanvas()
@@ -170,7 +171,7 @@ export class WebCAD {
     }
 
     drawShapes() {
-        [...this.shapes, ...this.tempShape].forEach(item => {
+        [...this.HM.value, ...this.tempShape].forEach(item => {
             if (item.w) {
                 this.ctx.save()
                 this.ctx.fillStyle = item.color

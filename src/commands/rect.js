@@ -54,6 +54,7 @@ export default class RectCommand extends Command {
                 color: COLORS.shapes_fill,
                 stroke: COLORS.shapes_stroke
             });
+            this.main.HM.set(this.main.shapes)
         }
     }
 
@@ -69,6 +70,7 @@ export default class RectCommand extends Command {
                 color: COLORS.shapes_fill,
                 stroke: COLORS.shapes_stroke
             });
+            this.main.HM.set(this.main.shapes)
         }
     }
 

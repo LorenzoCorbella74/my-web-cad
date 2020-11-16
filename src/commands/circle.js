@@ -46,8 +46,9 @@ export default class CircleCommand extends Command {
                 color: COLORS.shapes_fill,
                 stroke: COLORS.shapes_stroke
             });
+            this.main.HM.set(this.main.shapes)
+            this.radius = 0;
         }
-        this.radius = 0;
     }
 
     mouseout(event) {
@@ -61,8 +62,9 @@ export default class CircleCommand extends Command {
                 color: COLORS.shapes_fill,
                 stroke: COLORS.shapes_stroke
             });
+            this.main.HM.set(this.main.shapes)
+            this.radius = 0;
         }
-        this.radius = 0;
     }
 
 }
