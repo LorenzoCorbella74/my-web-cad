@@ -52,22 +52,31 @@ export default class KeyboardEvents {
                 this.hasSnap = false;
             } else if (e.key == "1") {
                 this.hasSnap = true;
-                this.currentSnap = SNAP_GRID.L
+                this.currentSnap = SNAP_GRID.XL
             } else if (e.key == "2") {
                 this.hasSnap = true;
-                this.currentSnap = SNAP_GRID.M
+                this.currentSnap = SNAP_GRID.L
             } else if (e.key == "3") {
                 this.hasSnap = true;
-                this.currentSnap = SNAP_GRID.S
+                this.currentSnap = SNAP_GRID.M
             } else if (e.key == "4") {
+                this.hasSnap = true;
+                this.currentSnap = SNAP_GRID.S
+            } else if (e.key == "5") {
                 this.hasSnap = true;
                 this.currentSnap = SNAP_GRID.XS
             } else if (e.ctrlKey && e.key == 'z') {
-                // alert("Ctrl + Z shortcut combination was pressed");
                 this.main.HM.undo()
             } else if (e.ctrlKey && e.key == 'y') {
-                // alert("Ctrl + Y shortcut combination was pressed");
                 this.main.HM.redo()
+            } else if (e.ctrlKey && e.key == 'x') {
+                this.main.zoomLevel = 1;
+            } /* else if (e.ctrlKey && e.key == '+') {
+                this.main.zoomLevel += 0.1;
+            } else if (e.ctrlKey && e.key == '-') {
+                this.main.zoomLevel -= 0.1;
+            } */ else if (e.key == 'x') {
+                this.choosenCommand = OPERATIONS.ZOOM;
             }
         }
     }

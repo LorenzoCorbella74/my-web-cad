@@ -4,10 +4,11 @@ export const CANVAS_DIMENSIONS = {
 }
 
 export const SNAP_GRID = {
-    'XS': 10,
-    'S': 20,
-    'M': 25,
-    'L': 50
+    'XS': 5,
+    'S': 10,
+    'M': 20,
+    'L': 40,
+    'XL': 80
 };
 
 export const OPERATIONS = {
@@ -28,10 +29,13 @@ export const OPERATIONS = {
     CIRCLE: 'CIRCLE',
     ARC: 'ARC',
     // STYLE
-    FILL: 'FILL'
+    FILL: 'FILL',
+    // UTILS
+    TEXT: 'TEXT',
+    MEASURES: 'MEASURES'
 };
 
 export const COLORS = {
-    shapes_fill: 'rgba(0,190,0,0.35)',
+    shapes_fill: 'rgba(0,200,0,0.30)',
     shapes_stroke: 'white'
 }
