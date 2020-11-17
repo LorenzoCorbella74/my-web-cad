@@ -130,10 +130,11 @@ var CANVAS_DIMENSIONS = {
 };
 exports.CANVAS_DIMENSIONS = CANVAS_DIMENSIONS;
 var SNAP_GRID = {
-  'XS': 10,
-  'S': 20,
-  'M': 25,
-  'L': 50
+  'XS': 5,
+  'S': 10,
+  'M': 20,
+  'L': 40,
+  'XL': 80
 };
 exports.SNAP_GRID = SNAP_GRID;
 var OPERATIONS = {
@@ -154,12 +155,17 @@ var OPERATIONS = {
   CIRCLE: 'CIRCLE',
   ARC: 'ARC',
   // STYLE
-  FILL: 'FILL'
+  FILL: 'FILL',
+  // UTILS
+  TEXT: 'TEXT',
+  MEASURES: 'MEASURES'
 };
 exports.OPERATIONS = OPERATIONS;
 var COLORS = {
-  shapes_fill: 'rgba(0,190,0,0.35)',
-  shapes_stroke: 'white'
+  shapes_fill: 'rgba(0,200,0,0.30)',
+  shapes_fill_selected: 'rgba(200,0,200,0.30)',
+  shapes_stroke: 'white',
+  LINES: 'grey'
 };
 exports.COLORS = COLORS;
 },{}],"src/keyboards_events.js":[function(require,module,exports) {
@@ -233,23 +239,34 @@ var KeyboardEvents = /*#__PURE__*/function () {
           _this.hasSnap = false;
         } else if (e.key == "1") {
           _this.hasSnap = true;
-          _this.currentSnap = _constants.SNAP_GRID.L;
+          _this.currentSnap = _constants.SNAP_GRID.XL;
         } else if (e.key == "2") {
           _this.hasSnap = true;
-          _this.currentSnap = _constants.SNAP_GRID.M;
+          _this.currentSnap = _constants.SNAP_GRID.L;
         } else if (e.key == "3") {
           _this.hasSnap = true;
-          _this.currentSnap = _constants.SNAP_GRID.S;
+          _this.currentSnap = _constants.SNAP_GRID.M;
         } else if (e.key == "4") {
+          _this.hasSnap = true;
+          _this.currentSnap = _constants.SNAP_GRID.S;
+        } else if (e.key == "5") {
           _this.hasSnap = true;
           _this.currentSnap = _constants.SNAP_GRID.XS;
         } else if (e.ctrlKey && e.key == 'z') {
-          // alert("Ctrl + Z shortcut combination was pressed");
           _this.main.HM.undo();
         } else if (e.ctrlKey && e.key == 'y') {
-          // alert("Ctrl + Y shortcut combination was pressed");
           _this.main.HM.redo();
+        } else if (e.ctrlKey && e.key == 'x') {
+          _this.main.zoomLevel = 1;
         }
+        /* else if (e.ctrlKey && e.key == '+') {
+          this.main.zoomLevel += 0.1;
+        } else if (e.ctrlKey && e.key == '-') {
+          this.main.zoomLevel -= 0.1;
+        } */
+        else if (e.key == 'x') {
+            _this.choosenCommand = _constants.OPERATIONS.ZOOM;
+          }
       };
     }
   }]);
@@ -342,6 +359,30 @@ var HistoryManagement = /*#__PURE__*/function () {
 }();
 
 exports.default = HistoryManagement;
+},{}],"src/utils.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.trackSelection = trackSelection;
+exports.colorsTable = void 0;
+var colorsTable = {};
+exports.colorsTable = colorsTable;
+
+function trackSelection(shape) {
+  var r = Math.round(Math.random() * 255);
+  var g = Math.round(Math.random() * 255);
+  var b = Math.round(Math.random() * 255);
+  var key = "rgb(".concat(r, ",").concat(g, ",").concat(b, ")");
+  shape.colorKey = key;
+
+  if (!(key in colorsTable)) {
+    colorsTable[key] = shape;
+  }
+
+  return shape;
+}
 },{}],"src/commands/command.js":[function(require,module,exports) {
 "use strict";
 
@@ -406,7 +447,7 @@ var PanCommand = /*#__PURE__*/function (_Command) {
 
     _this = _super.call(this, state); // this.mouse drag related variables
 
-    _this.isDown = false;
+    _this.isMouseDown = false;
     _this.startX, _this.startY; // the accumulated horizontal(X) & vertical(Y) panning the user has done in total
 
     _this.main.netPanningX = 0;
@@ -417,13 +458,10 @@ var PanCommand = /*#__PURE__*/function (_Command) {
   _createClass(PanCommand, [{
     key: "mousemove",
     value: function mousemove(e) {
-      // tell the browser we're handling this event
-      e.preventDefault();
-      e.stopPropagation();
       var x = e._x;
       var y = e._y; // if the this.mouse is being dragged
 
-      if (this.isDown) {
+      if (this.isMouseDown) {
         // dx & dy are the distance the this.mouse has moved since the last this.mousemove event
         var dx = x - this.startX;
         var dy = y - this.startY; // reset the vars for next this.mousemove
@@ -432,9 +470,8 @@ var PanCommand = /*#__PURE__*/function (_Command) {
         this.startY = y; // accumulate the net panning done
 
         this.main.netPanningX += dx;
-        this.main.netPanningY += dy;
-        console.clear();
-        console.log("Net change in panning: x:".concat(this.main.netPanningX, "px, y:").concat(this.main.netPanningY, "px"));
+        this.main.netPanningY += dy; // console.clear()
+        // console.log(`Net change in panning: x:${this.main.netPanningX}px, y:${this.main.netPanningY}px`);
       }
 
       this.main.mouse.x = x;
@@ -444,31 +481,23 @@ var PanCommand = /*#__PURE__*/function (_Command) {
   }, {
     key: "mousedown",
     value: function mousedown(e) {
-      e.preventDefault();
-      e.stopPropagation(); // calc the starting this.mouse X,Y for the drag
-
+      // calc the starting this.mouse X,Y for the drag
       this.startX = e._x;
       this.startY = e._y; // set the isDragging flag
 
-      this.isDown = true;
+      this.isMouseDown = true;
     }
   }, {
     key: "mouseup",
     value: function mouseup(e) {
-      console.log('PanCommand: mouseup', e, this);
-      e.preventDefault();
-      e.stopPropagation(); // clear the isDragging flag
-
-      this.isDown = false;
+      // clear the isDragging flag
+      this.isMouseDown = false;
     }
   }, {
     key: "mouseout",
     value: function mouseout(e) {
-      console.log('PanCommand: mouseout', e, this);
-      e.preventDefault();
-      e.stopPropagation(); // clear the isDragging flag
-
-      this.isDown = false;
+      // clear the isDragging flag
+      this.isMouseDown = false;
     }
   }]);
 
@@ -486,9 +515,17 @@ exports.default = void 0;
 
 var _command = _interopRequireDefault(require("./command"));
 
+var _utils = require("../utils");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -516,38 +553,71 @@ var SelectCommand = /*#__PURE__*/function (_Command) {
   var _super = _createSuper(SelectCommand);
 
   function SelectCommand(state) {
+    var _this;
+
     _classCallCheck(this, SelectCommand);
 
-    return _super.call(this, state);
+    _this = _super.call(this, state);
+    _this.foundCoordinates = {};
+    return _this;
   }
 
   _createClass(SelectCommand, [{
     key: "mousemove",
     value: function mousemove(e) {
-      // console.log('SelectCommand: mousemove', e, this)
       this.main.mouse.x = e._x;
       this.main.mouse.y = e._y;
       this.main.mouse.event = e;
     }
   }, {
+    key: "isSamePoint",
+    value: function isSamePoint(point) {
+      return this.foundCoordinates.x === point.x && this.foundCoordinates.y === point.y;
+    }
+  }, {
     key: "mousedown",
-    value: function mousedown(e) {// console.log('SelectCommand: mousedown', e, this)
+    value: function mousedown(e) {
+      var _this2 = this;
+
+      var x = e._x - this.main.netPanningX;
+      var y = e._y - this.main.netPanningY;
+
+      if (!this.isSamePoint({
+        x: x,
+        y: y
+      })) {
+        // get pixel under cursor
+        var pixel = this.main.gctx.getImageData(x, y, 1, 1).data; // create rgb color for that pixel
+
+        var color = "rgb(".concat(pixel[0], ",").concat(pixel[1], ",").concat(pixel[2], ")"); // find a shape with the same colour
+
+        this.main.shapes.forEach(function (item) {
+          if (color === item.colorKey) {
+            item.selected = true;
+            _this2.main.theOneSelected = item;
+            _this2.foundCoordinates = _objectSpread({}, {
+              x: x,
+              y: y
+            });
+          } else {
+            item.selected = false;
+          }
+        });
+      }
     }
   }, {
     key: "mouseup",
-    value: function mouseup(event) {// console.log('SelectCommand: mouseup', event, this)
-    }
+    value: function mouseup(event) {}
   }, {
     key: "mouseout",
-    value: function mouseout(event) {// console.log('SelectCommand: mouseout', event, this)
-    }
+    value: function mouseout(event) {}
   }]);
 
   return SelectCommand;
 }(_command.default);
 
 exports.default = SelectCommand;
-},{"./command":"src/commands/command.js"}],"src/commands/line.js":[function(require,module,exports) {
+},{"./command":"src/commands/command.js","../utils":"src/utils.js"}],"src/commands/line.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -558,6 +628,8 @@ exports.default = void 0;
 var _command = _interopRequireDefault(require("./command"));
 
 var _constants = require("../constants");
+
+var _utils = require("../utils");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -618,7 +690,6 @@ var LineCommand = /*#__PURE__*/function (_Command) {
   }, {
     key: "mousedown",
     value: function mousedown(event) {
-      /*         this.main.ctx.beginPath(); */
       this.start.x = event._x - this.main.netPanningX;
       this.start.y = event._y - this.main.netPanningY;
       this.started = true;
@@ -629,13 +700,13 @@ var LineCommand = /*#__PURE__*/function (_Command) {
       if (this.started) {
         this.started = false;
         this.main.tempShape.length = 0;
-        this.main.shapes.push({
+        this.main.shapes.push((0, _utils.trackSelection)({
           start_x: this.start.x,
           start_y: this.start.y,
           end_x: event._x - this.main.netPanningX,
           end_y: event._y - this.main.netPanningY,
           color: _constants.COLORS.shapes_stroke
-        });
+        }));
         this.main.HM.set(this.main.shapes);
       }
     }
@@ -645,13 +716,13 @@ var LineCommand = /*#__PURE__*/function (_Command) {
       if (this.started) {
         this.started = false;
         this.main.tempShape.length = 0;
-        this.main.shapes.push({
+        this.main.shapes.push((0, _utils.trackSelection)({
           start_x: this.start.x,
           start_y: this.start.y,
           end_x: event._x - this.main.netPanningX,
           end_y: event._y - this.main.netPanningY,
           color: _constants.COLORS.shapes_stroke
-        });
+        }));
         this.main.HM.set(this.main.shapes);
       }
     }
@@ -661,7 +732,7 @@ var LineCommand = /*#__PURE__*/function (_Command) {
 }(_command.default);
 
 exports.default = LineCommand;
-},{"./command":"src/commands/command.js","../constants":"src/constants.js"}],"src/commands/rect.js":[function(require,module,exports) {
+},{"./command":"src/commands/command.js","../constants":"src/constants.js","../utils":"src/utils.js"}],"src/commands/rect.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -672,6 +743,8 @@ exports.default = void 0;
 var _command = _interopRequireDefault(require("./command"));
 
 var _constants = require("../constants");
+
+var _utils = require("../utils");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -740,7 +813,6 @@ var RectCommand = /*#__PURE__*/function (_Command) {
   }, {
     key: "mousedown",
     value: function mousedown(event) {
-      this.main.ctx.beginPath();
       this.start.x = event._x;
       this.start.y = event._y;
       this.started = true;
@@ -751,14 +823,14 @@ var RectCommand = /*#__PURE__*/function (_Command) {
       if (this.started) {
         this.started = false;
         this.main.tempShape.length = 0;
-        this.main.shapes.push({
+        this.main.shapes.push((0, _utils.trackSelection)({
           x: this.x - this.main.netPanningX,
           y: this.y - this.main.netPanningY,
           w: this.w,
           h: this.h,
           color: _constants.COLORS.shapes_fill,
           stroke: _constants.COLORS.shapes_stroke
-        });
+        }));
         this.main.HM.set(this.main.shapes);
       }
     }
@@ -768,14 +840,14 @@ var RectCommand = /*#__PURE__*/function (_Command) {
       if (this.started) {
         this.started = false;
         this.main.tempShape.length = 0;
-        this.main.shapes.push({
+        this.main.shapes.push((0, _utils.trackSelection)({
           x: this.x - this.main.netPanningX,
           y: this.y - this.main.netPanningY,
           w: this.w,
           h: this.h,
           color: _constants.COLORS.shapes_fill,
           stroke: _constants.COLORS.shapes_stroke
-        });
+        }));
         this.main.HM.set(this.main.shapes);
       }
     }
@@ -785,7 +857,7 @@ var RectCommand = /*#__PURE__*/function (_Command) {
 }(_command.default);
 
 exports.default = RectCommand;
-},{"./command":"src/commands/command.js","../constants":"src/constants.js"}],"src/commands/circle.js":[function(require,module,exports) {
+},{"./command":"src/commands/command.js","../constants":"src/constants.js","../utils":"src/utils.js"}],"src/commands/circle.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -796,6 +868,8 @@ exports.default = void 0;
 var _command = _interopRequireDefault(require("./command"));
 
 var _constants = require("../constants");
+
+var _utils = require("../utils");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -870,13 +944,13 @@ var CircleCommand = /*#__PURE__*/function (_Command) {
       if (this.started) {
         this.started = false;
         this.main.tempShape.length = 0;
-        this.main.shapes.push({
+        this.main.shapes.push((0, _utils.trackSelection)({
           start_x: this.start.x,
           start_y: this.start.y,
           radius: this.radius,
           color: _constants.COLORS.shapes_fill,
           stroke: _constants.COLORS.shapes_stroke
-        });
+        }));
         this.main.HM.set(this.main.shapes);
         this.radius = 0;
       }
@@ -887,13 +961,13 @@ var CircleCommand = /*#__PURE__*/function (_Command) {
       if (this.started) {
         this.started = false;
         this.main.tempShape.length = 0;
-        this.main.shapes.push({
+        this.main.shapes.push((0, _utils.trackSelection)({
           start_x: this.start.x,
           start_y: this.start.y,
           radius: this.radius,
           color: _constants.COLORS.shapes_fill,
           stroke: _constants.COLORS.shapes_stroke
-        });
+        }));
         this.main.HM.set(this.main.shapes);
         this.radius = 0;
       }
@@ -904,7 +978,97 @@ var CircleCommand = /*#__PURE__*/function (_Command) {
 }(_command.default);
 
 exports.default = CircleCommand;
-},{"./command":"src/commands/command.js","../constants":"src/constants.js"}],"src/app.js":[function(require,module,exports) {
+},{"./command":"src/commands/command.js","../constants":"src/constants.js","../utils":"src/utils.js"}],"src/commands/zoom.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _command = _interopRequireDefault(require("./command"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var ZoomCommand = /*#__PURE__*/function (_Command) {
+  _inherits(ZoomCommand, _Command);
+
+  var _super = _createSuper(ZoomCommand);
+
+  function ZoomCommand(state) {
+    var _this;
+
+    _classCallCheck(this, ZoomCommand);
+
+    _this = _super.call(this, state);
+    _this.main.zoomLevel = 1;
+    _this.mouseDown = false;
+    return _this;
+  }
+
+  _createClass(ZoomCommand, [{
+    key: "mousemove",
+    value: function mousemove(e) {
+      // console.log('Zoom: mousemove', e, this)
+      this.main.mouse.x = e._x;
+      this.main.mouse.y = e._y;
+      this.main.mouse.event = e;
+
+      if (this.mouseDown) {
+        if (!e.ctrlKey) {
+          this.main.zoomLevel += .005;
+        } else {
+          this.main.zoomLevel -= .005;
+        }
+      }
+    }
+  }, {
+    key: "mousedown",
+    value: function mousedown(e) {
+      // console.log('Zoom: mousedown', e, this)
+      this.mouseDown = true;
+    }
+  }, {
+    key: "mouseup",
+    value: function mouseup(event) {
+      // console.log('Zoom: mouseup', event, this)
+      this.mouseDown = false;
+    }
+  }, {
+    key: "mouseout",
+    value: function mouseout(event) {
+      // console.log('Zoom: mouseout', event, this)
+      this.mouseDown = false;
+    }
+  }]);
+
+  return ZoomCommand;
+}(_command.default);
+
+exports.default = ZoomCommand;
+},{"./command":"src/commands/command.js"}],"src/app.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -915,6 +1079,8 @@ exports.WebCAD = void 0;
 var _keyboards_events = _interopRequireDefault(require("./keyboards_events"));
 
 var _history_management = _interopRequireDefault(require("./history_management"));
+
+var _utils = require("./utils");
 
 var _constants = require("./constants");
 
@@ -927,6 +1093,8 @@ var _line = _interopRequireDefault(require("./commands/line"));
 var _rect = _interopRequireDefault(require("./commands/rect"));
 
 var _circle = _interopRequireDefault(require("./commands/circle"));
+
+var _zoom = _interopRequireDefault(require("./commands/zoom"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -960,11 +1128,17 @@ var WebCAD = /*#__PURE__*/function () {
     _classCallCheck(this, WebCAD);
 
     this.canvas = document.getElementById("canvas");
-    this.ctx = canvas.getContext('2d');
+    this.ctx = this.canvas.getContext('2d'); // ghost canvas for selection
+
+    this.ghostcanvas = document.createElement('canvas');
+    ;
+    this.gctx = this.ghostcanvas.getContext('2d');
     this.keys = new _keyboards_events.default(this);
+    this.colorsTable = _utils.colorsTable;
     this.commands = {
-      'PAN': new _pan.default(this),
       'SELECT': new _select.default(this),
+      'PAN': new _pan.default(this),
+      'ZOOM': new _zoom.default(this),
       'LINE': new _line.default(this),
       'RECT': new _rect.default(this),
       'CIRCLE': new _circle.default(this)
@@ -986,6 +1160,8 @@ var WebCAD = /*#__PURE__*/function () {
     value: function resizeCanvas() {
       this.canvas.width = window.innerWidth;
       this.canvas.height = window.innerHeight;
+      this.ghostcanvas.width = window.innerWidth;
+      this.ghostcanvas.height = window.innerHeight;
       this.canvas.style.cursor = "none";
       this.drawAll();
     }
@@ -994,6 +1170,12 @@ var WebCAD = /*#__PURE__*/function () {
     value: function startListening() {
       // resize the canvas to fill browser window dynamically
       window.addEventListener('resize', this.resizeCanvas.bind(this), false);
+
+      this.canvas.oncontextmenu = function () {
+        return false;
+      }; // this.canvas.addEventListener('click', this.globalHandler.bind(this), false);
+
+
       this.canvas.addEventListener('mousemove', this.globalHandler.bind(this), false);
       this.canvas.addEventListener('mousedown', this.globalHandler.bind(this), false);
       this.canvas.addEventListener('mouseup', this.globalHandler.bind(this), false);
@@ -1002,7 +1184,8 @@ var WebCAD = /*#__PURE__*/function () {
   }, {
     key: "globalHandler",
     value: function globalHandler(ev) {
-      this.currentCommand = this.commands[this.keys.choosenCommand];
+      ev.preventDefault();
+      ev.stopPropagation();
       var x = parseInt(ev.clientX);
       var y = parseInt(ev.clientY);
       /* ----------------- SNAP 2 GRID ----------------- */
@@ -1027,6 +1210,7 @@ var WebCAD = /*#__PURE__*/function () {
 
       ev._x = x;
       ev._y = y;
+      this.currentCommand = this.commands[this.keys.choosenCommand];
       var func = this.currentCommand[ev.type].bind(this.currentCommand);
 
       if (func) {
@@ -1055,18 +1239,25 @@ var WebCAD = /*#__PURE__*/function () {
     value: function drawPointer() {
       this.ctx.strokeStyle = "rgb(0,103,28)"; // green
 
-      this.ctx.strokeRect(this.mouse.x - 4.5 - this.netPanningX, this.mouse.y - 5.5 - this.netPanningY, 10, 10);
+      this.ctx.strokeRect(this.mouse.x - 5 - this.netPanningX, this.mouse.y - 5 - this.netPanningY, 10, 10);
       this.ctx.lineWidth = 0.5;
+      this.ctx.setLineDash([this.keys.currentSnap, this.keys.currentSnap]); // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setLineDash
+
       this.ctx.beginPath();
       this.ctx.moveTo(this.mouse.x - this.netPanningX, 0);
+      this.ctx.lineTo(this.mouse.x - this.netPanningX, this.mouse.y - 5 - this.netPanningY);
+      this.ctx.moveTo(this.mouse.x - this.netPanningX, this.mouse.y + 5 - this.netPanningY);
       this.ctx.lineTo(this.mouse.x - this.netPanningX, _constants.CANVAS_DIMENSIONS.HEIGHT);
       this.ctx.moveTo(0, this.mouse.y - this.netPanningY);
+      this.ctx.lineTo(this.mouse.x - 5 - this.netPanningX, this.mouse.y - this.netPanningY);
+      this.ctx.moveTo(this.mouse.x + 5 - this.netPanningX, this.mouse.y - this.netPanningY);
       this.ctx.lineTo(_constants.CANVAS_DIMENSIONS.WIDTH, this.mouse.y - this.netPanningY);
       this.ctx.stroke();
-      this.ctx.fillStyle = "grey";
+      this.ctx.fillStyle = _constants.COLORS.LINES;
       this.ctx.fillText("".concat(this.keys.choosenCommand.toUpperCase()), this.mouse.x + 12.5 - this.netPanningX, this.mouse.y - 4.5 - this.netPanningY);
       this.ctx.fillText("x: ".concat(this.mouse.x - this.netPanningX, " - y: ").concat(this.mouse.y - this.netPanningY), this.mouse.x + 12.5 - this.netPanningX, this.mouse.y + 12.5 - this.netPanningY);
       this.ctx.closePath();
+      this.ctx.setLineDash([]);
     }
   }, {
     key: "drawCanvas",
@@ -1093,7 +1284,7 @@ var WebCAD = /*#__PURE__*/function () {
 
         if (i % 100 === 0) {
           this.ctx.font = "11px Arial";
-          this.ctx.fillStyle = "grey"; // this.ctx.textAlign = "center";
+          this.ctx.fillStyle = _constants.COLORS.LINES; // this.ctx.textAlign = "center";
 
           this.ctx.fillText(i.toString(), i + 2.5, 10 - (this.netPanningY > 0 ? 0 : this.netPanningY));
         }
@@ -1119,7 +1310,7 @@ var WebCAD = /*#__PURE__*/function () {
 
         if (_i % 100 === 0) {
           this.ctx.font = "11px Arial";
-          this.ctx.fillStyle = "grey"; // this.ctx.textAlign = "center";
+          this.ctx.fillStyle = _constants.COLORS.LINES; // this.ctx.textAlign = "center";
 
           this.ctx.fillText(_i.toString(), 2.5 - (this.netPanningX > 0 ? 0 : this.netPanningX), _i - 2.5);
         }
@@ -1127,80 +1318,65 @@ var WebCAD = /*#__PURE__*/function () {
     }
   }, {
     key: "drawShapes",
-    value: function drawShapes() {
-      var _this2 = this;
-
+    value: function drawShapes(ctx, hit) {
       [].concat(_toConsumableArray(this.HM.value), _toConsumableArray(this.tempShape)).forEach(function (item) {
         if (item.w) {
-          _this2.ctx.save();
-
-          _this2.ctx.fillStyle = item.color;
-          _this2.ctx.strokeStyle = item.stroke;
-
-          _this2.ctx.beginPath();
-
-          _this2.ctx.rect(item.x, item.y, item.w, item.h);
-
-          _this2.ctx.fill();
-
-          _this2.ctx.stroke();
-
-          _this2.ctx.restore();
+          ctx.save();
+          ctx.fillStyle = item.selected ? _constants.COLORS.shapes_fill_selected : hit ? item.colorKey : item.color;
+          ctx.strokeStyle = hit ? item.colorKey : item.stroke;
+          ctx.beginPath();
+          ctx.rect(item.x, item.y, item.w, item.h);
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
         } else if (item.radius) {
-          _this2.ctx.save();
+          ctx.save();
+          ctx.strokeStyle = hit ? item.colorKey : item.stroke;
+          ctx.fillStyle = item.selected ? _constants.COLORS.shapes_fill_selected : hit ? item.colorKey : item.color;
+          ctx.beginPath(); // x, y, radius, startAngle, endAngle, antiClockwise = false by default
 
-          _this2.ctx.strokeStyle = item.stroke;
-          _this2.ctx.fillStyle = item.color; // x, y, radius, startAngle, endAngle, antiClockwise = false by default
+          ctx.arc(item.start_x, item.start_y, item.radius, 0, 2 * Math.PI, false); // full circle
 
-          _this2.ctx.beginPath();
-
-          _this2.ctx.arc(item.start_x, item.start_y, item.radius, 0, 2 * Math.PI, false); // full circle
-
-
-          _this2.ctx.fill();
-
-          _this2.ctx.stroke();
-
-          _this2.ctx.restore();
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
         } else {
-          _this2.ctx.save();
-
-          _this2.ctx.strokeStyle = item.color;
-
-          _this2.ctx.beginPath();
-
-          _this2.ctx.moveTo(item.start_x, item.start_y); // sets our starting point
-
-
-          _this2.ctx.lineTo(item.end_x, item.end_y); // create a line from start point to X: 100, Y: 200
-
-
-          _this2.ctx.closePath(); // left side and closes the pat
-
-
-          _this2.ctx.stroke();
-
-          _this2.ctx.restore();
+          ctx.save();
+          ctx.strokeStyle = item.selected ? _constants.COLORS.shapes_fill_selected : hit ? item.colorKey : item.color;
+          ctx.beginPath();
+          ctx.moveTo(item.start_x, item.start_y);
+          ctx.lineTo(item.end_x, item.end_y);
+          ctx.closePath();
+          ctx.stroke();
+          ctx.restore();
         }
       });
     }
   }, {
     key: "drawAll",
     value: function drawAll() {
-      // this.ctx.fillStyle = "black";
+      this.ctx.fillStyle = "black";
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height); // CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT
 
       this.ctx.save();
-      this.ctx.scale(1, 1
-      /* this.viewport.scale[0], this.viewport.scale[1] */
-      ); // apply scale
+      this.ctx.scale(this.zoomLevel, this.zoomLevel); // apply scale
 
       this.ctx.translate(this.netPanningX, this.netPanningY); // apply translation
 
       this.drawCanvas();
       this.drawPointer();
-      this.drawShapes();
+      this.drawShapes(this.ctx, false);
       this.ctx.restore();
+      this.gctx.fillStyle = "black";
+      this.gctx.fillRect(0, 0, this.ghostcanvas.width, this.ghostcanvas.height); // CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT
+
+      this.gctx.save();
+      this.gctx.scale(this.zoomLevel, this.zoomLevel); // apply scale
+
+      this.gctx.translate(this.netPanningX, this.netPanningY); // apply translation
+
+      this.drawShapes(this.gctx, true);
+      this.gctx.restore();
     }
   }]);
 
@@ -1208,7 +1384,7 @@ var WebCAD = /*#__PURE__*/function () {
 }();
 
 exports.WebCAD = WebCAD;
-},{"./keyboards_events":"src/keyboards_events.js","./history_management":"src/history_management.js","./constants":"src/constants.js","./commands/pan":"src/commands/pan.js","./commands/select":"src/commands/select.js","./commands/line":"src/commands/line.js","./commands/rect":"src/commands/rect.js","./commands/circle":"src/commands/circle.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./keyboards_events":"src/keyboards_events.js","./history_management":"src/history_management.js","./utils":"src/utils.js","./constants":"src/constants.js","./commands/pan":"src/commands/pan.js","./commands/select":"src/commands/select.js","./commands/line":"src/commands/line.js","./commands/rect":"src/commands/rect.js","./commands/circle":"src/commands/circle.js","./commands/zoom":"src/commands/zoom.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -1236,7 +1412,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53087" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51331" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

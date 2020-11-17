@@ -1,6 +1,7 @@
 import Command from './command';
 
 import { COLORS } from '../constants';
+import {trackSelection} from '../utils'
 
 export default class LineCommand extends Command {
 
@@ -22,12 +23,10 @@ export default class LineCommand extends Command {
                 end_x: event._x - this.main.netPanningX,
                 end_y: event._y - this.main.netPanningY
             }]
-
         }
     }
 
     mousedown(event) {
-        /*         this.main.ctx.beginPath(); */
         this.start.x = event._x - this.main.netPanningX;
         this.start.y = event._y - this.main.netPanningY;
         this.started = true;
@@ -37,13 +36,13 @@ export default class LineCommand extends Command {
         if (this.started) {
             this.started = false;
             this.main.tempShape.length = 0;
-            this.main.shapes.push({
+            this.main.shapes.push(trackSelection({
                 start_x: this.start.x,
                 start_y: this.start.y,
                 end_x: event._x - this.main.netPanningX,
                 end_y: event._y - this.main.netPanningY,
                 color: COLORS.shapes_stroke
-            });
+            }));
             this.main.HM.set(this.main.shapes)
         }
     }
@@ -52,13 +51,13 @@ export default class LineCommand extends Command {
         if (this.started) {
             this.started = false;
             this.main.tempShape.length = 0;
-            this.main.shapes.push({
+            this.main.shapes.push(trackSelection({
                 start_x: this.start.x,
                 start_y: this.start.y,
                 end_x: event._x - this.main.netPanningX,
                 end_y: event._y - this.main.netPanningY,
                 color: COLORS.shapes_stroke
-            });
+            }));
             this.main.HM.set(this.main.shapes)
         }
     }

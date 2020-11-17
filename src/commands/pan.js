@@ -8,7 +8,6 @@ export default class PanCommand extends Command {
         // this.mouse drag related variables
         this.isMouseDown = false;
         this.startX, this.startY;
-
         // the accumulated horizontal(X) & vertical(Y) panning the user has done in total
         this.main.netPanningX = 0;
         this.main.netPanningY = 0;

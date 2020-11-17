@@ -1,6 +1,7 @@
 import Command from './command';
 
 import { COLORS } from '../constants';
+import {trackSelection} from '../utils'
 
 export default class RectCommand extends Command {
 
@@ -36,7 +37,6 @@ export default class RectCommand extends Command {
     }
 
     mousedown(event) {
-        this.main.ctx.beginPath();
         this.start.x = event._x;
         this.start.y = event._y;
         this.started = true;
@@ -46,14 +46,14 @@ export default class RectCommand extends Command {
         if (this.started) {
             this.started = false;
             this.main.tempShape.length = 0;
-            this.main.shapes.push({
+            this.main.shapes.push(trackSelection({
                 x: this.x - this.main.netPanningX,
                 y: this.y - this.main.netPanningY,
                 w: this.w,
                 h: this.h,
                 color: COLORS.shapes_fill,
                 stroke: COLORS.shapes_stroke
-            });
+            }));
             this.main.HM.set(this.main.shapes)
         }
     }
@@ -62,14 +62,14 @@ export default class RectCommand extends Command {
         if (this.started) {
             this.started = false;
             this.main.tempShape.length = 0;
-            this.main.shapes.push({
+            this.main.shapes.push(trackSelection({
                 x: this.x - this.main.netPanningX,
                 y: this.y - this.main.netPanningY,
                 w: this.w,
                 h: this.h,
                 color: COLORS.shapes_fill,
                 stroke: COLORS.shapes_stroke
-            });
+            }));
             this.main.HM.set(this.main.shapes)
         }
     }

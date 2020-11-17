@@ -1,6 +1,7 @@
 import Command from './command';
 
 import { COLORS } from '../constants';
+import { trackSelection } from '../utils'
 
 export default class CircleCommand extends Command {
 
@@ -11,7 +12,7 @@ export default class CircleCommand extends Command {
         this.radius = 0
     }
 
-    mousemove(event) {
+    mousemove (event) {
         this.main.mouse.x = event._x;
         this.main.mouse.y = event._y;
         this.main.mouse.event = event;
@@ -28,40 +29,40 @@ export default class CircleCommand extends Command {
         }
     }
 
-    mousedown(event) {
+    mousedown (event) {
         /* this.main.ctx.beginPath(); */
         this.start.x = event._x - this.main.netPanningX;
         this.start.y = event._y - this.main.netPanningY;
         this.started = true;
     }
 
-    mouseup(event) {
+    mouseup (event) {
         if (this.started) {
             this.started = false;
             this.main.tempShape.length = 0;
-            this.main.shapes.push({
+            this.main.shapes.push(trackSelection({
                 start_x: this.start.x,
                 start_y: this.start.y,
                 radius: this.radius,
                 color: COLORS.shapes_fill,
                 stroke: COLORS.shapes_stroke
-            });
+            }));
             this.main.HM.set(this.main.shapes)
             this.radius = 0;
         }
     }
 
-    mouseout(event) {
+    mouseout (event) {
         if (this.started) {
             this.started = false;
             this.main.tempShape.length = 0;
-            this.main.shapes.push({
+            this.main.shapes.push(trackSelection({
                 start_x: this.start.x,
                 start_y: this.start.y,
                 radius: this.radius,
                 color: COLORS.shapes_fill,
                 stroke: COLORS.shapes_stroke
-            });
+            }));
             this.main.HM.set(this.main.shapes)
             this.radius = 0;
         }

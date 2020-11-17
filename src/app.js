@@ -1,7 +1,8 @@
 import KeyboardEvents from './keyboards_events';
 import HistoryManagement from './history_management';
+import { colorsTable } from './utils';
 
-import { CANVAS_DIMENSIONS } from './constants';
+import { CANVAS_DIMENSIONS, COLORS } from './constants';
 
 // Commands
 import PanCommand from './commands/pan';
@@ -22,8 +23,13 @@ export class WebCAD {
 
     constructor() {
         this.canvas = document.getElementById("canvas");
-        this.ctx = canvas.getContext('2d');
+        this.ctx = this.canvas.getContext('2d');
+
+        // ghost canvas for selection
+        this.ghostcanvas = document.createElement('canvas');;
+        this.gctx = this.ghostcanvas.getContext('2d');
         this.keys = new KeyboardEvents(this);
+        this.colorsTable = colorsTable;
 
         this.commands = {
             'SELECT': new SelectCommand(this),
@@ -48,24 +54,27 @@ export class WebCAD {
         this.resizeCanvas()
     }
 
-    resizeCanvas() {
+    resizeCanvas () {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
+        this.ghostcanvas.width = window.innerWidth;
+        this.ghostcanvas.height = window.innerHeight;
         this.canvas.style.cursor = "none"
         this.drawAll();
     }
 
-    startListening() {
+    startListening () {
         // resize the canvas to fill browser window dynamically
         window.addEventListener('resize', this.resizeCanvas.bind(this), false);
         this.canvas.oncontextmenu = () => false;
+        // this.canvas.addEventListener('click', this.globalHandler.bind(this), false);
         this.canvas.addEventListener('mousemove', this.globalHandler.bind(this), false);
         this.canvas.addEventListener('mousedown', this.globalHandler.bind(this), false);
         this.canvas.addEventListener('mouseup', this.globalHandler.bind(this), false);
         this.canvas.addEventListener('mouseout', this.globalHandler.bind(this), false);
     }
 
-    globalHandler(ev) {
+    globalHandler (ev) {
         ev.preventDefault();
         ev.stopPropagation();
         let x = parseInt(ev.clientX);
@@ -96,23 +105,24 @@ export class WebCAD {
         }
     }
 
-    loop() {
+    loop () {
         this.drawAll();
         requestAnimationFrame(() => {
             this.loop()
         });
     }
 
-    start() {
+    start () {
         this.loop();
     }
 
     /* --------------------------------------------------------- */
 
-    drawPointer() {
+    drawPointer () {
         this.ctx.strokeStyle = "rgb(0,103,28)"; // green
         this.ctx.strokeRect(this.mouse.x - 5 - this.netPanningX, this.mouse.y - 5 - this.netPanningY, 10, 10);
         this.ctx.lineWidth = 0.5;
+        this.ctx.setLineDash([this.keys.currentSnap, this.keys.currentSnap]);   // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setLineDash
         this.ctx.beginPath();
         this.ctx.moveTo(this.mouse.x - this.netPanningX, 0);
         this.ctx.lineTo(this.mouse.x - this.netPanningX, this.mouse.y - 5 - this.netPanningY);
@@ -123,13 +133,14 @@ export class WebCAD {
         this.ctx.moveTo(this.mouse.x + 5 - this.netPanningX, this.mouse.y - this.netPanningY);
         this.ctx.lineTo(CANVAS_DIMENSIONS.WIDTH, this.mouse.y - this.netPanningY);
         this.ctx.stroke();
-        this.ctx.fillStyle = "grey";
+        this.ctx.fillStyle = COLORS.LINES;
         this.ctx.fillText(`${this.keys.choosenCommand.toUpperCase()}`, this.mouse.x + 12.5 - this.netPanningX, this.mouse.y - 4.5 - this.netPanningY)
         this.ctx.fillText(`x: ${this.mouse.x - this.netPanningX} - y: ${this.mouse.y - this.netPanningY}`, this.mouse.x + 12.5 - this.netPanningX, this.mouse.y + 12.5 - this.netPanningY)
         this.ctx.closePath();
+        this.ctx.setLineDash([]);
     }
 
-    drawCanvas() {
+    drawCanvas () {
         this.ctx.fillStyle = "rgb(31,40,49)";
         this.ctx.fillRect(0, 0, CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT);
         // colonne
@@ -149,7 +160,7 @@ export class WebCAD {
             }
             if (i % 100 === 0) {
                 this.ctx.font = "11px Arial";
-                this.ctx.fillStyle = "grey";
+                this.ctx.fillStyle = COLORS.LINES;
                 // this.ctx.textAlign = "center";
                 this.ctx.fillText(i.toString(), i + 2.5, 10 - (this.netPanningY > 0 ? 0 : this.netPanningY));
             }
@@ -171,57 +182,66 @@ export class WebCAD {
             }
             if (i % 100 === 0) {
                 this.ctx.font = "11px Arial";
-                this.ctx.fillStyle = "grey";
+                this.ctx.fillStyle = COLORS.LINES;
                 // this.ctx.textAlign = "center";
                 this.ctx.fillText(i.toString(), 2.5 - (this.netPanningX > 0 ? 0 : this.netPanningX), i - 2.5);
             }
         }
     }
 
-    drawShapes() {
+    drawShapes (ctx, hit) {
         [...this.HM.value, ...this.tempShape].forEach(item => {
             if (item.w) {
-                this.ctx.save()
-                this.ctx.fillStyle = item.color
-                this.ctx.strokeStyle = item.stroke
-                this.ctx.beginPath()
-                this.ctx.rect(item.x, item.y, item.w, item.h)
-                this.ctx.fill()
-                this.ctx.stroke()
-                this.ctx.restore()
+                ctx.save()
+                ctx.fillStyle = item.selected ? COLORS.shapes_fill_selected : (hit ? item.colorKey : item.color)
+                ctx.strokeStyle = hit ? item.colorKey : item.stroke
+                ctx.beginPath()
+                ctx.rect(item.x, item.y, item.w, item.h)
+                ctx.fill()
+                ctx.stroke()
+                ctx.restore()
             } else if (item.radius) {
-                this.ctx.save()
-                this.ctx.strokeStyle = item.stroke
-                this.ctx.fillStyle = item.color
-                this.ctx.beginPath()
+                ctx.save()
+                ctx.strokeStyle = hit ? item.colorKey : item.stroke
+                ctx.fillStyle = item.selected ? COLORS.shapes_fill_selected : (hit ? item.colorKey : item.color)
+                ctx.beginPath()
                 // x, y, radius, startAngle, endAngle, antiClockwise = false by default
-                this.ctx.arc(item.start_x, item.start_y, item.radius, 0, 2 * Math.PI, false) // full circle
-                this.ctx.fill()
-                this.ctx.stroke()
-                this.ctx.restore()
+                ctx.arc(item.start_x, item.start_y, item.radius, 0, 2 * Math.PI, false) // full circle
+                ctx.fill()
+                ctx.stroke()
+                ctx.restore()
             } else {
-                this.ctx.save()
-                this.ctx.strokeStyle = item.color;
-                this.ctx.beginPath()
-                this.ctx.moveTo(item.start_x, item.start_y)
-                this.ctx.lineTo(item.end_x, item.end_y)
-                this.ctx.closePath()
-                this.ctx.stroke()
-                this.ctx.restore()
+                ctx.save()
+                ctx.strokeStyle = item.selected ? COLORS.shapes_fill_selected : (hit ? item.colorKey : item.color)
+                ctx.beginPath()
+                ctx.moveTo(item.start_x, item.start_y)
+                ctx.lineTo(item.end_x, item.end_y)
+                ctx.closePath()
+                ctx.stroke()
+                ctx.restore()
             }
         });
     }
 
-    drawAll() {
+    drawAll () {
         this.ctx.fillStyle = "black";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height); // CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT
+
         this.ctx.save();
         this.ctx.scale(this.zoomLevel, this.zoomLevel); // apply scale
         this.ctx.translate(this.netPanningX, this.netPanningY); // apply translation
         this.drawCanvas();
         this.drawPointer();
-        this.drawShapes();
+        this.drawShapes(this.ctx, false);
         this.ctx.restore();
+
+        this.gctx.fillStyle = "black";
+        this.gctx.fillRect(0, 0, this.ghostcanvas.width, this.ghostcanvas.height); // CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT
+        this.gctx.save();
+        this.gctx.scale(this.zoomLevel, this.zoomLevel); // apply scale
+        this.gctx.translate(this.netPanningX, this.netPanningY); // apply translation
+        this.drawShapes(this.gctx, true);
+        this.gctx.restore();
     }
 
 }
