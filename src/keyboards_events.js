@@ -40,6 +40,8 @@ export default class KeyboardEvents {
                     this.choosenCommand = OPERATIONS.ARC;
                 } else if (e.key == 'f') {
                     this.choosenCommand = OPERATIONS.FILL; */
+            } else if (e.key == 'd') {
+                this.choosenCommand = OPERATIONS.DELETE;
             } else if (e.key == 'l') {
                 this.choosenCommand = OPERATIONS.LINE;
             } else if (e.key == 'r') {

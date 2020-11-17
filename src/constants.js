@@ -20,8 +20,8 @@ export const OPERATIONS = {
     // MODIFICA
     MOVE: 'MOVE',
     ROTATE: "ROTATE",
-    PULL: "PULL",
-    SCALE: 'SCALE',
+    // PULL: "PULL", una volta selezionato...
+    // SCALE: 'SCALE',
     COPY: 'COPY',
     // SHAPES
     LINE: 'LINE',

@@ -12,7 +12,7 @@ export default class CircleCommand extends Command {
         this.radius = 0
     }
 
-    mousemove (event) {
+    mousemove(event) {
         this.main.mouse.x = event._x;
         this.main.mouse.y = event._y;
         this.main.mouse.event = event;
@@ -29,14 +29,14 @@ export default class CircleCommand extends Command {
         }
     }
 
-    mousedown (event) {
+    mousedown(event) {
         /* this.main.ctx.beginPath(); */
         this.start.x = event._x - this.main.netPanningX;
         this.start.y = event._y - this.main.netPanningY;
         this.started = true;
     }
 
-    mouseup (event) {
+    mouseup(event) {
         if (this.started) {
             this.started = false;
             this.main.tempShape.length = 0;
@@ -52,7 +52,7 @@ export default class CircleCommand extends Command {
         }
     }
 
-    mouseout (event) {
+    mouseout(event) {
         if (this.started) {
             this.started = false;
             this.main.tempShape.length = 0;
@@ -68,4 +68,5 @@ export default class CircleCommand extends Command {
         }
     }
 
+    click(e) { }
 }

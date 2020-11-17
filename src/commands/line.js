@@ -1,7 +1,7 @@
 import Command from './command';
 
 import { COLORS } from '../constants';
-import {trackSelection} from '../utils'
+import { trackSelection } from '../utils'
 
 export default class LineCommand extends Command {
 

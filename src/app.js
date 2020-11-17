@@ -6,17 +6,18 @@ import { CANVAS_DIMENSIONS, COLORS } from './constants';
 
 // Commands
 import PanCommand from './commands/pan';
+import ZoomCommand from './commands/zoom';
 import SelectCommand from './commands/select';
+import DeleteCommand from './commands/delete';
 import LineCommand from './commands/line';
 import RectCommand from './commands/rect';
 import CircleCommand from './commands/circle';
-import ZoomCommand from './commands/zoom';
 
 window.onload = () => {
     const cad = new WebCAD();
     document.getElementById('canvas').replaceWith(cad.canvas);
     cad.start();
-    window.cad = cad;
+    window.cad = cad;   // debug
 }
 
 export class WebCAD {
@@ -33,6 +34,7 @@ export class WebCAD {
 
         this.commands = {
             'SELECT': new SelectCommand(this),
+            'DELETE': new DeleteCommand(this),
             'PAN': new PanCommand(this),
             'ZOOM': new ZoomCommand(this),
             'LINE': new LineCommand(this),
@@ -46,6 +48,8 @@ export class WebCAD {
             event: null
         };
 
+        this.zoomLevel = 1;
+
         this.shapes = [];
         this.tempShape = []
         this.HM = new HistoryManagement(this);
@@ -54,7 +58,7 @@ export class WebCAD {
         this.resizeCanvas()
     }
 
-    resizeCanvas () {
+    resizeCanvas() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
         this.ghostcanvas.width = window.innerWidth;
@@ -63,25 +67,25 @@ export class WebCAD {
         this.drawAll();
     }
 
-    startListening () {
+    startListening() {
         // resize the canvas to fill browser window dynamically
         window.addEventListener('resize', this.resizeCanvas.bind(this), false);
         this.canvas.oncontextmenu = () => false;
-        // this.canvas.addEventListener('click', this.globalHandler.bind(this), false);
+        this.canvas.addEventListener('click', this.globalHandler.bind(this), false);
         this.canvas.addEventListener('mousemove', this.globalHandler.bind(this), false);
         this.canvas.addEventListener('mousedown', this.globalHandler.bind(this), false);
         this.canvas.addEventListener('mouseup', this.globalHandler.bind(this), false);
         this.canvas.addEventListener('mouseout', this.globalHandler.bind(this), false);
     }
 
-    globalHandler (ev) {
+    globalHandler(ev) {
         ev.preventDefault();
         ev.stopPropagation();
         let x = parseInt(ev.clientX);
         let y = parseInt(ev.clientY);
 
         /* ----------------- SNAP 2 GRID ----------------- */
-        if (this.keys.hasSnap) {
+        if (this.keys.hasSnap && !(this.keys.choosenCommand === 'DELETE' || this.keys.choosenCommand === 'SELECT')) {
             let restoH = x % this.keys.currentSnap;
             if (restoH >= this.keys.currentSnap) {
                 x = x - restoH + this.keys.currentSnap
@@ -105,20 +109,20 @@ export class WebCAD {
         }
     }
 
-    loop () {
+    loop() {
         this.drawAll();
         requestAnimationFrame(() => {
             this.loop()
         });
     }
 
-    start () {
+    start() {
         this.loop();
     }
 
-    /* --------------------------------------------------------- */
+    /* ---------------------------- RENDER ----------------------------- */
 
-    drawPointer () {
+    drawPointer() {
         this.ctx.strokeStyle = "rgb(0,103,28)"; // green
         this.ctx.strokeRect(this.mouse.x - 5 - this.netPanningX, this.mouse.y - 5 - this.netPanningY, 10, 10);
         this.ctx.lineWidth = 0.5;
@@ -140,7 +144,7 @@ export class WebCAD {
         this.ctx.setLineDash([]);
     }
 
-    drawCanvas () {
+    drawCanvas() {
         this.ctx.fillStyle = "rgb(31,40,49)";
         this.ctx.fillRect(0, 0, CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT);
         // colonne
@@ -189,7 +193,7 @@ export class WebCAD {
         }
     }
 
-    drawShapes (ctx, hit) {
+    drawShapes(ctx, hit) {
         [...this.HM.value, ...this.tempShape].forEach(item => {
             if (item.w) {
                 ctx.save()
@@ -223,9 +227,9 @@ export class WebCAD {
         });
     }
 
-    drawAll () {
+    drawAll() {
         this.ctx.fillStyle = "black";
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height); // CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.ctx.save();
         this.ctx.scale(this.zoomLevel, this.zoomLevel); // apply scale
@@ -236,7 +240,7 @@ export class WebCAD {
         this.ctx.restore();
 
         this.gctx.fillStyle = "black";
-        this.gctx.fillRect(0, 0, this.ghostcanvas.width, this.ghostcanvas.height); // CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT
+        this.gctx.fillRect(0, 0, this.ghostcanvas.width, this.ghostcanvas.height);
         this.gctx.save();
         this.gctx.scale(this.zoomLevel, this.zoomLevel); // apply scale
         this.gctx.translate(this.netPanningX, this.netPanningY); // apply translation
@@ -244,6 +248,7 @@ export class WebCAD {
         this.gctx.restore();
     }
 
+    /* ---------------------------- RENDER ----------------------------- */
 }
 
 
