@@ -12,6 +12,7 @@ import DeleteCommand from './commands/delete';
 import LineCommand from './commands/line';
 import RectCommand from './commands/rect';
 import CircleCommand from './commands/circle';
+import MoveCommand from './commands/move';
 
 window.onload = () => {
     const cad = new WebCAD();
@@ -37,6 +38,7 @@ export class WebCAD {
             'DELETE': new DeleteCommand(this),
             'PAN': new PanCommand(this),
             'ZOOM': new ZoomCommand(this),
+            'MOVE': new MoveCommand(this),
             'LINE': new LineCommand(this),
             'RECT': new RectCommand(this),
             'CIRCLE': new CircleCommand(this),

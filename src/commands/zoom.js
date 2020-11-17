@@ -4,7 +4,6 @@ export default class ZoomCommand extends Command {
 
     constructor(state) {
         super(state)
-        this.main.zoomLevel = 1;
         this.mouseDown = false;
     }
 

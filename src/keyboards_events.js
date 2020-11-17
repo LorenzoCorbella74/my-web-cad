@@ -18,12 +18,9 @@ export default class KeyboardEvents {
         document.onkeyup = (e) => {
             if (e.key == 'Escape' || e.key == 's') {
                 this.choosenCommand = OPERATIONS.SELECT;
-                /* } else if (e.key == 'd') {
-                    this.choosenCommand = OPERATIONS.DELETE;
+                /* 
                 } else if (e.key == 'c') {
                     this.choosenCommand = OPERATIONS.COPY;
-                } else if (e.key == 'm') {
-                    this.choosenCommand = OPERATIONS.MOVE;
                 } else if (e.key == 'r') {
                     this.choosenCommand = OPERATIONS.ROTATE;
                 } else if (e.key == 'p') {
@@ -40,6 +37,8 @@ export default class KeyboardEvents {
                     this.choosenCommand = OPERATIONS.ARC;
                 } else if (e.key == 'f') {
                     this.choosenCommand = OPERATIONS.FILL; */
+            } else if (e.key == 'm') {
+                this.choosenCommand = OPERATIONS.MOVE;
             } else if (e.key == 'd') {
                 this.choosenCommand = OPERATIONS.DELETE;
             } else if (e.key == 'l') {

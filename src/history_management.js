@@ -6,19 +6,23 @@ export default class HistoryManagement {
         this.position = 0;
     }
 
-    get value () {
+    get value() {
         return this.history[this.position];
     }
 
-    set (value) {
+    get selected() {
+        return this.history[this.position].find(e => e.selected)[0];
+    }
+
+    set(value) {
         if (this.position < this.history.length - 1) {
             this.history = this.history.slice(0, this.position + 1);
         }
         this.history.push([...value]);
         this.position += 1;
     }
-    
-    undo () {
+
+    undo() {
         if (this.position > 0) {
             this.position--;
             this.main.shapes = [...this.value];
@@ -26,8 +30,8 @@ export default class HistoryManagement {
             console.log('No more undo ...')
         }
     }
-    
-    redo () {
+
+    redo() {
         if (this.position < this.history.length - 1) {
             this.position++;
             this.main.shapes = [...this.value];
@@ -37,7 +41,7 @@ export default class HistoryManagement {
     }
 
     // toString function to aid in illustrating
-    toString () {
+    toString() {
         console.log("Currnent Value: ", this.value)
         console.log("History: ", this.history)
         console.log("Position: ", this.position);
