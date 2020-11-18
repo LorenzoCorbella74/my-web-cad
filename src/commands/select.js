@@ -24,7 +24,7 @@ export default class SelectCommand extends Command {
 
     click(e) {
         // get pixel under cursor
-        const pixel = this.main.gctx.getImageData(e._x, e._y, 1, 1).data;
+        const pixel = this.main.gctx.getImageData(e._x * this.main.zoomLevel, e._y * this.main.zoomLevel, 1, 1).data;
         // create rgb color for that pixel
         const color = `rgb(${pixel[0]},${pixel[1]},${pixel[2]})`;
         // find a shape with the same colour
