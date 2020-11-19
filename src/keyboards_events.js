@@ -72,11 +72,11 @@ export default class KeyboardEvents {
                 this.main.HM.redo()
             } else if (e.ctrlKey && e.key == 'x') {
                 this.main.zoomLevel = 1;
-            } /* else if (e.ctrlKey && e.key == '+') {
+            } else if (e.altKey && e.key == '+') {
                 this.main.zoomLevel += 0.1;
-            } else if (e.ctrlKey && e.key == '-') {
+            } else if (e.altKey && e.key == '-') {
                 this.main.zoomLevel -= 0.1;
-            } */ else if (e.key == 'x') {
+            } else if (e.key == 'x') {
                 this.choosenCommand = OPERATIONS.ZOOM;
             }
         }
