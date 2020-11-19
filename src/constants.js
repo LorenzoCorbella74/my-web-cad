@@ -36,8 +36,8 @@ export const OPERATIONS = {
 };
 
 export const COLORS = {
-    shapes_fill: 'rgba(0,200,0,0.30)',
-    shapes_fill_selected: 'rgba(200,0,200,0.30)',
+    shapes_fill: 'rgba(100,100,255,0.30)',
+    shapes_fill_selected: 'rgba(200,0,100,0.30)',
     shapes_stroke: 'white',
     LINES: 'grey'
 }
