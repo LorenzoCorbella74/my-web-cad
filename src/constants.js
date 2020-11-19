@@ -36,8 +36,9 @@ export const OPERATIONS = {
 };
 
 export const COLORS = {
-    shapes_fill: 'rgba(100,100,255,0.30)',
-    shapes_fill_selected: 'rgba(200,0,100,0.30)',
+    shapes_fill: 'rgba(100,100,255,0.25)',
+    shapes_fill_temp: 'rgba(100,100,180,0.20)',
+    shapes_fill_selected: 'rgba(200,0,100,0.25)',
     shapes_stroke: 'white',
     shapes_stroke_selected: 'salmon',
     LINES: 'grey'

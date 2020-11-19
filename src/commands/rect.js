@@ -27,10 +27,11 @@ export default class RectCommand extends Command {
                 return;
             }
             this.main.tempShape = [{
-                x: this.x - this.main.netPanningX,
-                y: this.y - this.main.netPanningY,
+                start_x: this.x - this.main.netPanningX,
+                start_y: this.y - this.main.netPanningY,
                 w: this.w,
-                h: this.h
+                h: this.h,
+                color: COLORS.shapes_fill_temp,
             }]
         }
 
@@ -47,8 +48,8 @@ export default class RectCommand extends Command {
             this.started = false;
             this.main.tempShape.length = 0;
             this.main.shapes.push(trackSelection({
-                x: this.x - this.main.netPanningX,
-                y: this.y - this.main.netPanningY,
+                start_x: this.x - this.main.netPanningX,
+                start_y: this.y - this.main.netPanningY,
                 w: this.w,
                 h: this.h,
                 color: COLORS.shapes_fill,
@@ -63,8 +64,8 @@ export default class RectCommand extends Command {
             this.started = false;
             this.main.tempShape.length = 0;
             this.main.shapes.push(trackSelection({
-                x: this.x - this.main.netPanningX,
-                y: this.y - this.main.netPanningY,
+                start_x: this.x - this.main.netPanningX,
+                start_y: this.y - this.main.netPanningY,
                 w: this.w,
                 h: this.h,
                 color: COLORS.shapes_fill,
