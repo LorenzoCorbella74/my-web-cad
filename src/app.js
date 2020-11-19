@@ -149,7 +149,7 @@ export class WebCAD {
     }
 
     drawCanvas() {
-        this.ctx.fillStyle = "rgb(31,40,49)";
+        this.ctx.fillStyle = COLORS.CANVAS;
         this.ctx.fillRect(0, 0, CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT);
         // colonne
         for (let i = 0; i < CANVAS_DIMENSIONS.WIDTH; i += this.keys.currentSnap) {
@@ -158,9 +158,9 @@ export class WebCAD {
                 this.ctx.moveTo(i + 0.5, 0);
                 this.ctx.lineTo(i + 0.5, CANVAS_DIMENSIONS.HEIGHT);
                 if (i % 100 === 0) {
-                    this.ctx.strokeStyle = "rgb(48,55,71)";
+                    this.ctx.strokeStyle = COLORS.LINES_BIG;
                 } else {
-                    this.ctx.strokeStyle = "rgb(36,45,56)";
+                    this.ctx.strokeStyle = COLORS.LINES_SMALL;
                 }
                 this.ctx.lineWidth = 0.5;
                 this.ctx.closePath()
@@ -180,9 +180,9 @@ export class WebCAD {
                 this.ctx.moveTo(0, i + 0.5);
                 this.ctx.lineTo(CANVAS_DIMENSIONS.WIDTH, i + 0.5);
                 if (i % 100 === 0) {
-                    this.ctx.strokeStyle = "rgb(48,55,71)";
+                    this.ctx.strokeStyle = COLORS.LINES_BIG;
                 } else {
-                    this.ctx.strokeStyle = "rgb(36,45,56)";
+                    this.ctx.strokeStyle = COLORS.LINES_SMALL;
                 }
                 this.ctx.lineWidth = 0.5;
                 this.ctx.closePath()
@@ -201,6 +201,7 @@ export class WebCAD {
         [...this.HM.value, ...this.tempShape].forEach(item => {
             if (item.w && item.h) {
                 ctx.save()
+                ctx.lineWidth = 0.5
                 ctx.fillStyle = item.selected ? COLORS.shapes_fill_selected : (hit ? item.colorKey : item.color)
                 ctx.strokeStyle = item.selected ? COLORS.shapes_stroke_selected : (hit ? item.colorKey : item.stroke)
                 ctx.beginPath()
@@ -210,6 +211,7 @@ export class WebCAD {
                 ctx.restore()
             } else if (item.radius) {
                 ctx.save()
+                ctx.lineWidth = 0.5
                 ctx.strokeStyle = item.selected ? COLORS.shapes_stroke_selected : (hit ? item.colorKey : item.stroke)
                 ctx.fillStyle = item.selected ? COLORS.shapes_fill_selected : (hit ? item.colorKey : item.color)
                 ctx.beginPath()
@@ -224,6 +226,8 @@ export class WebCAD {
                 ctx.beginPath()
                 if (hit) {
                     ctx.lineWidth = 10 // to select lines...
+                } else {
+                    ctx.lineWidth = 2
                 }
                 ctx.moveTo(item.start_x, item.start_y)
                 ctx.lineTo(item.end_x, item.end_y)

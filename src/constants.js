@@ -20,9 +20,9 @@ export const OPERATIONS = {
     // MODIFICA
     MOVE: 'MOVE',
     ROTATE: "ROTATE",
+    COPY: 'COPY',
     // PULL: "PULL", una volta selezionato...
     // SCALE: 'SCALE',
-    COPY: 'COPY',
     // SHAPES
     LINE: 'LINE',
     RECT: 'RECT',
@@ -42,5 +42,8 @@ export const COLORS = {
     shapes_stroke: 'white',
     shapes_stroke_selected: 'salmon',
     LINES: 'grey',
-    CURSOR: 'rgb(1, 255, 112)'
+    CURSOR: 'rgb(1, 255, 112)',
+    CANVAS: "rgb(31,40,49)",
+    LINES_BIG: "rgb(48,55,71)",
+    LINES_SMALL: "rgb(36,45,56)"
 }
