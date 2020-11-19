@@ -54,11 +54,9 @@ export default class PanCommand extends Command {
             // console.clear()
             // console.log(`Net change in panning: x:${this.main.netPanningX}px, y:${this.main.netPanningY}px`);
         }
-
         this.main.mouse.x = e._x;
         this.main.mouse.y = e._y;
         this.main.mouse.event = e;
-
     }
 
     mousedown (e) {

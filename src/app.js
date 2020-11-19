@@ -229,13 +229,29 @@ export class WebCAD {
         });
     }
 
+
+    limitCamera (panx, pany) {
+        let x, y;
+        if (panx < 0) {
+            x = Math.max(-CANVAS_DIMENSIONS.WIDTH, panx)
+        } else {
+            x = 0
+        }
+        if (pany < 0) {
+            y = Math.max(-CANVAS_DIMENSIONS.HEIGHT, pany)
+        } else {
+            y = 0
+        }
+        return { x, y }
+    }
+
     drawAll () {
-        // let { x, y } = this.limitCamera(this.netPanningX, this.netPanningY)
+        let {x, y} = this.limitCamera(this.netPanningX, this.netPanningY)
         this.ctx.fillStyle = "black";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.save();
         this.ctx.scale(this.zoomLevel, this.zoomLevel); // apply scale
-        this.ctx.translate(this.netPanningX, this.netPanningY); // apply translation
+        this.ctx.translate(x,y); // apply translation
         this.drawCanvas();
         this.drawPointer();
         this.drawShapes(this.ctx, false);
@@ -245,7 +261,7 @@ export class WebCAD {
         this.gctx.fillRect(0, 0, this.ghostcanvas.width, this.ghostcanvas.height);
         this.gctx.save();
         this.gctx.scale(this.zoomLevel, this.zoomLevel); // apply scale
-        this.gctx.translate(this.netPanningX, this.netPanningY); // apply translation
+        this.gctx.translate(x,y); // apply translation
         this.drawShapes(this.gctx, true);
         this.gctx.restore();
     }
