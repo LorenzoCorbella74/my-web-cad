@@ -200,7 +200,7 @@ export class WebCAD {
             if (item.w) {
                 ctx.save()
                 ctx.fillStyle = item.selected ? COLORS.shapes_fill_selected : (hit ? item.colorKey : item.color)
-                ctx.strokeStyle = hit ? item.colorKey : item.stroke
+                ctx.strokeStyle = item.selected? COLORS.shapes_stroke_selected: (hit ? item.colorKey : item.stroke)
                 ctx.beginPath()
                 ctx.rect(item.x, item.y, item.w, item.h)
                 ctx.fill()
@@ -208,7 +208,7 @@ export class WebCAD {
                 ctx.restore()
             } else if (item.radius) {
                 ctx.save()
-                ctx.strokeStyle = hit ? item.colorKey : item.stroke
+                ctx.strokeStyle = item.selected? COLORS.shapes_stroke_selected: (hit ? item.colorKey : item.stroke)
                 ctx.fillStyle = item.selected ? COLORS.shapes_fill_selected : (hit ? item.colorKey : item.color)
                 ctx.beginPath()
                 // x, y, radius, startAngle, endAngle, antiClockwise = false by default
@@ -218,7 +218,7 @@ export class WebCAD {
                 ctx.restore()
             } else {
                 ctx.save()
-                ctx.strokeStyle = item.selected ? COLORS.shapes_fill_selected : (hit ? item.colorKey : item.color)
+                ctx.strokeStyle = item.selected? COLORS.shapes_stroke_selected: (hit ? item.colorKey : item.stroke)
                 ctx.beginPath()
                 ctx.moveTo(item.start_x, item.start_y)
                 ctx.lineTo(item.end_x, item.end_y)

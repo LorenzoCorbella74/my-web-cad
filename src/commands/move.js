@@ -10,7 +10,7 @@ export default class MoveCommand extends Command {
         this.currentlySelected = {}
     }
 
-    mousemove(event) {
+    mousemove (event) {
         this.main.mouse.x = event._x;
         this.main.mouse.y = event._y;
         this.main.mouse.event = event;
@@ -25,33 +25,37 @@ export default class MoveCommand extends Command {
         }
     }
 
-    mousedown(event) {
+    mousedown (event) {
         this.start.x = event._x - this.main.netPanningX;
         this.start.y = event._y - this.main.netPanningY;
         this.started = true;
     }
 
-    mouseup(event) {
+    mouseup (event) {
         if (this.started) {
             this.started = false;
             this.main.tempShape.length = 0;
             this.main.shapes[this.main.selected] = {
-                x: this.main.shapes[this.main.selected].x + (event._x - this.main.netPanningX - this.start.x),
-                y: this.main.shapes[this.main.selected].y + (event._y - this.main.netPanningY - this.start.y),
-                color: COLORS.shapes_stroke
+                ...this.main.shapes[this.main.selected] ,
+                x:  (event._x - this.main.netPanningX),
+                y:  (event._y - this.main.netPanningY),
+                color: COLORS.shapes_fill,
+                stroke: COLORS.shapes_stroke
             };
             this.main.HM.set(this.main.shapes)
         }
     }
 
-    mouseout(event) {
+    mouseout (event) {
         if (this.started) {
             this.started = false;
             this.main.tempShape.length = 0;
             this.main.shapes[this.main.selected] = {
-                x: this.main.shapes[this.main.selected].x + (event._x - this.main.netPanningX - this.start.x),
-                y: this.main.shapes[this.main.selected].y + (event._y - this.main.netPanningY - this.start.y),
-                color: COLORS.shapes_stroke
+                ...this.main.shapes[this.main.selected] ,
+                x:  (event._x - this.main.netPanningX),
+                y:  (event._y - this.main.netPanningY),
+                color: COLORS.shapes_fill,
+                stroke: COLORS.shapes_stroke
             };
             this.main.HM.set(this.main.shapes)
         }
