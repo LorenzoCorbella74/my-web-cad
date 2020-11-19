@@ -13,6 +13,7 @@ import LineCommand from './commands/line';
 import RectCommand from './commands/rect';
 import CircleCommand from './commands/circle';
 import MoveCommand from './commands/move';
+import CopyCommand from './commands/copy'
 
 window.onload = () => {
     const cad = new WebCAD();
@@ -36,12 +37,13 @@ export class WebCAD {
         this.commands = {
             'SELECT': new SelectCommand(this),
             'DELETE': new DeleteCommand(this),
+            'COPY': new CopyCommand(this),
+            'MOVE': new MoveCommand(this),
             'PAN': new PanCommand(this),
             'ZOOM': new ZoomCommand(this),
-            'MOVE': new MoveCommand(this),
             'LINE': new LineCommand(this),
             'RECT': new RectCommand(this),
-            'CIRCLE': new CircleCommand(this),
+            'CIRCLE': new CircleCommand(this)
         }
 
         this.mouse = {
@@ -125,7 +127,7 @@ export class WebCAD {
     /* ---------------------------- RENDER ----------------------------- */
 
     drawPointer() {
-        this.ctx.strokeStyle = "rgb(0,103,28)"; // green
+        this.ctx.strokeStyle = COLORS.CURSOR; // green
         this.ctx.strokeRect(this.mouse.x - 5 - this.netPanningX, this.mouse.y - 5 - this.netPanningY, 10, 10);
         this.ctx.lineWidth = 0.5;
         this.ctx.setLineDash([this.keys.currentSnap, this.keys.currentSnap]);   // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setLineDash

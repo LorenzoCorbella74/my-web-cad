@@ -41,5 +41,6 @@ export const COLORS = {
     shapes_fill_selected: 'rgba(200,0,100,0.25)',
     shapes_stroke: 'white',
     shapes_stroke_selected: 'salmon',
-    LINES: 'grey'
+    LINES: 'grey',
+    CURSOR: 'rgb(1, 255, 112)'
 }

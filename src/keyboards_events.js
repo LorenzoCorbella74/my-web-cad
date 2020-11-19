@@ -35,6 +35,8 @@ export default class KeyboardEvents {
                     this.choosenCommand = OPERATIONS.ARC;
                 } else if (e.key == 'f') {
                     this.choosenCommand = OPERATIONS.FILL; */
+            } else if (e.key == 'c') {
+                this.choosenCommand = OPERATIONS.COPY;
             } else if (e.key == 'm') {
                 this.choosenCommand = OPERATIONS.MOVE;
             } else if (e.key == 'd') {
@@ -43,7 +45,7 @@ export default class KeyboardEvents {
                 this.choosenCommand = OPERATIONS.LINE;
             } else if (e.key == 'r') {
                 this.choosenCommand = OPERATIONS.RECT;
-            } else if (e.key == 'c') {
+            } else if (e.key == 'a') {
                 this.choosenCommand = OPERATIONS.CIRCLE;
             } else if (e.key == 'p') {
                 this.choosenCommand = OPERATIONS.PAN;
