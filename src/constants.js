@@ -3,12 +3,21 @@ export const CANVAS_DIMENSIONS = {
     HEIGHT: 3000
 }
 
+// key : value in pixel
 export const SNAP_GRID = {
     'XS': 5,
     'S': 10,
     'M': 20,
     'L': 40,
     'XL': 80
+};
+
+// proportion from different unit measures 
+// pixels are the base...
+export const UNITS = {
+    pixels: 1,
+    cm: 2.5,
+    mt: 250
 };
 
 export const OPERATIONS = {

@@ -1,0 +1,30 @@
+Release BETA 0.6
+- valutare classe per rendering
+- resize rect and circle (pull & scale) and move vertices for lines
+- ui draggable commands panel
+- metadata in html header
+
+Release BETA 0.7
+- labels (linea e testo editabile su anchor)
+- measures (in grigio, <- xxcm -> clicco su punto iniziale, punto finale, drag su un lato
+- animation for copy / move / pull&scale, labels, measures
+
+Release BETA 0.8
+- arcs
+- extend linea
+- cut linea
+- UI to import/export JSON
+- UI to change colors & settings
+- UI cambiare  u.m. (1pixel -> 2.5cm, 1m, inserito dall'utente)
+
+Release BETA 0.9
+- multiple selection with drag (rect)
+- layers (UI list + visibility)
+- rotation command
+
+Release 1:
+- Readme & documentation 
+
+Release 2
+- BE
+- UI for drawings management with preview
