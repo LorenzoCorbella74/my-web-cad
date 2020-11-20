@@ -21,7 +21,8 @@ export default class LineCommand extends Command {
                 start_x: this.start.x,
                 start_y: this.start.y,
                 end_x: event._x - this.main.netPanningX,
-                end_y: event._y - this.main.netPanningY
+                end_y: event._y - this.main.netPanningY,
+                stroke: COLORS.LINES
             }]
         }
     }
@@ -41,7 +42,7 @@ export default class LineCommand extends Command {
                 start_y: this.start.y,
                 end_x: event._x - this.main.netPanningX,
                 end_y: event._y - this.main.netPanningY,
-                color: COLORS.shapes_stroke
+                stroke: COLORS.shapes_stroke
             }));
             this.main.HM.set(this.main.shapes)
         }
@@ -56,7 +57,7 @@ export default class LineCommand extends Command {
                 start_y: this.start.y,
                 end_x: event._x - this.main.netPanningX,
                 end_y: event._y - this.main.netPanningY,
-                color: COLORS.shapes_stroke
+                stroke: COLORS.shapes_stroke
             }));
             this.main.HM.set(this.main.shapes)
         }

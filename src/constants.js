@@ -29,9 +29,9 @@ export const OPERATIONS = {
     // MODIFICA
     MOVE: 'MOVE',
     ROTATE: "ROTATE",
+    COPY: 'COPY',
     // PULL: "PULL", una volta selezionato...
     // SCALE: 'SCALE',
-    COPY: 'COPY',
     // SHAPES
     LINE: 'LINE',
     RECT: 'RECT',
@@ -45,9 +45,14 @@ export const OPERATIONS = {
 };
 
 export const COLORS = {
-    shapes_fill: 'rgba(100,100,255,0.30)',
-    shapes_fill_selected: 'rgba(200,0,100,0.30)',
+    shapes_fill: 'rgba(100,100,255,0.25)',
+    shapes_fill_temp: 'rgba(100,100,180,0.20)',
+    shapes_fill_selected: 'rgba(200,0,100,0.25)',
     shapes_stroke: 'white',
     shapes_stroke_selected: 'salmon',
-    LINES: 'grey'
+    LINES: 'grey',
+    CURSOR: 'rgb(1, 255, 112)',
+    CANVAS: "rgb(31,40,49)",
+    LINES_BIG: "rgb(48,55,71)",
+    LINES_SMALL: "rgb(36,45,56)"
 }
