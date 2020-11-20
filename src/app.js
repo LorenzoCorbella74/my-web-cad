@@ -2,7 +2,7 @@ import KeyboardEvents from './keyboards_events';
 import HistoryManagement from './history_management';
 import { colorsTable } from './utils';
 
-import { CANVAS_DIMENSIONS, COLORS } from './constants';
+import { CANVAS_DIMENSIONS, COLORS, UNITS } from './constants';
 
 // Commands
 import PanCommand from './commands/pan';
@@ -53,6 +53,7 @@ export class WebCAD {
         };
 
         this.zoomLevel = 1;
+        this.choosenUnitSystem = 'ONE'
 
         this.shapes = [];
         this.tempShape = []
@@ -62,7 +63,15 @@ export class WebCAD {
         this.resizeCanvas()
     }
 
-    resizeCanvas() {
+    setUnitSystem (what) {
+        this.choosenUnitSystem = what
+    }
+
+    getValueAccordingToUnitSystem (val) {
+        return val ? val / UNITS[this.choosenUnitSystem] : 0;
+    }
+
+    resizeCanvas () {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
         this.ghostcanvas.width = window.innerWidth;
@@ -71,7 +80,7 @@ export class WebCAD {
         this.drawAll();
     }
 
-    startListening() {
+    startListening () {
         // resize the canvas to fill browser window dynamically
         window.addEventListener('resize', this.resizeCanvas.bind(this), false);
         this.canvas.oncontextmenu = () => false;
@@ -82,7 +91,7 @@ export class WebCAD {
         this.canvas.addEventListener('mouseout', this.globalHandler.bind(this), false);
     }
 
-    globalHandler(ev) {
+    globalHandler (ev) {
         ev.preventDefault();
         ev.stopPropagation();
         let x = parseInt(ev.clientX / this.zoomLevel);
@@ -113,20 +122,20 @@ export class WebCAD {
         }
     }
 
-    loop() {
+    loop () {
         this.drawAll();
         requestAnimationFrame(() => {
             this.loop()
         });
     }
 
-    start() {
+    start () {
         this.loop();
     }
 
     /* ---------------------------- RENDER ----------------------------- */
 
-    drawPointer() {
+    drawPointer () {
         this.ctx.strokeStyle = COLORS.CURSOR; // green
         this.ctx.strokeRect(this.mouse.x - 5 - this.netPanningX, this.mouse.y - 5 - this.netPanningY, 10, 10);
         this.ctx.lineWidth = 0.5;
@@ -143,12 +152,12 @@ export class WebCAD {
         this.ctx.stroke();
         this.ctx.fillStyle = COLORS.LINES;
         this.ctx.fillText(`${this.keys.choosenCommand.toUpperCase()}`, this.mouse.x + 12.5 - this.netPanningX, this.mouse.y - 4.5 - this.netPanningY)
-        this.ctx.fillText(`x: ${this.mouse.x - this.netPanningX} - y: ${this.mouse.y - this.netPanningY}`, this.mouse.x + 12.5 - this.netPanningX, this.mouse.y + 12.5 - this.netPanningY)
+        this.ctx.fillText(`x: ${this.getValueAccordingToUnitSystem(this.mouse.x - this.netPanningX)} - y: ${this.getValueAccordingToUnitSystem(this.mouse.y - this.netPanningY)}`, this.mouse.x + 12.5 - this.netPanningX, this.mouse.y + 12.5 - this.netPanningY)
         this.ctx.closePath();
         this.ctx.setLineDash([]);
     }
 
-    drawCanvas() {
+    drawCanvas () {
         this.ctx.fillStyle = COLORS.CANVAS;
         this.ctx.fillRect(0, 0, CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT);
         // colonne
@@ -170,7 +179,9 @@ export class WebCAD {
                 this.ctx.font = "11px Arial";
                 this.ctx.fillStyle = COLORS.LINES;
                 // this.ctx.textAlign = "center";
-                this.ctx.fillText(i.toString(), i + 2.5, 10 - (this.netPanningY > 0 ? 0 : this.netPanningY));
+                this.ctx.fillText(
+                    this.getValueAccordingToUnitSystem(i).toString(),
+                    i + 2.5, 10 - (this.netPanningY > 0 ? 0 : this.netPanningY));
             }
         }
         // righe
@@ -192,12 +203,14 @@ export class WebCAD {
                 this.ctx.font = "11px Arial";
                 this.ctx.fillStyle = COLORS.LINES;
                 // this.ctx.textAlign = "center";
-                this.ctx.fillText(i.toString(), 2.5 - (this.netPanningX > 0 ? 0 : this.netPanningX), i - 2.5);
+                this.ctx.fillText(
+                    this.getValueAccordingToUnitSystem(i).toString(),
+                    2.5 - (this.netPanningX > 0 ? 0 : this.netPanningX), i - 2.5);
             }
         }
     }
 
-    drawShapes(ctx, hit) {
+    drawShapes (ctx, hit) {
         [...this.HM.value, ...this.tempShape].forEach(item => {
             if (item.w && item.h) {
                 ctx.save()
@@ -227,7 +240,7 @@ export class WebCAD {
                 if (hit) {
                     ctx.lineWidth = 10 // to select lines...
                 } else {
-                    ctx.lineWidth = 2
+                    ctx.lineWidth = 0.5
                 }
                 ctx.moveTo(item.start_x, item.start_y)
                 ctx.lineTo(item.end_x, item.end_y)
@@ -238,7 +251,7 @@ export class WebCAD {
         });
     }
 
-    drawAll() {
+    drawAll () {
         this.ctx.fillStyle = "black";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.save();

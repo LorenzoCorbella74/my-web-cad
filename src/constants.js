@@ -15,9 +15,9 @@ export const SNAP_GRID = {
 // proportion from different unit measures 
 // pixels are the base...
 export const UNITS = {
-    pixels: 1,
-    cm: 2.5,
-    mt: 250
+    ONE: 1,
+    TEN: 10,
+    HUNDRED: 100
 };
 
 export const OPERATIONS = {
