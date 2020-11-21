@@ -30,7 +30,7 @@ export const OPERATIONS = {
     MOVE: 'MOVE',
     ROTATE: "ROTATE",
     COPY: 'COPY',
-    // PULL: "PULL", una volta selezionato...
+    RESIZE: "RESIZE",
     // SCALE: 'SCALE',
     // SHAPES
     LINE: 'LINE',

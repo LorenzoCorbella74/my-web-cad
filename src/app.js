@@ -2,7 +2,7 @@ import KeyboardEvents from './keyboards_events';
 import HistoryManagement from './history_management';
 import { colorsTable } from './utils';
 
-import { CANVAS_DIMENSIONS, COLORS, UNITS } from './constants';
+import { CANVAS_DIMENSIONS, COLORS, UNITS, OPERATIONS } from './constants';
 
 // Commands
 import PanCommand from './commands/pan';
@@ -14,6 +14,7 @@ import RectCommand from './commands/rect';
 import CircleCommand from './commands/circle';
 import MoveCommand from './commands/move';
 import CopyCommand from './commands/copy'
+import ResizeCommand from './commands/resize'
 
 window.onload = () => {
     const cad = new WebCAD();
@@ -39,6 +40,7 @@ export class WebCAD {
             'DELETE': new DeleteCommand(this),
             'COPY': new CopyCommand(this),
             'MOVE': new MoveCommand(this),
+            'RESIZE': new ResizeCommand(this),
             'PAN': new PanCommand(this),
             'ZOOM': new ZoomCommand(this),
             'LINE': new LineCommand(this),
@@ -57,21 +59,22 @@ export class WebCAD {
 
         this.shapes = [];
         this.tempShape = []
+        this.selected = null;
         this.HM = new HistoryManagement(this);
 
         this.startListening()
         this.resizeCanvas()
     }
 
-    setUnitSystem (what) {
+    setUnitSystem(what) {
         this.choosenUnitSystem = what
     }
 
-    getValueAccordingToUnitSystem (val) {
+    getValueAccordingToUnitSystem(val) {
         return val ? val / UNITS[this.choosenUnitSystem] : 0;
     }
 
-    resizeCanvas () {
+    resizeCanvas() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
         this.ghostcanvas.width = window.innerWidth;
@@ -80,7 +83,7 @@ export class WebCAD {
         this.drawAll();
     }
 
-    startListening () {
+    startListening() {
         // resize the canvas to fill browser window dynamically
         window.addEventListener('resize', this.resizeCanvas.bind(this), false);
         this.canvas.oncontextmenu = () => false;
@@ -91,7 +94,7 @@ export class WebCAD {
         this.canvas.addEventListener('mouseout', this.globalHandler.bind(this), false);
     }
 
-    globalHandler (ev) {
+    globalHandler(ev) {
         ev.preventDefault();
         ev.stopPropagation();
         let x = parseInt(ev.clientX / this.zoomLevel);
@@ -122,20 +125,20 @@ export class WebCAD {
         }
     }
 
-    loop () {
+    loop() {
         this.drawAll();
         requestAnimationFrame(() => {
             this.loop()
         });
     }
 
-    start () {
+    start() {
         this.loop();
     }
 
     /* ---------------------------- RENDER ----------------------------- */
 
-    drawPointer () {
+    drawPointer() {
         this.ctx.strokeStyle = COLORS.CURSOR; // green
         this.ctx.strokeRect(this.mouse.x - 5 - this.netPanningX, this.mouse.y - 5 - this.netPanningY, 10, 10);
         this.ctx.lineWidth = 0.5;
@@ -157,7 +160,7 @@ export class WebCAD {
         this.ctx.setLineDash([]);
     }
 
-    drawCanvas () {
+    drawCanvas() {
         this.ctx.fillStyle = COLORS.CANVAS;
         this.ctx.fillRect(0, 0, CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT);
         // colonne
@@ -210,7 +213,7 @@ export class WebCAD {
         }
     }
 
-    drawShapes (ctx, hit) {
+    drawShapes(ctx, hit) {
         [...this.HM.value, ...this.tempShape].forEach(item => {
             if (item.w && item.h) {
                 ctx.save()
@@ -251,7 +254,7 @@ export class WebCAD {
         });
     }
 
-    drawAll () {
+    drawAll() {
         this.ctx.fillStyle = "black";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.save();

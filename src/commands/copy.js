@@ -28,9 +28,26 @@ export default class CopyCommand extends Command {
     }
 
     mousedown(event) {
-        this.start.x = event._x - this.main.netPanningX;
-        this.start.y = event._y - this.main.netPanningY;
-        this.started = true;
+        const pixel = this.main.gctx.getImageData(event._x * this.main.zoomLevel, event._y * this.main.zoomLevel, 1, 1).data;
+        // create rgb color for that pixel
+        const color = `rgb(${pixel[0]},${pixel[1]},${pixel[2]})`;
+        // find a shape with the same colour
+
+        this.main.shapes.forEach((item, index) => {
+            if (item.colorKey === color) {
+                item.selected = true;
+                this.main.selected = index;
+            } else {
+                item.selected = false;
+            }
+        });
+        if (this.main.shapes.every(e => e.selected === false)) {
+            this.main.selected = null;
+        } else {
+            this.started = true;
+            this.start.x = event._x - this.main.netPanningX;
+            this.start.y = event._y - this.main.netPanningY;
+        }
     }
 
     mouseup(event) {

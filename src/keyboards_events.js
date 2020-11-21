@@ -35,6 +35,8 @@ export default class KeyboardEvents {
                     this.choosenCommand = OPERATIONS.ARC;
                 } else if (e.key == 'f') {
                     this.choosenCommand = OPERATIONS.FILL; */
+            } else if (e.key == 'e') {
+                this.choosenCommand = OPERATIONS.RESIZE;
             } else if (e.key == 'c') {
                 this.choosenCommand = OPERATIONS.COPY;
             } else if (e.key == 'm') {
