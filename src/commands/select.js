@@ -1,4 +1,6 @@
 import Command from './command';
+import { COLORS, TEXT } from '../constants';
+import { trackSelection } from '../utils'
 
 export default class SelectCommand extends Command {
 
@@ -24,6 +26,22 @@ export default class SelectCommand extends Command {
         if (this.main.shapes.every(e => e.selected === false)) {
             this.main.selected = null;
         }
+
+        // if it's a text open the dialogue
+        if (this.main.shapes[this.main.selected] && this.main.shapes[this.main.selected].text) {
+            let theOne = this.main.shapes[this.main.selected]
+            this.main.textModal.open(
+                theOne.start_x - this.main.netPanningX,
+                theOne.start_y - this.main.netPanningY,
+                theOne.text,
+                (val) => this.updateText(val))
+        }
+    }
+
+    updateText(info) {
+        let { val } = info;
+        this.main.shapes[this.main.selected].text = val;
+        this.main.HM.set(this.main.shapes)
     }
 
 }

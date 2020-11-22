@@ -59,5 +59,5 @@ export const COLORS = {
 
 export const TEXT = {
     OFFSET: 5,
-    FONT: '11px Arial'
+    FONT: '13px Arial'
 }

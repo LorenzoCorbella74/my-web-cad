@@ -37,22 +37,33 @@ export default class TextCommand extends Command {
         if (this.started) {
             this.started = false;
             this.main.tempShape.length = 0;
-            this.main.shapes.push(trackSelection({
-                start_x: this.start.x,
-                start_y: this.start.y,
-                end_x: event._x - this.main.netPanningX,
-                end_y: event._y - this.main.netPanningY,
-                stroke: COLORS.LINES
-            }));
-            this.main.shapes.push(trackSelection({
-                start_x: (event._x - this.main.netPanningX) + TEXT.OFFSET,
-                start_y: (event._y - this.main.netPanningY) - TEXT.OFFSET,
-                text: 'Solo per i tuoi occhi',
-                font: TEXT.FONT,
-                fill: COLORS.shapes_stroke
-            }));
-            this.main.HM.set(this.main.shapes)
+
+            this.main.textModal.open(
+                event._x - this.main.netPanningX,
+                event._y - this.main.netPanningY,
+                '',
+                (val) => this.saveText(val))
         }
+    }
+
+    saveText(info) {
+        let { x, y, val } = info;
+        this.main.shapes.push(trackSelection({
+            start_x: this.start.x,
+            start_y: this.start.y,
+            dashed: true,
+            end_x: x - this.main.netPanningX,
+            end_y: y - this.main.netPanningY,
+            stroke: COLORS.LINES
+        }));
+        this.main.shapes.push(trackSelection({
+            start_x: (x - this.main.netPanningX) + TEXT.OFFSET,
+            start_y: (y - this.main.netPanningY) - TEXT.OFFSET,
+            text: val,
+            font: TEXT.FONT,
+            fill: COLORS.shapes_stroke
+        }));
+        this.main.HM.set(this.main.shapes)
     }
 
     mouseout(event) {

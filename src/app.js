@@ -1,8 +1,11 @@
+import '../style.css'
+
 import KeyboardEvents from './keyboards_events';
 import HistoryManagement from './history_management';
 import { colorsTable } from './utils';
+import InputDialogue from './input-dialogue';
 
-import { CANVAS_DIMENSIONS, COLORS, UNITS, OPERATIONS } from './constants';
+import { CANVAS_DIMENSIONS, COLORS, UNITS, OPERATIONS, TEXT } from './constants';
 
 // Commands
 import PanCommand from './commands/pan';
@@ -49,6 +52,8 @@ export class WebCAD {
             'CIRCLE': new CircleCommand(this),
             'TEXT': new TextCommand(this)
         }
+
+        this.textModal = new InputDialogue(this)
 
         this.mouse = {
             x: 0,
@@ -181,7 +186,7 @@ export class WebCAD {
                 this.ctx.stroke();
             }
             if (i % 100 === 0) {
-                this.ctx.font = "11px Arial";
+                this.ctx.font = TEXT.FONT;
                 this.ctx.fillStyle = COLORS.LINES;
                 // this.ctx.textAlign = "center";
                 this.ctx.fillText(
@@ -205,7 +210,7 @@ export class WebCAD {
                 this.ctx.stroke();
             }
             if (i % 100 === 0) {
-                this.ctx.font = "11px Arial";
+                this.ctx.font = TEXT.FONT;
                 this.ctx.fillStyle = COLORS.LINES;
                 // this.ctx.textAlign = "center";
                 this.ctx.fillText(
@@ -227,7 +232,7 @@ export class WebCAD {
                     ctx.save()
                     ctx.fillStyle = item.colorKey
                     ctx.beginPath()
-                    ctx.rect(item.start_x, item.start_y, 50, 20)
+                    ctx.rect(item.start_x, item.start_y - 15, 100, 20)
                     ctx.fill()
                     ctx.stroke()
                     ctx.restore()
@@ -268,6 +273,9 @@ export class WebCAD {
                 ctx.save()
                 ctx.strokeStyle = item.selected ? COLORS.shapes_stroke_selected : (hit ? item.colorKey : item.stroke)
                 ctx.beginPath()
+                if (item.dashed) {
+                    ctx.setLineDash([this.keys.currentSnap / 3, this.keys.currentSnap]);
+                }
                 ctx.moveTo(item.start_x, item.start_y)
                 ctx.lineTo(item.end_x, item.end_y)
                 ctx.closePath()

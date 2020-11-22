@@ -5,10 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WEBCAD</title>
-    <style>* {
+    <style>
+        * {
             margin: 0;
             padding: 0;
-            cursor: none;
+            /* cursor: none; */
             box-sizing: border-box;
         }
 
@@ -21,13 +22,25 @@
 
         canvas {
             /* border: 1px solid rgb(62, 62, 62); */
-        }</style>
-</head>
+        }
+    </style>
+<link rel="stylesheet" href="/app.52b09c74.css"></head>
 
 <body>
     <canvas id="canvas"></canvas>
+
+    <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <input data-text="">
+            <span class="save">&#10004;</span>
+            <span class="close">&times;</span>
+        </div>
+
+    </div>
 </body>
 
-<script src="/app.a6a4d504.js" type="module"></script>
+<script src="/app.52b09c74.js" type="module"></script>
 
 </html>
