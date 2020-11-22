@@ -51,6 +51,8 @@ export default class KeyboardEvents {
                 this.choosenCommand = OPERATIONS.CIRCLE;
             } else if (e.key == 'p') {
                 this.choosenCommand = OPERATIONS.PAN;
+            } else if (e.key == 't') {
+                this.choosenCommand = OPERATIONS.TEXT;
             } else if (e.key == 0) {
                 this.hasSnap = false;
             } else if (e.key == "1") {

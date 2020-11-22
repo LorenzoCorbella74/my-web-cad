@@ -15,6 +15,7 @@ import CircleCommand from './commands/circle';
 import MoveCommand from './commands/move';
 import CopyCommand from './commands/copy'
 import ResizeCommand from './commands/resize'
+import TextCommand from './commands/text';
 
 window.onload = () => {
     const cad = new WebCAD();
@@ -45,7 +46,8 @@ export class WebCAD {
             'ZOOM': new ZoomCommand(this),
             'LINE': new LineCommand(this),
             'RECT': new RectCommand(this),
-            'CIRCLE': new CircleCommand(this)
+            'CIRCLE': new CircleCommand(this),
+            'TEXT': new TextCommand(this)
         }
 
         this.mouse = {
@@ -220,7 +222,30 @@ export class WebCAD {
             } else {
                 ctx.lineWidth = 0.5
             }
-            if (item.w && item.h) {
+            if (item.text) {
+                if (hit) {
+                    ctx.save()
+                    ctx.fillStyle = item.colorKey
+                    ctx.beginPath()
+                    ctx.rect(item.start_x, item.start_y, 50, 20)
+                    ctx.fill()
+                    ctx.stroke()
+                    ctx.restore()
+                } else {
+                    ctx.save()
+                    ctx.fillStyle = item.selected ? COLORS.shapes_fill_selected : (hit ? item.colorKey : item.color)
+                    ctx.beginPath()
+                    ctx.font = item.font;
+                    ctx.fillText(item.text, item.start_x, item.start_y);
+                    ctx.restore()
+                }
+                ctx.save()
+                ctx.fillStyle = item.selected ? COLORS.shapes_fill_selected : (hit ? item.colorKey : item.color)
+                ctx.beginPath()
+                ctx.font = item.font;
+                ctx.fillText(item.text, item.start_x, item.start_y);
+                ctx.restore()
+            } else if (item.w && item.h) {
                 ctx.save()
                 ctx.fillStyle = item.selected ? COLORS.shapes_fill_selected : (hit ? item.colorKey : item.color)
                 ctx.strokeStyle = item.selected ? COLORS.shapes_stroke_selected : (hit ? item.colorKey : item.stroke)

@@ -37,7 +37,8 @@ export default class ResizeCommand extends Command {
             this.main.selected = null;
         }
 
-        if (this.main.selected || this.main.selected === 0) {
+        // if there is a selected and is a rectangle
+        if ((this.main.selected || this.main.selected === 0) && this.main.shapes[this.main.selected].w) {
             this.createBoxes();
         } else {
             this.removeBoxes();

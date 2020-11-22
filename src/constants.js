@@ -56,3 +56,8 @@ export const COLORS = {
     LINES_BIG: "rgb(48,55,71)",
     LINES_SMALL: "rgb(36,45,56)"
 }
+
+export const TEXT = {
+    OFFSET: 5,
+    FONT: '11px Arial'
+}
