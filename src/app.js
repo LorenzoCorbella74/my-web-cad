@@ -215,9 +215,13 @@ export class WebCAD {
 
     drawShapes(ctx, hit) {
         [...this.HM.value, ...this.tempShape].forEach(item => {
+            if (hit) {
+                ctx.lineWidth = 10 // to select lines or sides of rect...
+            } else {
+                ctx.lineWidth = 0.5
+            }
             if (item.w && item.h) {
                 ctx.save()
-                ctx.lineWidth = 0.5
                 ctx.fillStyle = item.selected ? COLORS.shapes_fill_selected : (hit ? item.colorKey : item.color)
                 ctx.strokeStyle = item.selected ? COLORS.shapes_stroke_selected : (hit ? item.colorKey : item.stroke)
                 ctx.beginPath()
@@ -227,7 +231,6 @@ export class WebCAD {
                 ctx.restore()
             } else if (item.radius) {
                 ctx.save()
-                ctx.lineWidth = 0.5
                 ctx.strokeStyle = item.selected ? COLORS.shapes_stroke_selected : (hit ? item.colorKey : item.stroke)
                 ctx.fillStyle = item.selected ? COLORS.shapes_fill_selected : (hit ? item.colorKey : item.color)
                 ctx.beginPath()
@@ -240,11 +243,6 @@ export class WebCAD {
                 ctx.save()
                 ctx.strokeStyle = item.selected ? COLORS.shapes_stroke_selected : (hit ? item.colorKey : item.stroke)
                 ctx.beginPath()
-                if (hit) {
-                    ctx.lineWidth = 10 // to select lines...
-                } else {
-                    ctx.lineWidth = 0.5
-                }
                 ctx.moveTo(item.start_x, item.start_y)
                 ctx.lineTo(item.end_x, item.end_y)
                 ctx.closePath()
