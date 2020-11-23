@@ -24,24 +24,32 @@
 .modal-content {
     background-color: rgb(31, 40, 49);
     padding: 10px 5px;
-    border: 1px solid #888;
+    border: 1px solid grey;
+    border-radius: 3px;
     width: 240px;
     display: flex;
+}
+
+.modal-content input {
+    outline: none;
+    background-color: transparent;
+    color: white;
 }
 
 /* The Close/save Buttons */
 .close,
 .save {
     margin-left: 12px;
-    font-size: 24px;
     font-weight: bold;
 }
 
 .close {
-    color: red
+    color: red;
+    font-size: 30px;
 }
 
 .save {
+    font-size: 24px;
     color: green
 }
 

@@ -24,7 +24,7 @@ export default class InputDialogue {
 
     close(e) {
         this.modal.style.display = "none";
-        /* this.isOpen = false; */
+        this.isOpen = false;
     }
 
     save(e) {
@@ -34,7 +34,7 @@ export default class InputDialogue {
     }
 
     open(x, y, value, callback) {
-        /* this.isOpen = true; */
+        this.isOpen = true;
         this.x = x;
         this.y = y;
         this.modal.style.display = "block";
