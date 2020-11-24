@@ -164,7 +164,7 @@ export class WebCAD {
 
     unselectAll(){
         this.shapes.forEach((item, index) => {
-                item.selected = true;
+                item.selected = false;
         });
         this.selected = null;
     }
