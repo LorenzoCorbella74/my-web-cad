@@ -61,3 +61,8 @@ export const TEXT = {
     OFFSET: 5,
     FONT: '13px Arial'
 }
+
+export const ANIMATION = {
+    TIME: 1,
+    
+}

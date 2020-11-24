@@ -5,7 +5,7 @@ import HistoryManagement from './history_management';
 import { colorsTable } from './utils';
 import InputDialogue from './input-dialogue';
 
-import { CANVAS_DIMENSIONS, COLORS, UNITS, OPERATIONS, TEXT } from './constants';
+import { CANVAS_DIMENSIONS, COLORS, UNITS, OPERATIONS, TEXT, ANIMATION } from './constants';
 
 // Commands
 import PanCommand from './commands/pan';
@@ -91,7 +91,7 @@ export class WebCAD {
         this.ghostcanvas.width = window.innerWidth;
         this.ghostcanvas.height = window.innerHeight;
         /* this.canvas.style.cursor = "none" */
-        this.drawAll();
+        this.draw();
     }
 
     startListening () {
@@ -136,10 +136,19 @@ export class WebCAD {
         }
     }
 
-    loop (dt) {
-        this.drawAll(dt);
-        requestAnimationFrame((dt) => {
-            this.loop(dt)
+    loop () {
+        // time management for animation
+        this.currentTime = (new Date()).getTime();
+        this.dt = (this.currentTime - this.lastTime) / 1000;
+
+        this.update(this.dt)
+
+        this.draw();
+
+        this.lastTime = this.currentTime;
+
+        requestAnimationFrame(() => {
+            this.loop()
         });
     }
 
@@ -147,9 +156,39 @@ export class WebCAD {
         this.loop();
     }
 
+    interpolate (a, b, frac) {
+        var nx = a.x + (b.x - a.x) * frac;
+        var ny = a.y + (b.y - a.y) * frac;
+        return { x: nx, y: ny };
+    }
+
+    unselectAll(){
+        this.shapes.forEach((item, index) => {
+                item.selected = true;
+        });
+        this.selected = null;
+    }
+
+    update (dt) {
+        // console.log(dt)
+        [...this.HM.value].forEach(item => {
+            if (item.animation) {
+                if (item.counter <= ANIMATION.TIME) {
+                    item.counter += 0.05
+                    let { x, y } = this.interpolate({ x: item.start_x, y: item.start_y }, { x: item.new_start_x, y: item.new_start_y }, item.counter / ANIMATION.TIME);
+                    item.start_x = x;
+                    item.start_y = y;
+                } else {
+                    item.animation = false;
+                    this.unselectAll();
+                }
+            }
+        })
+    }
+
     /* ---------------------------- RENDER ----------------------------- */
 
-    drawPointer () {
+    renderPointer () {
         this.ctx.strokeStyle = COLORS.CURSOR; // green
         this.ctx.strokeRect(this.mouse.x - 5 - this.netPanningX, this.mouse.y - 5 - this.netPanningY, 10, 10);
         this.ctx.lineWidth = 0.5;
@@ -171,7 +210,7 @@ export class WebCAD {
         this.ctx.setLineDash([]);
     }
 
-    drawCanvas () {
+    renderCanvas () {
         this.ctx.fillStyle = COLORS.CANVAS;
         this.ctx.fillRect(0, 0, CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT);
         // colonne
@@ -224,7 +263,7 @@ export class WebCAD {
         }
     }
 
-    drawShapes (dt, ctx, hit) {
+    renderShapes (ctx, hit) {
         [...this.HM.value, ...this.tempShape].forEach(item => {
             if (hit) {
                 ctx.lineWidth = 10 // to select lines or sides of rect...
@@ -289,30 +328,26 @@ export class WebCAD {
         });
     }
 
-    drawAll () {
-        // time management for animation
-        this.currentTime = (new Date()).getTime();
-        this.dt = (this.currentTime - this.lastTime) / 1000;
-
+    draw () {
+        // CANCAS
         this.ctx.fillStyle = "black";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.save();
         this.ctx.scale(this.zoomLevel, this.zoomLevel); // apply scale
         this.ctx.translate(this.netPanningX, this.netPanningY); // apply translation
-        this.drawCanvas(this.dt);
-        this.drawPointer(this.dt);
-        this.drawShapes(this.dt, this.ctx, false);
+        this.renderCanvas();
+        this.renderPointer();
+        this.renderShapes(this.ctx, false);
         this.ctx.restore();
 
+        // GHOST CANVAS for HIT Detection
         this.gctx.fillStyle = "black";
         this.gctx.fillRect(0, 0, this.ghostcanvas.width, this.ghostcanvas.height);
         this.gctx.save();
         this.gctx.scale(this.zoomLevel, this.zoomLevel); // apply scale
         this.gctx.translate(this.netPanningX, this.netPanningY); // apply translation
-        this.drawShapes(this.dt, this.gctx, true);
+        this.renderShapes(this.gctx, true);
         this.gctx.restore();
-
-        this.lastTime = this.currentTime;
     }
 
     /* ---------------------------- RENDER ----------------------------- */
