@@ -22,25 +22,25 @@ export default class InputDialogue {
         }
     }
 
-    close(e) {
+    close (e) {
         this.modal.style.display = "none";
         this.isOpen = false;
     }
 
-    save(e) {
+    save (e) {
         this.close();
         this.callback && this.callback({ x: this.x, y: this.y, val: this.input.value });
         this.input.value = '';
     }
 
-    open(x, y, value, callback) {
+    open (x, y, value, callback) {
         this.isOpen = true;
         this.x = x;
         this.y = y;
         this.modal.style.display = "block";
         this.content.style.position = "absolute";
         this.content.style.left = x + 'px';
-        this.content.style.top = y + 'px';
+        this.content.style.top = (y - 26) + 'px';
         this.input.value = value
         this.input.focus()
         this.callback = callback;

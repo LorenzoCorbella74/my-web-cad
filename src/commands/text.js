@@ -48,21 +48,23 @@ export default class TextCommand extends Command {
 
     saveText(info) {
         let { x, y, val } = info;
-        this.main.shapes.push(trackSelection({
+        let dashed_line = trackSelection({
             start_x: this.start.x,
             start_y: this.start.y,
             dashed: true,
             end_x: x - this.main.netPanningX,
             end_y: y - this.main.netPanningY,
             stroke: COLORS.LINES
-        }));
-        this.main.shapes.push(trackSelection({
+        });
+        this.main.shapes.push(dashed_line);
+        this.main.shapes.push({
             start_x: (x - this.main.netPanningX) + TEXT.OFFSET,
             start_y: (y - this.main.netPanningY) - TEXT.OFFSET,
             text: val,
             font: TEXT.FONT,
-            fill: COLORS.shapes_stroke
-        }));
+            fill: COLORS.shapes_stroke,
+            colorKey:dashed_line.colorKey
+        });
         this.main.HM.set(this.main.shapes)
     }
 

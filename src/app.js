@@ -69,19 +69,23 @@ export class WebCAD {
         this.selected = null;
         this.HM = new HistoryManagement(this);
 
+        this.lastTime = (new Date()).getTime();
+        this.currentTime = 0;
+        this.delta = 0;
+
         this.startListening()
         this.resizeCanvas()
     }
 
-    setUnitSystem(what) {
+    setUnitSystem (what) {
         this.choosenUnitSystem = what
     }
 
-    getValueAccordingToUnitSystem(val) {
+    getValueAccordingToUnitSystem (val) {
         return val ? val / UNITS[this.choosenUnitSystem] : 0;
     }
 
-    resizeCanvas() {
+    resizeCanvas () {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
         this.ghostcanvas.width = window.innerWidth;
@@ -90,7 +94,7 @@ export class WebCAD {
         this.drawAll();
     }
 
-    startListening() {
+    startListening () {
         // resize the canvas to fill browser window dynamically
         window.addEventListener('resize', this.resizeCanvas.bind(this), false);
         this.canvas.oncontextmenu = () => false;
@@ -101,7 +105,7 @@ export class WebCAD {
         this.canvas.addEventListener('mouseout', this.globalHandler.bind(this), false);
     }
 
-    globalHandler(ev) {
+    globalHandler (ev) {
         ev.preventDefault();
         ev.stopPropagation();
         let x = parseInt(ev.clientX / this.zoomLevel);
@@ -132,20 +136,20 @@ export class WebCAD {
         }
     }
 
-    loop() {
-        this.drawAll();
-        requestAnimationFrame(() => {
-            this.loop()
+    loop (dt) {
+        this.drawAll(dt);
+        requestAnimationFrame((dt) => {
+            this.loop(dt)
         });
     }
 
-    start() {
+    start () {
         this.loop();
     }
 
     /* ---------------------------- RENDER ----------------------------- */
 
-    drawPointer() {
+    drawPointer () {
         this.ctx.strokeStyle = COLORS.CURSOR; // green
         this.ctx.strokeRect(this.mouse.x - 5 - this.netPanningX, this.mouse.y - 5 - this.netPanningY, 10, 10);
         this.ctx.lineWidth = 0.5;
@@ -167,7 +171,7 @@ export class WebCAD {
         this.ctx.setLineDash([]);
     }
 
-    drawCanvas() {
+    drawCanvas () {
         this.ctx.fillStyle = COLORS.CANVAS;
         this.ctx.fillRect(0, 0, CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT);
         // colonne
@@ -220,7 +224,7 @@ export class WebCAD {
         }
     }
 
-    drawShapes(ctx, hit) {
+    drawShapes (dt, ctx, hit) {
         [...this.HM.value, ...this.tempShape].forEach(item => {
             if (hit) {
                 ctx.lineWidth = 10 // to select lines or sides of rect...
@@ -232,7 +236,7 @@ export class WebCAD {
                     ctx.save()
                     ctx.fillStyle = item.colorKey
                     ctx.beginPath()
-                    ctx.rect(item.start_x, item.start_y - 15, 100, 20)
+                    ctx.rect(item.start_x, item.start_y - 13, 9 * item.text.length, 20) /* 9px for each char */
                     ctx.fill()
                     ctx.stroke()
                     ctx.restore()
@@ -274,7 +278,7 @@ export class WebCAD {
                 ctx.strokeStyle = item.selected ? COLORS.shapes_stroke_selected : (hit ? item.colorKey : item.stroke)
                 ctx.beginPath()
                 if (item.dashed) {
-                    ctx.setLineDash([this.keys.currentSnap / 3, this.keys.currentSnap]);
+                    ctx.setLineDash([3.5, 10]);
                 }
                 ctx.moveTo(item.start_x, item.start_y)
                 ctx.lineTo(item.end_x, item.end_y)
@@ -285,15 +289,19 @@ export class WebCAD {
         });
     }
 
-    drawAll() {
+    drawAll () {
+        // time management for animation
+        this.currentTime = (new Date()).getTime();
+        this.dt = (this.currentTime - this.lastTime) / 1000;
+
         this.ctx.fillStyle = "black";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.save();
         this.ctx.scale(this.zoomLevel, this.zoomLevel); // apply scale
         this.ctx.translate(this.netPanningX, this.netPanningY); // apply translation
-        this.drawCanvas();
-        this.drawPointer();
-        this.drawShapes(this.ctx, false);
+        this.drawCanvas(this.dt);
+        this.drawPointer(this.dt);
+        this.drawShapes(this.dt, this.ctx, false);
         this.ctx.restore();
 
         this.gctx.fillStyle = "black";
@@ -301,8 +309,10 @@ export class WebCAD {
         this.gctx.save();
         this.gctx.scale(this.zoomLevel, this.zoomLevel); // apply scale
         this.gctx.translate(this.netPanningX, this.netPanningY); // apply translation
-        this.drawShapes(this.gctx, true);
+        this.drawShapes(this.dt, this.gctx, true);
         this.gctx.restore();
+
+        this.lastTime = this.currentTime;
     }
 
     /* ---------------------------- RENDER ----------------------------- */
