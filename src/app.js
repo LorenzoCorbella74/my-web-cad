@@ -2,10 +2,12 @@ import '../style.css'
 
 import KeyboardEvents from './keyboards_events';
 import HistoryManagement from './history_management';
-import { colorsTable } from './utils';
+import { colorsTable, interpolate } from './utils';
 import InputDialogue from './input-dialogue';
 
-import { CANVAS_DIMENSIONS, COLORS, UNITS, OPERATIONS, TEXT, ANIMATION } from './constants';
+import { UNITS, ANIMATION } from './constants';
+
+import { renderPointer, renderCanvas, renderShapes } from './renderFn'
 
 // Commands
 import PanCommand from './commands/pan';
@@ -156,15 +158,9 @@ export class WebCAD {
         this.loop();
     }
 
-    interpolate (a, b, frac) {
-        var nx = a.x + (b.x - a.x) * frac;
-        var ny = a.y + (b.y - a.y) * frac;
-        return { x: nx, y: ny };
-    }
-
-    unselectAll(){
+    unselectAll () {
         this.shapes.forEach((item, index) => {
-                item.selected = false;
+            item.selected = false;
         });
         this.selected = null;
     }
@@ -175,7 +171,7 @@ export class WebCAD {
             if (item.animation) {
                 if (item.counter <= ANIMATION.TIME) {
                     item.counter += 0.05
-                    let { x, y } = this.interpolate({ x: item.start_x, y: item.start_y }, { x: item.new_start_x, y: item.new_start_y }, item.counter / ANIMATION.TIME);
+                    let { x, y } = interpolate({ x: item.start_x, y: item.start_y }, { x: item.new_start_x, y: item.new_start_y }, item.counter / ANIMATION.TIME);
                     item.start_x = x;
                     item.start_y = y;
                 } else {
@@ -186,148 +182,6 @@ export class WebCAD {
         })
     }
 
-    /* ---------------------------- RENDER ----------------------------- */
-
-    renderPointer () {
-        this.ctx.strokeStyle = COLORS.CURSOR; // green
-        this.ctx.strokeRect(this.mouse.x - 5 - this.netPanningX, this.mouse.y - 5 - this.netPanningY, 10, 10);
-        this.ctx.lineWidth = 0.5;
-        this.ctx.setLineDash([this.keys.currentSnap, this.keys.currentSnap]);   // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setLineDash
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.mouse.x - this.netPanningX, 0);
-        this.ctx.lineTo(this.mouse.x - this.netPanningX, this.mouse.y - 5 - this.netPanningY);
-        this.ctx.moveTo(this.mouse.x - this.netPanningX, this.mouse.y + 5 - this.netPanningY);
-        this.ctx.lineTo(this.mouse.x - this.netPanningX, CANVAS_DIMENSIONS.HEIGHT);
-        this.ctx.moveTo(0, this.mouse.y - this.netPanningY);
-        this.ctx.lineTo(this.mouse.x - 5 - this.netPanningX, this.mouse.y - this.netPanningY);
-        this.ctx.moveTo(this.mouse.x + 5 - this.netPanningX, this.mouse.y - this.netPanningY);
-        this.ctx.lineTo(CANVAS_DIMENSIONS.WIDTH, this.mouse.y - this.netPanningY);
-        this.ctx.stroke();
-        this.ctx.fillStyle = COLORS.LINES;
-        this.ctx.fillText(`${this.keys.choosenCommand.toUpperCase()}`, this.mouse.x + 12.5 - this.netPanningX, this.mouse.y - 4.5 - this.netPanningY)
-        this.ctx.fillText(`x: ${this.getValueAccordingToUnitSystem(this.mouse.x - this.netPanningX)} - y: ${this.getValueAccordingToUnitSystem(this.mouse.y - this.netPanningY)}`, this.mouse.x + 12.5 - this.netPanningX, this.mouse.y + 12.5 - this.netPanningY)
-        this.ctx.closePath();
-        this.ctx.setLineDash([]);
-    }
-
-    renderCanvas () {
-        this.ctx.fillStyle = COLORS.CANVAS;
-        this.ctx.fillRect(0, 0, CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT);
-        // colonne
-        for (let i = 0; i < CANVAS_DIMENSIONS.WIDTH; i += this.keys.currentSnap) {
-            if (this.keys.hasSnap) {
-                this.ctx.beginPath();
-                this.ctx.moveTo(i + 0.5, 0);
-                this.ctx.lineTo(i + 0.5, CANVAS_DIMENSIONS.HEIGHT);
-                if (i % 100 === 0) {
-                    this.ctx.strokeStyle = COLORS.LINES_BIG;
-                } else {
-                    this.ctx.strokeStyle = COLORS.LINES_SMALL;
-                }
-                this.ctx.lineWidth = 0.5;
-                this.ctx.closePath()
-                this.ctx.stroke();
-            }
-            if (i % 100 === 0) {
-                this.ctx.font = TEXT.FONT;
-                this.ctx.fillStyle = COLORS.LINES;
-                // this.ctx.textAlign = "center";
-                this.ctx.fillText(
-                    this.getValueAccordingToUnitSystem(i).toString(),
-                    i + 2.5, 10 - (this.netPanningY > 0 ? 0 : this.netPanningY));
-            }
-        }
-        // righe
-        for (let i = 0; i < CANVAS_DIMENSIONS.HEIGHT; i += this.keys.currentSnap) {
-            if (this.keys.hasSnap) {
-                this.ctx.beginPath();
-                this.ctx.moveTo(0, i + 0.5);
-                this.ctx.lineTo(CANVAS_DIMENSIONS.WIDTH, i + 0.5);
-                if (i % 100 === 0) {
-                    this.ctx.strokeStyle = COLORS.LINES_BIG;
-                } else {
-                    this.ctx.strokeStyle = COLORS.LINES_SMALL;
-                }
-                this.ctx.lineWidth = 0.5;
-                this.ctx.closePath()
-                this.ctx.stroke();
-            }
-            if (i % 100 === 0) {
-                this.ctx.font = TEXT.FONT;
-                this.ctx.fillStyle = COLORS.LINES;
-                // this.ctx.textAlign = "center";
-                this.ctx.fillText(
-                    this.getValueAccordingToUnitSystem(i).toString(),
-                    2.5 - (this.netPanningX > 0 ? 0 : this.netPanningX), i - 2.5);
-            }
-        }
-    }
-
-    renderShapes (ctx, hit) {
-        [...this.HM.value, ...this.tempShape].forEach(item => {
-            if (hit) {
-                ctx.lineWidth = 10 // to select lines or sides of rect...
-            } else {
-                ctx.lineWidth = 0.5
-            }
-            if (item.text) {
-                if (hit) {
-                    ctx.save()
-                    ctx.fillStyle = item.colorKey
-                    ctx.beginPath()
-                    ctx.rect(item.start_x, item.start_y - 13, 9 * item.text.length, 20) /* 9px for each char */
-                    ctx.fill()
-                    ctx.stroke()
-                    ctx.restore()
-                } else {
-                    ctx.save()
-                    ctx.fillStyle = item.selected ? COLORS.shapes_fill_selected : (hit ? item.colorKey : item.color)
-                    ctx.beginPath()
-                    ctx.font = item.font;
-                    ctx.fillText(item.text, item.start_x, item.start_y);
-                    ctx.restore()
-                }
-                ctx.save()
-                ctx.fillStyle = item.selected ? COLORS.shapes_fill_selected : (hit ? item.colorKey : item.color)
-                ctx.beginPath()
-                ctx.font = item.font;
-                ctx.fillText(item.text, item.start_x, item.start_y);
-                ctx.restore()
-            } else if (item.w && item.h) {
-                ctx.save()
-                ctx.fillStyle = item.selected ? COLORS.shapes_fill_selected : (hit ? item.colorKey : item.color)
-                ctx.strokeStyle = item.selected ? COLORS.shapes_stroke_selected : (hit ? item.colorKey : item.stroke)
-                ctx.beginPath()
-                ctx.rect(item.start_x, item.start_y, item.w, item.h)
-                ctx.fill()
-                ctx.stroke()
-                ctx.restore()
-            } else if (item.radius) {
-                ctx.save()
-                ctx.strokeStyle = item.selected ? COLORS.shapes_stroke_selected : (hit ? item.colorKey : item.stroke)
-                ctx.fillStyle = item.selected ? COLORS.shapes_fill_selected : (hit ? item.colorKey : item.color)
-                ctx.beginPath()
-                // x, y, radius, startAngle, endAngle, antiClockwise = false by default
-                ctx.arc(item.start_x, item.start_y, item.radius, 0, 2 * Math.PI, false) // full circle
-                ctx.fill()
-                ctx.stroke()
-                ctx.restore()
-            } else {
-                ctx.save()
-                ctx.strokeStyle = item.selected ? COLORS.shapes_stroke_selected : (hit ? item.colorKey : item.stroke)
-                ctx.beginPath()
-                if (item.dashed) {
-                    ctx.setLineDash([3.5, 10]);
-                }
-                ctx.moveTo(item.start_x, item.start_y)
-                ctx.lineTo(item.end_x, item.end_y)
-                ctx.closePath()
-                ctx.stroke()
-                ctx.restore()
-            }
-        });
-    }
-
     draw () {
         // CANCAS
         this.ctx.fillStyle = "black";
@@ -335,9 +189,9 @@ export class WebCAD {
         this.ctx.save();
         this.ctx.scale(this.zoomLevel, this.zoomLevel); // apply scale
         this.ctx.translate(this.netPanningX, this.netPanningY); // apply translation
-        this.renderCanvas();
-        this.renderPointer();
-        this.renderShapes(this.ctx, false);
+        renderCanvas(this);
+        renderPointer(this);
+        renderShapes(this, this.ctx, false);
         this.ctx.restore();
 
         // GHOST CANVAS for HIT Detection
@@ -346,11 +200,9 @@ export class WebCAD {
         this.gctx.save();
         this.gctx.scale(this.zoomLevel, this.zoomLevel); // apply scale
         this.gctx.translate(this.netPanningX, this.netPanningY); // apply translation
-        this.renderShapes(this.gctx, true);
+        renderShapes(this, this.gctx, true);
         this.gctx.restore();
     }
-
-    /* ---------------------------- RENDER ----------------------------- */
 }
 
 

@@ -1,6 +1,6 @@
 {
   "name": "web-cad",
-  "version": "0.0.1",
+  "version": "0.6.0",
   "description": "A simple cad for the web",
   "main": "index.html",
   "scripts": {

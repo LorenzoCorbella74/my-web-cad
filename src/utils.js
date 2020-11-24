@@ -11,3 +11,9 @@ export function trackSelection (shape) {
     }
     return shape;
 }
+
+export function interpolate (a, b, frac) {
+    var nx = a.x + (b.x - a.x) * frac;
+    var ny = a.y + (b.y - a.y) * frac;
+    return { x: nx, y: ny };
+}
