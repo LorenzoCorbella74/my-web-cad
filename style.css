@@ -50,7 +50,7 @@
 
 .save {
     font-size: 24px;
-    color: green
+    color: green;
 }
 
 .close:hover,
@@ -60,4 +60,65 @@
     color: white;
     text-decoration: none;
     cursor: pointer;
+}
+
+/* ----------------------------------- */
+#panel {
+    position: absolute;
+    top: 10%;
+    left: 90%;
+    z-index: 50;
+    width: 90px;
+    background-color: rgb(23, 29, 49);
+    border: 1px solid grey;
+    height: 386px;
+    border-radius: 4px;
+}
+
+#panel-header {
+    padding: 10px;
+    cursor: move;
+    z-index: 51;
+    background-color: rgba(100,100,255,0.25);
+    height: 48px;
+}
+
+.row {
+    display: flex;
+    height: 32px;
+}
+
+.cmd {
+    flex: 1;
+    padding: 2px;
+    cursor: pointer;
+    font-size: 65%;
+    text-align: center;
+}
+
+.selected {
+    background-color: orange;
+    color: black;
+}
+
+.disabled {
+    background-color: darkslategray;
+    cursor: not-allowed;
+}
+
+.divider {
+    border-top: 1px dashed gray;
+}
+
+/* 
+    ICONS: https://materialdesignicons.com/
+
+    To change the color: 
+    https://stackoverflow.com/questions/22252472/how-to-change-the-color-of-an-svg-element
+    https://codepen.io/sosuke/pen/Pjoqqp
+*/
+.icon-white {
+    height: 24px;
+    width: 24px;
+    filter: invert(98%) sepia(42%) saturate(4100%) hue-rotate(183deg) brightness(127%) contrast(81%);
 }

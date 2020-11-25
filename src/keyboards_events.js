@@ -12,6 +12,10 @@ export default class KeyboardEvents {
         this.hasSnap = true;
 
         this.startListenDocumentKeyup()
+
+        document.body.addEventListener('CMD-PANEL', (passed) => {
+            this.choosenCommand = passed.detail;
+        }, false);
     }
 
     startListenDocumentKeyup() {
@@ -83,6 +87,8 @@ export default class KeyboardEvents {
                 }
             }
 
+            const event = new CustomEvent('CMD-KEYS', { bubbles: true, detail: this.choosenCommand });
+            document.body.dispatchEvent(event);
 
         }
     }

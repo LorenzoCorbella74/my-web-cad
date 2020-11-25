@@ -10,7 +10,8 @@
   "dependencies": {},
   "devDependencies": {
     "@babel/core": "7.2.0",
-    "parcel-bundler": "^1.6.1"
+    "parcel-bundler": "^1.6.1",
+    "parcel-plugin-webcomponents": "^1.2.3"
   },
   "repository": {
     "type": "git",

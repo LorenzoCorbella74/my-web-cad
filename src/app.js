@@ -1,9 +1,12 @@
 import '../style.css'
 
+
 import KeyboardEvents from './keyboards_events';
 import HistoryManagement from './history_management';
 import { colorsTable, interpolate } from './utils';
-import InputDialogue from './input-dialogue';
+
+import CommandsPanel from './components/commands-panel'; // web component for the command
+import InputDialogue from './components/input-dialogue';
 
 import { UNITS, ANIMATION } from './constants';
 
@@ -40,7 +43,7 @@ export class WebCAD {
         this.gctx = this.ghostcanvas.getContext('2d');
         this.keys = new KeyboardEvents(this);
         this.colorsTable = colorsTable;
-
+        
         this.commands = {
             'SELECT': new SelectCommand(this),
             'DELETE': new DeleteCommand(this),
@@ -54,8 +57,9 @@ export class WebCAD {
             'CIRCLE': new CircleCommand(this),
             'TEXT': new TextCommand(this)
         }
-
+        
         this.textModal = new InputDialogue(this)
+        this.panel = new CommandsPanel(this);
 
         this.mouse = {
             x: 0,
