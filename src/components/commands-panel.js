@@ -43,7 +43,6 @@ export default class CommandsPanel {
         console.log(`Event from commands panel: ${e.target.dataset.cmd}`);
         this.choosenCommand = e.target.parentNode.dataset.cmd;
         if (this.choosenCommand) {
-            this.adjustSelection()
             if (this.choosenCommand === 'UNDO') {
                 this.main.HM.undo();
                 return;
@@ -79,10 +78,11 @@ export default class CommandsPanel {
             if (!e.target.classList.contains('disabled')) {
                 const event = new CustomEvent('CMD-PANEL', { bubbles: true, detail: this.choosenCommand });
                 this.panel.dispatchEvent(event);
+                this.adjustSelection()
             }
         }
     }
-
+    
     dragMouseDown (e) {
         e = e || window.event;
         e.preventDefault();
@@ -149,7 +149,8 @@ export default class CommandsPanel {
 
     createDrawingFromImportedFile (data) {
         this.main.HM.clean();
-        this.main.HM.set(data.shapes);
+        this.main.shapes = data.shapes;
+        this.main.HM.set(this.main.shapes   );
     }
 
 }
