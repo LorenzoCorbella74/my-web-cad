@@ -29,102 +29,120 @@
 <body>
     <canvas id="canvas"></canvas>
 
+    <!-- COMMAND PANELS -->
     <div id="panel">
         <div id="panel-header"></div>
-        <div class="divider"></div>
-        <div class="row">
-            <div class="cmd" data-cmd="UNDO">
-                <img src="/src/svg/undo.svg" class="icon-white" />
+        <div class="panel-body">
+            <div class=left>
+                <div class="divider"></div>
+                <div class="row">
+                    <div class="cmd" data-cmd="UNDO">
+                        <img src="/src/svg/undo.svg" class="icon-white" />
+                    </div>
+                    <div class="cmd" data-cmd="REDO">
+                        <img src="/src/svg/redo.svg" class="icon-white" />
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row">
+                    <div class="cmd" data-cmd="PAN">
+                        <img src="/src/svg/pan.svg" class="icon-white" />
+                    </div>
+                    <div class="cmd" data-cmd="ZOOM">
+                        <img src="/src/svg/zoom.svg" class="icon-white" />
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row">
+                    <div class="cmd" data-cmd="SELECT">
+                        <img src="/src/svg/select2.svg" class="icon-white" />
+                    </div>
+                    <div class="cmd" data-cmd="DELETE">
+                        <img src="/src/svg/delete.svg" class="icon-white" />
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row">
+                    <div class="cmd" data-cmd="MOVE">
+                        <img src="/src/svg/move.svg" class="icon-white" />
+                    </div>
+                    <div class="cmd" data-cmd="COPY">
+                        <img src="/src/svg/copy.svg" class="icon-white" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="cmd disabled" data-cmd="ROTATE">
+                        <img src="/src/svg/rotate.svg" class="icon-white" />
+                    </div>
+                    <div class="cmd" data-cmd="RESIZE">
+                        <img src="/src/svg/resize.svg" class="icon-white" />
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row">
+                    <div class="cmd" data-cmd="LINE">
+                        <img src="/src/svg/line.svg" class="icon-white" />
+
+                    </div>
+                    <div class="cmd" data-cmd="RECT">
+                        <img src="/src/svg/rectangle.svg" class="icon-white" />
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="cmd" data-cmd="CIRCLE">
+                        <img src="/src/svg/circle.svg" class="icon-white" />
+                    </div>
+                    <div class="cmd disabled" data-cmd="ARC">
+                        <img src="/src/svg/arc.svg" class="icon-white" />
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row">
+                    <div class="cmd" data-cmd="TEXT">
+                        <img src="/src/svg/text.svg" class="icon-white" />
+
+                    </div>
+                    <div class="cmd disabled" data-cmd="MEASURE">
+                        <img src="/src/svg/measure.svg" class="icon-white" />
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row">
+                    <div class="cmd" data-cmd="FILL">
+                        <img src="/src/svg/fill.svg" class="icon-white" />
+                    </div>
+                    <div class="cmd" data-cmd="PALETTE">
+                        <img src="/src/svg/palette.svg" class="icon-white" />
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="row">
+                    <div class="cmd" data-cmd="SAVE">
+                        <img src="/src/svg/save.svg" class="icon-white" />
+                    </div>
+                    <div class="cmd" data-cmd="IMPORT">
+                        <img src="/src/svg/import.svg" class="icon-white" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="cmd" data-cmd="CONFIG">
+                        <img src="/src/svg/config.svg" class="icon-white" />
+                    </div>
+                    <div class="cmd" data-cmd="HELP">
+                        <img src="/src/svg/help.svg" class="icon-white" />
+                    </div>
+                </div>
             </div>
-            <div class="cmd" data-cmd="REDO">
-                <img src="/src/svg/redo.svg" class="icon-white" />
-            </div>
-        </div>
-        <div class="divider"></div>
-        <div class="row">
-            <div class="cmd" data-cmd="PAN">
-                <img src="/src/svg/pan.svg" class="icon-white" />
-            </div>
-            <div class="cmd" data-cmd="ZOOM">
-                <img src="/src/svg/zoom.svg" class="icon-white" />
-            </div>
-        </div>
-        <div class="divider"></div>
-        <div class="row">
-            <div class="cmd" data-cmd="SELECT">
-                <img src="/src/svg/select2.svg" class="icon-white" />
-            </div>
-            <div class="cmd" data-cmd="DELETE">
-                <img src="/src/svg/delete.svg" class="icon-white" />
-            </div>
-        </div>
-        <div class="divider"></div>
-        <div class="row">
-            <div class="cmd" data-cmd="MOVE">
-                <img src="/src/svg/move.svg" class="icon-white" />
-            </div>
-            <div class="cmd" data-cmd="COPY">
-                <img src="/src/svg/copy.svg" class="icon-white" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="cmd disabled" data-cmd="ROTATE">
-                <img src="/src/svg/rotate.svg" class="icon-white" />
-            </div>
-            <div class="cmd" data-cmd="RESIZE">
-                <img src="/src/svg/resize.svg" class="icon-white" />
+            <div class="right hide">
 
             </div>
         </div>
-        <div class="divider"></div>
-        <div class="row">
-            <div class="cmd" data-cmd="LINE">
-                <img src="/src/svg/line.svg" class="icon-white" />
 
-            </div>
-            <div class="cmd" data-cmd="RECT">
-                <img src="/src/svg/rectangle.svg" class="icon-white" />
 
-            </div>
-        </div>
-        <div class="row">
-            <div class="cmd" data-cmd="CIRCLE">
-                <img src="/src/svg/circle.svg" class="icon-white" />
-            </div>
-            <div class="cmd disabled" data-cmd="ARC">
-                <img src="/src/svg/arc.svg" class="icon-white" />
-            </div>
-        </div>
-        <div class="divider"></div>
-        <div class="row">
-            <div class="cmd" data-cmd="TEXT">
-                <img src="/src/svg/text.svg" class="icon-white" />
-
-            </div>
-            <div class="cmd disabled" data-cmd="MEASURE">
-                <img src="/src/svg/measure.svg" class="icon-white" />
-            </div>
-        </div>
-        <div class="divider"></div>
-        <div class="row">
-            <div class="cmd" data-cmd="FILL">
-                <img src="/src/svg/fill.svg" class="icon-white" />
-            </div>
-            <div class="cmd" data-cmd="CONFIG">
-                <img src="/src/svg/config.svg" class="icon-white" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="cmd" data-cmd="SAVE">
-                <img src="/src/svg/save.svg" class="icon-white" />
-            </div>
-            <div class="cmd" data-cmd="IMPORT">
-                <img src="/src/svg/import.svg" class="icon-white" />
-            </div>
-        </div>
     </div>
 
-
+    <!-- TEXT COMMAND DIALOGUE -->
     <div id="myModal" class="modal">
         <div class="modal-content">
             <input data-text="">
@@ -133,6 +151,12 @@
         </div>
 
     </div>
+
+    <!-- DOWNLOAD -->
+    <a id="downloadAnchorElem" style="display:none"></a>
+
+    <!-- IMPORT FILE -->
+    <input id="file-input" type="file" name="name" style="display: none;" />
 </body>
 
 <script src="src/app.js" type="module"></script>

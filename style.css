@@ -65,24 +65,47 @@
 /* ----------------------------------- */
 #panel {
     position: absolute;
-    top: 10%;
-    left: 90%;
+    top: 14%;
+    left: 85%;
     z-index: 50;
-    width: 90px;
-    background-color: rgb(23, 29, 49);
-    border: 1px solid grey;
-    height: 386px;
-    border-radius: 4px;
+    width: 120px;
+    height: 410px;
 }
 
 #panel-header {
     padding: 10px;
     cursor: move;
     z-index: 51;
-    background-color: rgba(100,100,255,0.25);
-    height: 48px;
+    height: 40px;
+    width: 90px;
+    background-color: rgb(23, 29, 49);
+    border: 1px solid grey;
+    border-radius: 4px;
 }
 
+.panel-body{
+    width: 120px;
+    display: flex;
+}
+
+.left{
+    width: 90px;
+    background-color: rgb(23, 29, 49);
+    border: 1px solid grey;
+    border-radius: 4px;
+}
+
+.right{
+    width: 30px;
+    background-color: rgb(23, 29, 49);
+    border: 1px solid grey;
+    border-radius: 4px;
+}
+
+
+.hide{
+    display:none;
+}
 .row {
     display: flex;
     height: 32px;

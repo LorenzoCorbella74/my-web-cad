@@ -1,3 +1,6 @@
+export const APP_VERSION = '0.6.0';
+
+
 export const CANVAS_DIMENSIONS = {
     WIDTH: 4000,
     HEIGHT: 3000

@@ -40,6 +40,11 @@ export default class HistoryManagement {
         }
     }
 
+    clean(){
+        this.history = [[]];
+        this.position = 0;
+    }
+
     // toString function to aid in illustrating
     toString() {
         console.log("Currnent Value: ", this.value)

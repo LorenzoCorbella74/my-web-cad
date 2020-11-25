@@ -1,13 +1,17 @@
+import { APP_VERSION } from '../constants';
+import { formatDate } from '../utils';
+
 export default class CommandsPanel {
     constructor(app) {
 
         this.main = app
-        this.x = this.x || 50
-        this.y = this.y || 50
+        this.x = this.x || 0
+        this.y = this.y || 0
         this.newX = this.newX || 0
         this.newY = this.newY || 0
         this.panel = document.querySelector('#panel')
         this.header = document.querySelector('#panel-header')
+        this.paletteBtn = document.querySelector('.right');
 
         this.choosenCommand = 'SELECT'; // default
         this.adjustSelection();
@@ -39,7 +43,6 @@ export default class CommandsPanel {
         console.log(`Event from commands panel: ${e.target.dataset.cmd}`);
         this.choosenCommand = e.target.parentNode.dataset.cmd;
         if (this.choosenCommand) {
-            const event = new CustomEvent('CMD-PANEL', { bubbles: true, detail: this.choosenCommand });
             this.adjustSelection()
             if (this.choosenCommand === 'UNDO') {
                 this.main.HM.undo();
@@ -58,19 +61,27 @@ export default class CommandsPanel {
                 return;
             }
             if (this.choosenCommand === 'SAVE') {
-                console.log('TODO: config')
+                this.save();
                 return;
             }
             if (this.choosenCommand === 'IMPORT') {
-                console.log('TODO: config')
+                this.import();
+                return;
+            }
+            if (this.choosenCommand === 'HELP') {
+                console.log('TODO: help')
+                return;
+            }
+            if (this.choosenCommand === 'PALETTE') {
+                this.paletteBtn.classList.toggle('hide')
                 return;
             }
             if (!e.target.classList.contains('disabled')) {
+                const event = new CustomEvent('CMD-PANEL', { bubbles: true, detail: this.choosenCommand });
                 this.panel.dispatchEvent(event);
             }
         }
     }
-
 
     dragMouseDown (e) {
         e = e || window.event;
@@ -101,4 +112,44 @@ export default class CommandsPanel {
         this.panel.onmouseup = null;
         this.panel.onmousemove = null;
     }
+
+    import () {
+        let input = document.getElementById('file-input');
+        input.onchange = e => {
+            // getting a hold of the file reference
+            var file = e.target.files[0];
+            // setting up the reader
+            var reader = new FileReader();
+            reader.readAsText(file, 'UTF-8');
+            // here we tell the reader what to do when it's done reading...
+            reader.onload = readerEvent => {
+                var content = readerEvent.target.result; // this is the content!
+                try {
+                    this.createDrawingFromImportedFile(JSON.parse(content));
+                } catch (error) {
+                    console.log('Was not possible to import the file!')
+                }
+            }
+        }
+        input.click();
+    }
+
+    save () {
+        let output = {
+            ver: APP_VERSION,
+            date: formatDate(new Date()),
+            shapes: this.main.HM.value
+        }
+        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(output));
+        var dlAnchorElem = document.getElementById('downloadAnchorElem');
+        dlAnchorElem.setAttribute("href", dataStr);
+        dlAnchorElem.setAttribute("download", `draw_${formatDate(new Date())}.json`); // ``
+        dlAnchorElem.click();
+    }
+
+    createDrawingFromImportedFile (data) {
+        this.main.HM.clean();
+        this.main.HM.set(data.shapes);
+    }
+
 }
