@@ -24,7 +24,8 @@ export default class CircleCommand extends Command {
             this.main.tempShape = [{
                 start_x: this.start.x,
                 start_y: this.start.y,
-                radius: this.radius
+                radius: this.radius,
+                color: COLORS[this.main.selectedTheme].shapes_fill_temp,
             }]
         }
     }
@@ -44,8 +45,8 @@ export default class CircleCommand extends Command {
                 start_x: this.start.x,
                 start_y: this.start.y,
                 radius: this.radius,
-                color: COLORS.shapes_fill,
-                stroke: COLORS.shapes_stroke
+                color: COLORS[this.main.selectedTheme].shapes_fill,
+                stroke: COLORS[this.main.selectedTheme].shapes_stroke
             }));
             this.main.HM.set(this.main.shapes)
             this.radius = 0;
@@ -60,8 +61,8 @@ export default class CircleCommand extends Command {
                 start_x: this.start.x,
                 start_y: this.start.y,
                 radius: this.radius,
-                color: COLORS.shapes_fill,
-                stroke: COLORS.shapes_stroke
+                color: COLORS[this.main.selectedTheme].shapes_fill,
+                stroke: COLORS[this.main.selectedTheme].shapes_stroke
             }));
             this.main.HM.set(this.main.shapes)
             this.radius = 0;

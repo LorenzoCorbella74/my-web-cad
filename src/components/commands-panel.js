@@ -27,7 +27,7 @@ export default class CommandsPanel {
         }, true);
     }
 
-    adjustSelection () {
+    adjustSelection() {
         let all = this.panel.querySelectorAll('.cmd');
         for (let i = 0; i < all.length; i++) {
             const element = all[i];
@@ -39,7 +39,7 @@ export default class CommandsPanel {
         }
     }
 
-    click (e) {
+    click(e) {
         console.log(`Event from commands panel: ${e.target.dataset.cmd}`);
         this.choosenCommand = e.target.parentNode.dataset.cmd;
         if (this.choosenCommand) {
@@ -52,7 +52,7 @@ export default class CommandsPanel {
                 return;
             }
             if (this.choosenCommand === 'FILL') {
-                console.log('TODO: fill')
+                this.switchTheme()
                 return;
             }
             if (this.choosenCommand === 'CONFIG') {
@@ -82,8 +82,19 @@ export default class CommandsPanel {
             }
         }
     }
-    
-    dragMouseDown (e) {
+
+    switchTheme() {
+        let options = ['grey', 'white', 'blue'];
+        let index = options.findIndex(e => e === this.main.selectedTheme);
+        if (index < options.length - 1) {
+            index++;
+        } else {
+            index = 0;
+        }
+        this.main.selectedTheme = options[index];
+    }
+
+    dragMouseDown(e) {
         e = e || window.event;
         e.preventDefault();
         // get the mouse cursor position at startup:
@@ -94,7 +105,7 @@ export default class CommandsPanel {
         this.panel.onmousemove = this.elementDrag.bind(this);
     }
 
-    elementDrag (e) {
+    elementDrag(e) {
         e = e || window.event;
         e.preventDefault();
         // calculate the new cursor position:
@@ -107,13 +118,13 @@ export default class CommandsPanel {
         this.panel.style.left = (this.panel.offsetLeft - this.x) + "px";
     }
 
-    closeDragElement () {
+    closeDragElement() {
         /* stop moving when mouse button is released:*/
         this.panel.onmouseup = null;
         this.panel.onmousemove = null;
     }
 
-    import () {
+    import() {
         let input = document.getElementById('file-input');
         input.onchange = e => {
             // getting a hold of the file reference
@@ -134,11 +145,12 @@ export default class CommandsPanel {
         input.click();
     }
 
-    save () {
+    save() {
         let output = {
             ver: APP_VERSION,
             date: formatDate(new Date()),
-            shapes: this.main.HM.value
+            shapes: this.main.HM.value,
+            theme: this.main.selectedTheme
         }
         var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(output));
         var dlAnchorElem = document.getElementById('downloadAnchorElem');
@@ -147,10 +159,11 @@ export default class CommandsPanel {
         dlAnchorElem.click();
     }
 
-    createDrawingFromImportedFile (data) {
+    createDrawingFromImportedFile(data) {
+        this.main.selectedTheme = data.theme;
         this.main.HM.clean();
         this.main.shapes = data.shapes;
-        this.main.HM.set(this.main.shapes   );
+        this.main.HM.set(this.main.shapes);
     }
 
 }

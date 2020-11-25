@@ -9,7 +9,7 @@ export default class MoveCommand extends Command {
         this.start = {}
     }
 
-    mousemove (event) {
+    mousemove(event) {
         this.main.mouse.x = event._x;
         this.main.mouse.y = event._y;
         this.main.mouse.event = event;
@@ -22,12 +22,12 @@ export default class MoveCommand extends Command {
                 dashed: true,
                 end_x: event._x - this.main.netPanningX,
                 end_y: event._y - this.main.netPanningY,
-                stroke: COLORS.LINES
+                stroke: COLORS[this.main.selectedTheme].LINES
             }]
         }
     }
 
-    mousedown (event) {// get pixel under cursor
+    mousedown(event) {// get pixel under cursor
         const pixel = this.main.gctx.getImageData(event._x * this.main.zoomLevel, event._y * this.main.zoomLevel, 1, 1).data;
         // create rgb color for that pixel
         const color = `rgb(${pixel[0]},${pixel[1]},${pixel[2]})`;
@@ -50,7 +50,7 @@ export default class MoveCommand extends Command {
         }
     }
 
-    mouseup (event) {
+    mouseup(event) {
         if (this.started && (this.main.selected || this.main.selected === 0)) {
             this.started = false;
             this.main.tempShape.length = 0;
@@ -81,7 +81,7 @@ export default class MoveCommand extends Command {
         }
     }
 
-    mouseout (event) {
+    mouseout(event) {
         if (this.started && (this.main.selected || this.main.selected === 0)) {
             this.started = false;
             this.main.tempShape.length = 0;

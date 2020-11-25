@@ -31,7 +31,7 @@ export default class RectCommand extends Command {
                 start_y: this.y - this.main.netPanningY,
                 w: this.w,
                 h: this.h,
-                color: COLORS.shapes_fill_temp,
+                color: COLORS[this.main.selectedTheme].shapes_fill_temp,
             }]
         }
 
@@ -52,8 +52,8 @@ export default class RectCommand extends Command {
                 start_y: this.y - this.main.netPanningY,
                 w: this.w,
                 h: this.h,
-                color: COLORS.shapes_fill,
-                stroke: COLORS.shapes_stroke
+                color: COLORS[this.main.selectedTheme].shapes_fill,
+                stroke: COLORS[this.main.selectedTheme].shapes_stroke
             }));
             this.main.HM.set(this.main.shapes)
         }
@@ -68,8 +68,8 @@ export default class RectCommand extends Command {
                 start_y: this.y - this.main.netPanningY,
                 w: this.w,
                 h: this.h,
-                color: COLORS.shapes_fill,
-                stroke: COLORS.shapes_stroke
+                color: COLORS[this.main.selectedTheme].shapes_fill,
+                stroke: COLORS[this.main.selectedTheme].shapes_stroke
             }));
             this.main.HM.set(this.main.shapes)
         }

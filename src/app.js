@@ -43,7 +43,8 @@ export class WebCAD {
         this.gctx = this.ghostcanvas.getContext('2d');
         this.keys = new KeyboardEvents(this);
         this.colorsTable = colorsTable;
-        
+        this.selectedTheme = 'grey'; // white, grey, blue
+
         this.commands = {
             'SELECT': new SelectCommand(this),
             'DELETE': new DeleteCommand(this),
@@ -57,7 +58,7 @@ export class WebCAD {
             'CIRCLE': new CircleCommand(this),
             'TEXT': new TextCommand(this)
         }
-        
+
         this.textModal = new InputDialogue(this)
         this.panel = new CommandsPanel(this);
 
@@ -83,15 +84,15 @@ export class WebCAD {
         this.resizeCanvas()
     }
 
-    setUnitSystem (what) {
+    setUnitSystem(what) {
         this.choosenUnitSystem = what
     }
 
-    getValueAccordingToUnitSystem (val) {
+    getValueAccordingToUnitSystem(val) {
         return val ? val / UNITS[this.choosenUnitSystem] : 0;
     }
 
-    resizeCanvas () {
+    resizeCanvas() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
         this.ghostcanvas.width = window.innerWidth;
@@ -100,7 +101,7 @@ export class WebCAD {
         this.draw();
     }
 
-    startListening () {
+    startListening() {
         // resize the canvas to fill browser window dynamically
         window.addEventListener('resize', this.resizeCanvas.bind(this), false);
         this.canvas.oncontextmenu = () => false;
@@ -111,7 +112,7 @@ export class WebCAD {
         this.canvas.addEventListener('mouseout', this.globalHandler.bind(this), false);
     }
 
-    globalHandler (ev) {
+    globalHandler(ev) {
         ev.preventDefault();
         ev.stopPropagation();
         let x = parseInt(ev.clientX / this.zoomLevel);
@@ -142,7 +143,7 @@ export class WebCAD {
         }
     }
 
-    loop () {
+    loop() {
         // time management for animation
         this.currentTime = (new Date()).getTime();
         this.dt = (this.currentTime - this.lastTime) / 1000;
@@ -158,18 +159,18 @@ export class WebCAD {
         });
     }
 
-    start () {
+    start() {
         this.loop();
     }
 
-    unselectAll () {
+    unselectAll() {
         this.shapes.forEach((item, index) => {
             item.selected = false;
         });
         this.selected = null;
     }
 
-    update (dt) {
+    update(dt) {
         // console.log(dt)
         [...this.HM.value].forEach(item => {
             if (item.animation) {
@@ -186,7 +187,7 @@ export class WebCAD {
         })
     }
 
-    draw () {
+    draw() {
         // CANCAS
         this.ctx.fillStyle = "black";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);

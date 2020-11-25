@@ -22,7 +22,7 @@ export default class TextCommand extends Command {
                 start_y: this.start.y,
                 end_x: event._x - this.main.netPanningX,
                 end_y: event._y - this.main.netPanningY,
-                stroke: COLORS.LINES
+                stroke: COLORS[this.main.selectedTheme].LINES
             }]
         }
     }
@@ -39,8 +39,8 @@ export default class TextCommand extends Command {
             this.main.tempShape.length = 0;
 
             this.main.textModal.open(
-                event._x - this.main.netPanningX,
-                event._y - this.main.netPanningY,
+                (event._x - this.main.netPanningX),
+                (event._y - this.main.netPanningY),
                 '',
                 (val) => this.saveText(val))
         }
@@ -54,7 +54,7 @@ export default class TextCommand extends Command {
             dashed: true,
             end_x: x - this.main.netPanningX,
             end_y: y - this.main.netPanningY,
-            stroke: COLORS.LINES
+            stroke: COLORS[this.main.selectedTheme].LINES
         });
         this.main.shapes.push(dashed_line);
         this.main.shapes.push({
@@ -62,8 +62,8 @@ export default class TextCommand extends Command {
             start_y: (y - this.main.netPanningY) - TEXT.OFFSET,
             text: val,
             font: TEXT.FONT,
-            fill: COLORS.shapes_stroke,
-            colorKey:dashed_line.colorKey
+            fill: COLORS[this.main.selectedTheme].shapes_stroke,
+            colorKey: dashed_line.colorKey
         });
         this.main.HM.set(this.main.shapes)
     }
@@ -77,7 +77,7 @@ export default class TextCommand extends Command {
                 start_y: this.start.y,
                 end_x: event._x - this.main.netPanningX,
                 end_y: event._y - this.main.netPanningY,
-                stroke: COLORS.shapes_stroke
+                stroke: COLORS[this.main.selectedTheme].shapes_stroke
             }));
             this.main.HM.set(this.main.shapes)
         }

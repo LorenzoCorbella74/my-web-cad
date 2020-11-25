@@ -22,7 +22,7 @@ export default class LineCommand extends Command {
                 start_y: this.start.y,
                 end_x: event._x - this.main.netPanningX,
                 end_y: event._y - this.main.netPanningY,
-                stroke: COLORS.LINES
+                stroke: COLORS[this.main.selectedTheme].LINES
             }]
         }
     }
@@ -42,7 +42,7 @@ export default class LineCommand extends Command {
                 start_y: this.start.y,
                 end_x: event._x - this.main.netPanningX,
                 end_y: event._y - this.main.netPanningY,
-                stroke: COLORS.shapes_stroke
+                stroke: COLORS[this.main.selectedTheme].shapes_stroke
             }));
             this.main.HM.set(this.main.shapes)
         }
@@ -57,7 +57,7 @@ export default class LineCommand extends Command {
                 start_y: this.start.y,
                 end_x: event._x - this.main.netPanningX,
                 end_y: event._y - this.main.netPanningY,
-                stroke: COLORS.shapes_stroke
+                stroke: COLORS[this.main.selectedTheme].shapes_stroke
             }));
             this.main.HM.set(this.main.shapes)
         }
