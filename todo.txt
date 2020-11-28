@@ -3,7 +3,7 @@ Release BETA 0.6
 - [x] labels (linea e testo editabile su anchor) + cancellazione testo + linea insieme
 - [x] animation for copy / move 
 - [ ] resize rect and circle (pull & scale) and move vertices for lines
-- [ ] ui draggable commands panel
+- [x] ui draggable commands panel
 - [ ] measures (in grigio, <- xxcm -> clicco su punto iniziale, punto finale, drag su un lato
 
 Release BETA 0.7
@@ -13,8 +13,8 @@ Release BETA 0.8
 - arcs
 - extend linea
 - cut linea
-- [ ] UI to import/export JSON
-- [ ] UI to change colors & settings
+- [x] UI to import/export JSON
+- [x] UI to change colors & settings
 - [ ] UI cambiare  u.m. (1pixel -> 2.5cm, 1m, inserito dall'utente)
 
 Release BETA 0.9

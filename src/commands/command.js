@@ -20,7 +20,7 @@ export default class Command {
     }
 
     mouseout(event) {
-        // console.log('Command: mouseout', event, this)
+        this.mouseup(event)
     }
 
     click(event) {

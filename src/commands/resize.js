@@ -224,10 +224,4 @@ export default class ResizeCommand extends Command {
         this.expectResize = -1;
     }
 
-    mouseout(event) {
-        // console.log('Command: mouseout', event, this)
-        this.isResizeDrag = false;
-        this.expectResize = -1;
-    }
-
 }

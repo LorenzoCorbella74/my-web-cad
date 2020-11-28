@@ -1,4 +1,5 @@
 import { CANVAS_DIMENSIONS, COLORS, TEXT } from './constants';
+import { hexToRGB } from './utils';
 
 export function renderPointer(scope) {
     scope.ctx.strokeStyle = COLORS[scope.selectedTheme].CURSOR; // green
@@ -93,21 +94,21 @@ export function renderShapes(scope, ctx, hit) {
                 ctx.restore()
             } else {
                 ctx.save()
-                ctx.fillStyle = item.selected ? COLORS[scope.selectedTheme].shapes_fill_selected : (hit ? item.colorKey : item.color)
+                ctx.fillStyle = item.selected ? COLORS[scope.selectedTheme].shapes_fill_selected : (hit ? item.colorKey : hexToRGB(item.color))
                 ctx.beginPath()
                 ctx.font = item.font;
                 ctx.fillText(item.text, item.start_x, item.start_y);
                 ctx.restore()
             }
             ctx.save()
-            ctx.fillStyle = item.selected ? COLORS[scope.selectedTheme].shapes_fill_selected : (hit ? item.colorKey : item.color)
+            ctx.fillStyle = item.selected ? COLORS[scope.selectedTheme].shapes_fill_selected : (hit ? item.colorKey : hexToRGB(item.color))
             ctx.beginPath()
             ctx.font = item.font;
             ctx.fillText(item.text, item.start_x, item.start_y);
             ctx.restore()
         } else if (item.w && item.h) {
             ctx.save()
-            ctx.fillStyle = item.selected ? COLORS[scope.selectedTheme].shapes_fill_selected : (hit ? item.colorKey : item.color)
+            ctx.fillStyle = item.selected ? COLORS[scope.selectedTheme].shapes_fill_selected : (hit ? item.colorKey : hexToRGB(item.color))
             ctx.strokeStyle = item.selected ? COLORS[scope.selectedTheme].shapes_stroke_selected : (hit ? item.colorKey : item.stroke)
             ctx.beginPath()
             ctx.rect(item.start_x, item.start_y, item.w, item.h)
@@ -117,7 +118,7 @@ export function renderShapes(scope, ctx, hit) {
         } else if (item.radius) {
             ctx.save()
             ctx.strokeStyle = item.selected ? COLORS[scope.selectedTheme].shapes_stroke_selected : (hit ? item.colorKey : item.stroke)
-            ctx.fillStyle = item.selected ? COLORS[scope.selectedTheme].shapes_fill_selected : (hit ? item.colorKey : item.color)
+            ctx.fillStyle = item.selected ? COLORS[scope.selectedTheme].shapes_fill_selected : (hit ? item.colorKey : hexToRGB(item.color))
             ctx.beginPath()
             // x, y, radius, startAngle, endAngle, antiClockwise = false by default
             ctx.arc(item.start_x, item.start_y, item.radius, 0, 2 * Math.PI, false) // full circle

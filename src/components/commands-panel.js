@@ -1,4 +1,4 @@
-import { APP_VERSION } from '../constants';
+import { APP_VERSION, COLORS_CMD_PANEL } from '../constants';
 import { formatDate } from '../utils';
 
 export default class CommandsPanel {
@@ -11,10 +11,14 @@ export default class CommandsPanel {
         this.newY = this.newY || 0
         this.panel = document.querySelector('#panel')
         this.header = document.querySelector('#panel-header')
-        this.paletteBtn = document.querySelector('.right');
+        this.colors = document.querySelector('.colors');
+        this.fillBtn = document.querySelector('.right');
+
+        this.generateColors();
 
         this.choosenCommand = 'SELECT'; // default
         this.adjustSelection();
+        this.adjustColorSelection(this.main.selectedColorInPanel)
 
         // EVENTS
         this.header.onmousedown = this.dragMouseDown.bind(this);
@@ -25,6 +29,42 @@ export default class CommandsPanel {
             this.choosenCommand = passed.detail;
             this.adjustSelection()
         }, true);
+
+        document.body.addEventListener('SELECT-ITEM', (passed) => {
+            console.log(`Selected element: ${passed.detail}`);
+            if (passed.detail || passed.detail == 0) {
+                this.main.selectedColorInPanel = this.main.shapes[passed.detail].color;
+                this.adjustColorSelection(this.main.selectedColorInPanel)
+            }
+        }, true);
+    }
+
+
+    // http://clrs.cc/
+    generateColors() {
+        let li = COLORS_CMD_PANEL;
+        this.colors.innerHTML = '<ul>' + li.map((e) => `<li class="color-dot" data-color="${e}" style="background-color:${e}"></li>`)
+            .join('') + '</ul>';
+        this.colors.addEventListener('click', this.selectColor.bind(this))
+    }
+
+    selectColor(evt) {
+        let c = evt.target.dataset.color;
+        this.main.selectedColorInPanel = c;
+        this.adjustColorSelection(c);
+    }
+
+    adjustColorSelection(c) {
+        let items = this.colors.getElementsByTagName("li");
+        for (let i = 0; i < items.length; ++i) {
+            items[i].classList.remove('selected-color');
+            if (items[i].dataset.color === c) {
+                items[i].classList.add('selected-color');
+            }
+        }
+        if (this.main.selected || this.main.selected == 0) {
+            this.main.shapes[this.main.selected].color = this.main.selectedColorInPanel;
+        }
     }
 
     adjustSelection() {
@@ -52,7 +92,7 @@ export default class CommandsPanel {
                 return;
             }
             if (this.choosenCommand === 'FILL') {
-                this.switchTheme()
+                this.fillBtn.classList.toggle('hide')
                 return;
             }
             if (this.choosenCommand === 'CONFIG') {
@@ -72,7 +112,7 @@ export default class CommandsPanel {
                 return;
             }
             if (this.choosenCommand === 'PALETTE') {
-                this.paletteBtn.classList.toggle('hide')
+                this.switchTheme()
                 return;
             }
             if (!e.target.classList.contains('disabled')) {

@@ -48,19 +48,4 @@ export default class LineCommand extends Command {
         }
     }
 
-    mouseout(event) {
-        if (this.started) {
-            this.started = false;
-            this.main.tempShape.length = 0;
-            this.main.shapes.push(trackSelection({
-                start_x: this.start.x,
-                start_y: this.start.y,
-                end_x: event._x - this.main.netPanningX,
-                end_y: event._y - this.main.netPanningY,
-                stroke: COLORS[this.main.selectedTheme].shapes_stroke
-            }));
-            this.main.HM.set(this.main.shapes)
-        }
-    }
-
 }

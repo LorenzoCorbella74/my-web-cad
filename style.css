@@ -147,3 +147,19 @@
     width: 24px;
     filter: invert(98%) sepia(42%) saturate(4100%) hue-rotate(183deg) brightness(127%) contrast(81%);
 }
+
+ul {
+    list-style-type: none;
+}
+
+.color-dot {
+    border: 1px solid white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    margin: 3px auto;
+}
+
+.selected-color {
+    border: 3px solid orange;
+}

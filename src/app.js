@@ -44,6 +44,7 @@ export class WebCAD {
         this.keys = new KeyboardEvents(this);
         this.colorsTable = colorsTable;
         this.selectedTheme = 'grey'; // white, grey, blue
+        this.selectedColorInPanel = '#0074D9'
 
         this.commands = {
             'SELECT': new SelectCommand(this),
@@ -175,7 +176,7 @@ export class WebCAD {
         [...this.HM.value].forEach(item => {
             if (item.animation) {
                 if (item.counter <= ANIMATION.TIME) {
-                    item.counter += 0.05
+                    item.counter += ANIMATION.STEP
                     let { x, y } = interpolate({ x: item.start_x, y: item.start_y }, { x: item.new_start_x, y: item.new_start_y }, item.counter / ANIMATION.TIME);
                     item.start_x = x;
                     item.start_y = y;
@@ -195,8 +196,8 @@ export class WebCAD {
         this.ctx.scale(this.zoomLevel, this.zoomLevel); // apply scale
         this.ctx.translate(this.netPanningX, this.netPanningY); // apply translation
         renderCanvas(this);
-        renderPointer(this);
         renderShapes(this, this.ctx, false);
+        renderPointer(this);
         this.ctx.restore();
 
         // GHOST CANVAS for HIT Detection

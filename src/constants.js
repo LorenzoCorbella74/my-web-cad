@@ -47,9 +47,43 @@ export const OPERATIONS = {
     MEASURES: 'MEASURES'
 };
 
+export const COLORS_CMD_PANEL = [
+    // NAVY
+    '#001f3f',
+    // Blue
+    '#0074D9',
+    // AQUA
+    '#7FDBFF',
+    // TEAL
+    '#39CCCC',
+    // OLIVE
+    '#3D9970',
+    // GREEN
+    '#2ECC40',
+    // LIME
+    '#01FF70',
+    // YELLOW
+    '#FFDC00',
+    // ORANGE
+    '#FF851B',
+    // RED
+    '#FF4136',
+    // MAROON
+    '#85144b',
+    // FUCHSIA
+    '#F012BE',
+    // PURPLE
+    '#B10DC9',
+    // BLACK
+    '#111111',
+    // GRAY
+    '#AAAAAA',
+    // SILVER
+    '#DDDDDD'
+];
+
 export const COLORS = {
     grey: {
-        shapes_fill: 'rgba(100,100,255,0.25)',
         shapes_fill_temp: 'rgba(100,100,180,0.20)',
         shapes_fill_selected: 'rgba(200,0,100,0.25)',
         shapes_stroke: 'white',
@@ -61,7 +95,6 @@ export const COLORS = {
         LINES_SMALL: "rgb(36,45,56)"
     },
     blue: {
-        shapes_fill: 'rgba(100,100,255,0.25)',
         shapes_fill_temp: 'rgba(100,100,180,0.20)',
         shapes_fill_selected: 'rgba(200,0,100,0.25)',
         shapes_stroke: '#D1D3D4',
@@ -73,7 +106,6 @@ export const COLORS = {
         LINES_SMALL: "rgb(36,45,56)"
     },
     white: {
-        shapes_fill: 'rgba(7,91,130,0.25)',
         shapes_fill_temp: 'rgba(100,100,180,0.20)',
         shapes_fill_selected: 'rgba(231,76,60,0.25)',
         shapes_stroke: '#808488',
@@ -94,5 +126,5 @@ export const TEXT = {
 
 export const ANIMATION = {
     TIME: 1,
-
+    STEP: .05
 }
