@@ -1,4 +1,4 @@
-import { APP_VERSION, COLORS_CMD_PANEL } from '../constants';
+import { APP_VERSION, COLORS_CMD_PANEL, SNAP_GRID } from '../constants';
 import { formatDate } from '../utils';
 
 export default class CommandsPanel {
@@ -13,6 +13,7 @@ export default class CommandsPanel {
         this.header = document.querySelector('#panel-header')
         this.colors = document.querySelector('.colors');
         this.fillBtn = document.querySelector('.right');
+        this.slider = document.querySelector('.slider');
 
         this.generateColors();
 
@@ -24,12 +25,14 @@ export default class CommandsPanel {
         this.header.onmousedown = this.dragMouseDown.bind(this);
         this.panel.onclick = this.click.bind(this);
 
+        // EVENTS from USER KEYBOARDS
         document.body.addEventListener('CMD-KEYS', (passed) => {
             console.log(`Event from keyboard: ${passed.detail}`);
             this.choosenCommand = passed.detail;
             this.adjustSelection()
         }, true);
 
+        // EVENTS from USER SELECTION
         document.body.addEventListener('SELECT-ITEM', (passed) => {
             console.log(`Selected element: ${passed.detail}`);
             if (passed.detail || passed.detail == 0) {
@@ -37,24 +40,55 @@ export default class CommandsPanel {
                 this.adjustColorSelection(this.main.selectedColorInPanel)
             }
         }, true);
+
+        this.slider.addEventListener('input', (e) => {
+            switch (e.target.value) {
+                case '0':
+                    this.main.keys.hasSnap = false;
+                    break;
+                case '1':
+                    this.main.keys.hasSnap = true;
+                    this.main.keys.currentSnap = SNAP_GRID.XL
+                    break;
+                case '2':
+                    this.main.keys.hasSnap = true;
+                    this.main.keys.currentSnap = SNAP_GRID.L
+                    break;
+                case '3':
+                    this.main.keys.hasSnap = true;
+                    this.main.keys.currentSnap = SNAP_GRID.M
+                    break;
+                case '4':
+                    this.main.keys.hasSnap = true;
+                    this.main.keys.currentSnap = SNAP_GRID.S
+                    break;
+                case '5':
+                    this.main.keys.hasSnap = true;
+                    this.main.keys.currentSnap = SNAP_GRID.XS
+                    break;
+                default:
+                    this.main.keys.hasSnap = true;
+                    this.main.keys.currentSnap = SNAP_GRID.M
+                    break;
+            }
+        }, false);
     }
 
-
     // http://clrs.cc/
-    generateColors() {
+    generateColors () {
         let li = COLORS_CMD_PANEL;
         this.colors.innerHTML = '<ul>' + li.map((e) => `<li class="color-dot" data-color="${e}" style="background-color:${e}"></li>`)
             .join('') + '</ul>';
         this.colors.addEventListener('click', this.selectColor.bind(this))
     }
 
-    selectColor(evt) {
+    selectColor (evt) {
         let c = evt.target.dataset.color;
         this.main.selectedColorInPanel = c;
         this.adjustColorSelection(c);
     }
 
-    adjustColorSelection(c) {
+    adjustColorSelection (c) {
         let items = this.colors.getElementsByTagName("li");
         for (let i = 0; i < items.length; ++i) {
             items[i].classList.remove('selected-color');
@@ -67,7 +101,7 @@ export default class CommandsPanel {
         }
     }
 
-    adjustSelection() {
+    adjustSelection () {
         let all = this.panel.querySelectorAll('.cmd');
         for (let i = 0; i < all.length; i++) {
             const element = all[i];
@@ -79,7 +113,7 @@ export default class CommandsPanel {
         }
     }
 
-    click(e) {
+    click (e) {
         console.log(`Event from commands panel: ${e.target.dataset.cmd}`);
         this.choosenCommand = e.target.parentNode.dataset.cmd;
         if (this.choosenCommand) {
@@ -123,7 +157,7 @@ export default class CommandsPanel {
         }
     }
 
-    switchTheme() {
+    switchTheme () {
         let options = ['grey', 'white', 'blue'];
         let index = options.findIndex(e => e === this.main.selectedTheme);
         if (index < options.length - 1) {
@@ -134,7 +168,7 @@ export default class CommandsPanel {
         this.main.selectedTheme = options[index];
     }
 
-    dragMouseDown(e) {
+    dragMouseDown (e) {
         e = e || window.event;
         e.preventDefault();
         // get the mouse cursor position at startup:
@@ -145,7 +179,7 @@ export default class CommandsPanel {
         this.panel.onmousemove = this.elementDrag.bind(this);
     }
 
-    elementDrag(e) {
+    elementDrag (e) {
         e = e || window.event;
         e.preventDefault();
         // calculate the new cursor position:
@@ -158,13 +192,13 @@ export default class CommandsPanel {
         this.panel.style.left = (this.panel.offsetLeft - this.x) + "px";
     }
 
-    closeDragElement() {
+    closeDragElement () {
         /* stop moving when mouse button is released:*/
         this.panel.onmouseup = null;
         this.panel.onmousemove = null;
     }
 
-    import() {
+    import () {
         let input = document.getElementById('file-input');
         input.onchange = e => {
             // getting a hold of the file reference
@@ -185,7 +219,7 @@ export default class CommandsPanel {
         input.click();
     }
 
-    save() {
+    save () {
         let output = {
             ver: APP_VERSION,
             date: formatDate(new Date()),
@@ -199,7 +233,7 @@ export default class CommandsPanel {
         dlAnchorElem.click();
     }
 
-    createDrawingFromImportedFile(data) {
+    createDrawingFromImportedFile (data) {
         this.main.selectedTheme = data.theme;
         this.main.HM.clean();
         this.main.shapes = data.shapes;
