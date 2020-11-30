@@ -18,6 +18,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
+            font: 1rem Arial;
         }
 
         canvas {
@@ -36,100 +37,122 @@
             <div class=left>
                 <div class="divider"></div>
                 <div class="row">
-                    <div class="cmd" data-cmd="UNDO">
+                    <div class="cmd tooltip" data-cmd="UNDO">
+                        <span class="tooltiptext">Undo</span>
                         <img src="/src/svg/undo.svg" class="icon-white" />
                     </div>
-                    <div class="cmd" data-cmd="REDO">
+                    <div class="cmd tooltip" data-cmd="REDO">
+                        <span class="tooltiptext">Redo</span>
                         <img src="/src/svg/redo.svg" class="icon-white" />
                     </div>
                 </div>
                 <div class="divider"></div>
                 <div class="row">
-                    <div class="cmd" data-cmd="PAN">
+                    <div class="cmd tooltip" data-cmd="PAN">
+                        <span class="tooltiptext">Pan</span>
                         <img src="/src/svg/pan.svg" class="icon-white" />
                     </div>
-                    <div class="cmd" data-cmd="ZOOM">
+                    <div class="cmd tooltip" data-cmd="ZOOM">
+                        <span class="tooltiptext">Zoom</span>
                         <img src="/src/svg/zoom.svg" class="icon-white" />
                     </div>
                 </div>
                 <div class="divider"></div>
                 <div class="row">
-                    <div class="cmd" data-cmd="SELECT">
+                    <div class="cmd tooltip" data-cmd="SELECT">
+                        <span class="tooltiptext">Select</span>
                         <img src="/src/svg/select2.svg" class="icon-white" />
                     </div>
-                    <div class="cmd" data-cmd="DELETE">
+                    <div class="cmd tooltip" data-cmd="DELETE">
+                        <span class="tooltiptext">Delete</span>
                         <img src="/src/svg/delete.svg" class="icon-white" />
                     </div>
                 </div>
                 <div class="divider"></div>
                 <div class="row">
-                    <div class="cmd" data-cmd="MOVE">
+                    <div class="cmd tooltip" data-cmd="MOVE">
+                        <span class="tooltiptext">Move</span>
                         <img src="/src/svg/move.svg" class="icon-white" />
                     </div>
-                    <div class="cmd" data-cmd="COPY">
+                    <div class="cmd tooltip" data-cmd="COPY">
+                        <span class="tooltiptext">Copy</span>
                         <img src="/src/svg/copy.svg" class="icon-white" />
                     </div>
                 </div>
                 <div class="row">
                     <div class="cmd disabled" data-cmd="ROTATE">
+                        <span class="tooltiptext">Rotate</span>
                         <img src="/src/svg/rotate.svg" class="icon-white" />
                     </div>
-                    <div class="cmd" data-cmd="RESIZE">
+                    <div class="cmd tooltip" data-cmd="RESIZE">
+                        <span class="tooltiptext">Edit</span>
                         <img src="/src/svg/resize.svg" class="icon-white" />
                     </div>
                 </div>
                 <div class="divider"></div>
                 <div class="row">
-                    <div class="cmd" data-cmd="LINE">
+                    <div class="cmd tooltip" data-cmd="LINE">
+                        <span class="tooltiptext">Line</span>
                         <img src="/src/svg/line.svg" class="icon-white" />
 
                     </div>
-                    <div class="cmd" data-cmd="RECT">
+                    <div class="cmd tooltip" data-cmd="RECT">
+                        <span class="tooltiptext">Rectangle</span>
                         <img src="/src/svg/rectangle.svg" class="icon-white" />
 
                     </div>
                 </div>
                 <div class="row">
-                    <div class="cmd" data-cmd="CIRCLE">
+                    <div class="cmd tooltip" data-cmd="CIRCLE">
+                        <span class="tooltiptext">Circle</span>
                         <img src="/src/svg/circle.svg" class="icon-white" />
                     </div>
                     <div class="cmd disabled" data-cmd="ARC">
+                        <span class="tooltiptext">Arc</span>
                         <img src="/src/svg/arc.svg" class="icon-white" />
                     </div>
                 </div>
                 <div class="divider"></div>
                 <div class="row">
-                    <div class="cmd" data-cmd="TEXT">
+                    <div class="cmd tooltip" data-cmd="TEXT">
+                        <span class="tooltiptext">Text</span>
                         <img src="/src/svg/text.svg" class="icon-white" />
 
                     </div>
                     <div class="cmd disabled" data-cmd="MEASURE">
+                        <span class="tooltiptext">Measures</span>
                         <img src="/src/svg/measure.svg" class="icon-white" />
                     </div>
                 </div>
                 <div class="divider"></div>
                 <div class="row">
-                    <div class="cmd" data-cmd="FILL">
+                    <div class="cmd tooltip" data-cmd="FILL">
+                        <span class="tooltiptext">Fill Colors</span>
                         <img src="/src/svg/fill.svg" class="icon-white" />
                     </div>
-                    <div class="cmd" data-cmd="PALETTE">
+                    <div class="cmd tooltip" data-cmd="PALETTE">
+                        <span class="tooltiptext">Change theme</span>
                         <img src="/src/svg/palette.svg" class="icon-white" />
                     </div>
                 </div>
                 <div class="divider"></div>
                 <div class="row">
-                    <div class="cmd" data-cmd="SAVE">
+                    <div class="cmd tooltip" data-cmd="SAVE">
+                        <span class="tooltiptext">Save</span>
                         <img src="/src/svg/save.svg" class="icon-white" />
                     </div>
-                    <div class="cmd" data-cmd="IMPORT">
+                    <div class="cmd tooltip" data-cmd="IMPORT">
+                        <span class="tooltiptext">Import</span>
                         <img src="/src/svg/import.svg" class="icon-white" />
                     </div>
                 </div>
                 <div class="row">
-                    <div class="cmd" data-cmd="CONFIG">
+                    <div class="cmd tooltip" data-cmd="CONFIG">
+                        <span class="tooltiptext">Config</span>
                         <img src="/src/svg/config.svg" class="icon-white" />
                     </div>
-                    <div class="cmd" data-cmd="HELP">
+                    <div class="cmd tooltip" data-cmd="HELP">
+                        <span class="tooltiptext">Help</span>
                         <img src="/src/svg/help.svg" class="icon-white" />
                     </div>
                 </div>
