@@ -18,7 +18,7 @@ export default class KeyboardEvents {
         }, false);
     }
 
-    startListenDocumentKeyup() {
+    startListenDocumentKeyup () {
         document.onkeyup = (e) => {
 
             // track keyboard events only if the text input modal is not open
@@ -57,21 +57,27 @@ export default class KeyboardEvents {
                     this.choosenCommand = OPERATIONS.TEXT;
                 } else if (e.key == 0) {
                     this.hasSnap = false;
+                    this.sendCustomEvent('CMD-SNAP', '0');
                 } else if (e.key == "1") {
                     this.hasSnap = true;
                     this.currentSnap = SNAP_GRID.XL
+                    this.sendCustomEvent('CMD-SNAP', '1');
                 } else if (e.key == "2") {
                     this.hasSnap = true;
                     this.currentSnap = SNAP_GRID.L
+                    this.sendCustomEvent('CMD-SNAP', '2');
                 } else if (e.key == "3") {
                     this.hasSnap = true;
                     this.currentSnap = SNAP_GRID.M
+                    this.sendCustomEvent('CMD-SNAP', '3');
                 } else if (e.key == "4") {
                     this.hasSnap = true;
                     this.currentSnap = SNAP_GRID.S
+                    this.sendCustomEvent('CMD-SNAP', '4');
                 } else if (e.key == "5") {
                     this.hasSnap = true;
                     this.currentSnap = SNAP_GRID.XS
+                    this.sendCustomEvent('CMD-SNAP', '5');
                 } else if (e.ctrlKey && e.key == 'z') {
                     this.main.HM.undo()
                 } else if (e.ctrlKey && e.key == 'y') {
@@ -87,9 +93,13 @@ export default class KeyboardEvents {
                 }
             }
 
-            const event = new CustomEvent('CMD-KEYS', { bubbles: true, detail: this.choosenCommand });
-            document.body.dispatchEvent(event);
+            this.sendCustomEvent('CMD-KEYS', this.choosenCommand);
 
         }
+    }
+
+    sendCustomEvent (key, payload) {
+        const event = new CustomEvent(key, { bubbles: true, detail: payload });
+        document.body.dispatchEvent(event);
     }
 }

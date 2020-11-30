@@ -32,6 +32,12 @@ export default class CommandsPanel {
             this.adjustSelection()
         }, true);
 
+        // EVENTS from USER KEYBOARDS for SNAP
+        document.body.addEventListener('CMD-SNAP', (passed) => {
+            console.log(`Event from keyboard: ${passed.detail}`);
+            this.slider.value = passed.detail;
+        }, true);
+
         // EVENTS from USER SELECTION
         document.body.addEventListener('SELECT-ITEM', (passed) => {
             console.log(`Selected element: ${passed.detail}`);
