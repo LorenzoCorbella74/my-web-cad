@@ -40,8 +40,12 @@ export default class LineCommand extends Command {
             this.main.shapes.push(trackSelection({
                 start_x: this.start.x,
                 start_y: this.start.y,
-                end_x: event._x - this.main.netPanningX,
-                end_y: event._y - this.main.netPanningY,
+                end_x: this.start.x,
+                end_y: this.start.y,
+                final_end_x: event._x - this.main.netPanningX,
+                final_end_y: event._y - this.main.netPanningY,
+                animationCreate: true,
+                counterCreate: 0,
                 stroke: COLORS[this.main.selectedTheme].shapes_stroke
             }));
             this.main.HM.set(this.main.shapes)

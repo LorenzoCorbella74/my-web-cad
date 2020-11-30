@@ -44,7 +44,10 @@ export default class CircleCommand extends Command {
             this.main.shapes.push(trackSelection({
                 start_x: this.start.x,
                 start_y: this.start.y,
-                radius: this.radius,
+                radius: 0,
+                final_radius: this.radius,
+                animationCreate: true,
+                counterCreate: 0,
                 color: this.main.selectedColorInPanel /* COLORS[this.main.selectedTheme].shapes_fill */,
                 stroke: COLORS[this.main.selectedTheme].shapes_stroke
             }));

@@ -84,8 +84,8 @@ export const COLORS_CMD_PANEL = [
 
 export const COLORS = {
     grey: {
-        shapes_fill_temp: 'rgba(100,100,180,0.20)',
-        shapes_fill_selected: 'rgba(200,0,100,0.25)',
+        shapes_fill_temp: '#E8E9E9',
+        shapes_fill_selected: 'rgb(200,0,100,0.25)',
         shapes_stroke: 'white',
         shapes_stroke_selected: 'salmon',
         LINES: 'grey',
@@ -95,7 +95,7 @@ export const COLORS = {
         LINES_SMALL: "rgb(36,45,56)"
     },
     blue: {
-        shapes_fill_temp: 'rgba(100,100,180,0.20)',
+        shapes_fill_temp: '#E8E9E9',
         shapes_fill_selected: 'rgba(200,0,100,0.25)',
         shapes_stroke: '#D1D3D4',
         shapes_stroke_selected: 'salmon',
@@ -106,11 +106,11 @@ export const COLORS = {
         LINES_SMALL: "rgb(36,45,56)"
     },
     white: {
-        shapes_fill_temp: 'rgba(100,100,180,0.20)',
+        shapes_fill_temp: '#D1D3D4',
         shapes_fill_selected: 'rgba(231,76,60,0.25)',
-        shapes_stroke: '#808488',
+        shapes_stroke: 'black',
         shapes_stroke_selected: 'salmon',
-        LINES: '#808488',
+        LINES: 'black',
         CURSOR: '#2ecc71',
         CANVAS: "rgb(235,242,250)",
         LINES_BIG: "#D1D3D4",

@@ -13,7 +13,7 @@ export default class RectCommand extends Command {
         this.width, this.height
     }
 
-    mousemove(event) {
+    mousemove (event) {
         this.main.mouse.x = event._x;
         this.main.mouse.y = event._y;
         this.main.mouse.event = event;
@@ -37,22 +37,26 @@ export default class RectCommand extends Command {
 
     }
 
-    mousedown(event) {
+    mousedown (event) {
         this.start.x = event._x;
         this.start.y = event._y;
         this.started = true;
     }
 
-    mouseup(event) {
+    mouseup (event) {
         if (this.started) {
             this.started = false;
             this.main.tempShape.length = 0;
             this.main.shapes.push(trackSelection({
                 start_x: this.x - this.main.netPanningX,
                 start_y: this.y - this.main.netPanningY,
-                w: this.w,
-                h: this.h,
-                color: this.main.selectedColorInPanel/* COLORS[this.main.selectedTheme].shapes_fill */,
+                final_w: this.w,
+                final_h: this.h,
+                w: 0,
+                h: 0,
+                animationCreate: true,
+                counterCreate: 0,
+                color: this.main.selectedColorInPanel,
                 stroke: COLORS[this.main.selectedTheme].shapes_stroke
             }));
             this.main.HM.set(this.main.shapes)

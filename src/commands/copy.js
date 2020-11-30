@@ -68,8 +68,8 @@ export default class CopyCommand extends Command {
                     new_start_y: (event._y - this.main.netPanningY) - dy,
                     w: sel.w,
                     h: sel.h,
-                    animation: true,
-                    counter: 0,
+                    animationEdit: true,
+                    counterEdit: 0,
                     color: this.main.selectedColorInPanel,
                     stroke: COLORS[this.main.selectedTheme].shapes_stroke
                 }));
@@ -83,8 +83,8 @@ export default class CopyCommand extends Command {
                     new_start_x: (event._x - this.main.netPanningX) - dx,
                     new_start_y: (event._y - this.main.netPanningY) - dy,
                     radius: sel.radius,
-                    animation: true,
-                    counter: 0,
+                    animationEdit: true,
+                    counterEdit: 0,
                     color: this.main.selectedColorInPanel,
                     stroke: COLORS[this.main.selectedTheme].shapes_stroke
                 }));

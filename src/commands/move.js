@@ -63,8 +63,8 @@ export default class MoveCommand extends Command {
                 sel.new_start_y = (event._y - this.main.netPanningY) - dy;
                 sel.start_x = this.start.x - dx;
                 sel.start_y = this.start.y - dy;
-                sel.animation = true;
-                sel.counter = 0;
+                sel.animationEdit = true;
+                sel.counterEdit = 0;
                 this.main.HM.set(this.main.shapes)
             } else {
                 // lines

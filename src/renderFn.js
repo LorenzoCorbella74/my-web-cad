@@ -94,18 +94,12 @@ export function renderShapes(scope, ctx, hit) {
                 ctx.restore()
             } else {
                 ctx.save()
-                ctx.fillStyle = item.selected ? COLORS[scope.selectedTheme].shapes_fill_selected : (hit ? item.colorKey : hexToRGB(item.color))
+                ctx.fillStyle = item.selected ? COLORS[scope.selectedTheme].shapes_fill_selected : (hit ? item.colorKey : item.color)
                 ctx.beginPath()
                 ctx.font = item.font;
                 ctx.fillText(item.text, item.start_x, item.start_y);
                 ctx.restore()
             }
-            ctx.save()
-            ctx.fillStyle = item.selected ? COLORS[scope.selectedTheme].shapes_fill_selected : (hit ? item.colorKey : hexToRGB(item.color))
-            ctx.beginPath()
-            ctx.font = item.font;
-            ctx.fillText(item.text, item.start_x, item.start_y);
-            ctx.restore()
         } else if (item.w && item.h) {
             ctx.save()
             ctx.fillStyle = item.selected ? COLORS[scope.selectedTheme].shapes_fill_selected : (hit ? item.colorKey : hexToRGB(item.color))

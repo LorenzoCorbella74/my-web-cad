@@ -1,6 +1,6 @@
 export const colorsTable = {}
 
-export function trackSelection(shape) {
+export function trackSelection (shape) {
     const r = Math.round(Math.random() * 255);
     const g = Math.round(Math.random() * 255);
     const b = Math.round(Math.random() * 255);
@@ -12,13 +12,13 @@ export function trackSelection(shape) {
     return shape;
 }
 
-export function interpolate(a, b, frac) {
+export function interpolate (a = { x: 0, y: 0 }, b = { x: 0, y: 0 }, frac) {
     var nx = a.x + (b.x - a.x) * frac;
     var ny = a.y + (b.y - a.y) * frac;
     return { x: nx, y: ny };
 }
 
-export function formatDate(date) {
+export function formatDate (date) {
     var d = new Date(date),
         month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
@@ -33,7 +33,7 @@ export function formatDate(date) {
 }
 
 // https://css-tricks.com/converting-color-spaces-in-javascript/
-export function hexToRGB(h) {
+export function hexToRGB (h) {
     let r = 0, g = 0, b = 0;
 
     // 3 digits

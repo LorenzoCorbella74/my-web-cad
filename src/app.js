@@ -85,15 +85,15 @@ export class WebCAD {
         this.resizeCanvas()
     }
 
-    setUnitSystem(what) {
+    setUnitSystem (what) {
         this.choosenUnitSystem = what
     }
 
-    getValueAccordingToUnitSystem(val) {
+    getValueAccordingToUnitSystem (val) {
         return val ? val / UNITS[this.choosenUnitSystem] : 0;
     }
 
-    resizeCanvas() {
+    resizeCanvas () {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
         this.ghostcanvas.width = window.innerWidth;
@@ -102,7 +102,7 @@ export class WebCAD {
         this.draw();
     }
 
-    startListening() {
+    startListening () {
         // resize the canvas to fill browser window dynamically
         window.addEventListener('resize', this.resizeCanvas.bind(this), false);
         this.canvas.oncontextmenu = () => false;
@@ -113,7 +113,7 @@ export class WebCAD {
         this.canvas.addEventListener('mouseout', this.globalHandler.bind(this), false);
     }
 
-    globalHandler(ev) {
+    globalHandler (ev) {
         ev.preventDefault();
         ev.stopPropagation();
         let x = parseInt(ev.clientX / this.zoomLevel);
@@ -144,7 +144,7 @@ export class WebCAD {
         }
     }
 
-    loop() {
+    loop () {
         // time management for animation
         this.currentTime = (new Date()).getTime();
         this.dt = (this.currentTime - this.lastTime) / 1000;
@@ -160,35 +160,61 @@ export class WebCAD {
         });
     }
 
-    start() {
+    start () {
         this.loop();
     }
 
-    unselectAll() {
+    unselectAll () {
         this.shapes.forEach((item, index) => {
             item.selected = false;
         });
         this.selected = null;
     }
 
-    update(dt) {
+    update (dt) {
         // console.log(dt)
-        [...this.HM.value].forEach(item => {
-            if (item.animation) {
-                if (item.counter <= ANIMATION.TIME) {
-                    item.counter += ANIMATION.STEP
-                    let { x, y } = interpolate({ x: item.start_x, y: item.start_y }, { x: item.new_start_x, y: item.new_start_y }, item.counter / ANIMATION.TIME);
+        this.HM.value.forEach(item => {
+            // ANIMATION on COPY / MOVE
+            if (item.animationEdit) {
+                if (item.counterEdit <= ANIMATION.TIME) {
+                    item.counterEdit += ANIMATION.STEP
+                    let { x, y } = interpolate({ x: item.start_x, y: item.start_y }, { x: item.new_start_x, y: item.new_start_y }, item.counterEdit / ANIMATION.TIME);
                     item.start_x = x;
                     item.start_y = y;
                 } else {
-                    item.animation = false;
+                    item.animationEdit = false;
                     this.unselectAll();
+                }
+            }
+            // Animation on shape creation
+            if (item.animationCreate) {
+                if (item.counterCreate <= ANIMATION.TIME) {
+                    item.counterCreate += ANIMATION.STEP
+                    // RECT
+                    if (item.final_w) {
+                        let { x, y } = interpolate({ x: item.w, y: item.h }, { x: item.final_w, y: item.final_h }, item.counterCreate / ANIMATION.TIME);
+                        item.w = x;
+                        item.h = y;
+                    }
+                    // LINE
+                    if (item.final_end_x) {
+                        let { x, y } = interpolate({ x: item.end_x, y: item.end_y }, { x: item.final_end_x, y: item.final_end_y }, item.counterCreate / ANIMATION.TIME);
+                        item.end_x = x;
+                        item.end_y = y;
+                    }
+                    // CIRCLE
+                    if (item.final_radius) {
+                        let { x } = interpolate({ x: item.radius, y: 0 }, { x: item.final_radius, y: 0 }, item.counterCreate / ANIMATION.TIME);
+                        item.radius = x;
+                    }
+                } else {
+                    item.animationCreate = false;
                 }
             }
         })
     }
 
-    draw() {
+    draw () {
         // CANCAS
         this.ctx.fillStyle = "black";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
