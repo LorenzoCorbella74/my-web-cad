@@ -19,6 +19,8 @@ export default class SelectCommand extends Command {
             if (item.colorKey === color) {
                 item.selected = true;
                 this.main.selected = index;
+                const event = new CustomEvent('SELECT-ITEM', { bubbles: true, detail: this.main.selected });
+                document.body.dispatchEvent(event);
             } else {
                 item.selected = false;
             }
@@ -36,6 +38,7 @@ export default class SelectCommand extends Command {
                 theOne.text,
                 (val) => this.updateText(val))
         }
+
     }
 
     updateText(info) {

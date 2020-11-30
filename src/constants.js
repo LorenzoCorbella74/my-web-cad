@@ -47,17 +47,76 @@ export const OPERATIONS = {
     MEASURES: 'MEASURES'
 };
 
+export const COLORS_CMD_PANEL = [
+    // NAVY
+    '#001f3f',
+    // Blue
+    '#0074D9',
+    // AQUA
+    '#7FDBFF',
+    // TEAL
+    '#39CCCC',
+    // OLIVE
+    '#3D9970',
+    // GREEN
+    '#2ECC40',
+    // LIME
+    '#01FF70',
+    // YELLOW
+    '#FFDC00',
+    // ORANGE
+    '#FF851B',
+    // RED
+    '#FF4136',
+    // MAROON
+    '#85144b',
+    // FUCHSIA
+    '#F012BE',
+    // PURPLE
+    '#B10DC9',
+    // BLACK
+    '#111111',
+    // GRAY
+    '#AAAAAA',
+    // SILVER
+    '#DDDDDD'
+];
+
 export const COLORS = {
-    shapes_fill: 'rgba(100,100,255,0.25)',
-    shapes_fill_temp: 'rgba(100,100,180,0.20)',
-    shapes_fill_selected: 'rgba(200,0,100,0.25)',
-    shapes_stroke: 'white',
-    shapes_stroke_selected: 'salmon',
-    LINES: 'grey',
-    CURSOR: 'rgb(1, 255, 112)',
-    CANVAS: "rgb(31,40,49)",
-    LINES_BIG: "rgb(48,55,71)",
-    LINES_SMALL: "rgb(36,45,56)"
+    grey: {
+        shapes_fill_temp: 'rgba(100,100,180,0.20)',
+        shapes_fill_selected: 'rgba(200,0,100,0.25)',
+        shapes_stroke: 'white',
+        shapes_stroke_selected: 'salmon',
+        LINES: 'grey',
+        CURSOR: 'rgb(1, 255, 112)',
+        CANVAS: "rgb(31,40,49)",
+        LINES_BIG: "rgb(48,55,71)",
+        LINES_SMALL: "rgb(36,45,56)"
+    },
+    blue: {
+        shapes_fill_temp: 'rgba(100,100,180,0.20)',
+        shapes_fill_selected: 'rgba(200,0,100,0.25)',
+        shapes_stroke: '#D1D3D4',
+        shapes_stroke_selected: 'salmon',
+        LINES: 'white',
+        CURSOR: '#ad7fa8',
+        CANVAS: "#0f223e",
+        LINES_BIG: "rgb(48,55,71)",
+        LINES_SMALL: "rgb(36,45,56)"
+    },
+    white: {
+        shapes_fill_temp: 'rgba(100,100,180,0.20)',
+        shapes_fill_selected: 'rgba(231,76,60,0.25)',
+        shapes_stroke: '#808488',
+        shapes_stroke_selected: 'salmon',
+        LINES: '#808488',
+        CURSOR: '#2ecc71',
+        CANVAS: "rgb(235,242,250)",
+        LINES_BIG: "#D1D3D4",
+        LINES_SMALL: "#E8E9E9"
+    }
+
 }
 
 export const TEXT = {
@@ -67,5 +126,5 @@ export const TEXT = {
 
 export const ANIMATION = {
     TIME: 1,
-    
+    STEP: .05
 }

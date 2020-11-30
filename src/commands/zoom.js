@@ -33,9 +33,4 @@ export default class ZoomCommand extends Command {
         this.mouseDown = false;
     }
 
-    mouseout(event) {
-        // console.log('Zoom: mouseout', event, this)
-        this.mouseDown = false;
-    }
-
 }

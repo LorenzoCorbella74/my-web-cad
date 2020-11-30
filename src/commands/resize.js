@@ -15,7 +15,6 @@ export default class ResizeCommand extends Command {
         this.mySelWidth = 10;
         this.mySelBoxColor = 'darkred'; // New for selection boxes
         this.mySelBoxSize = 10;
-
     }
 
     click(e) {
@@ -95,7 +94,7 @@ export default class ResizeCommand extends Command {
                 w: this.mySelWidth,
                 h: this.mySelWidth,
                 color: this.mySelColor,
-                stroke: COLORS.shapes_stroke
+                stroke: COLORS[this.main.selectedTheme].shapes_stroke
             })
         }
         this.main.tempShape = [...anchors]
@@ -154,6 +153,7 @@ export default class ResizeCommand extends Command {
                     mySel.h = my - oldy;
                     break;
             }
+            this.createBoxes()
         }
 
         if (mySel !== null && !this.isResizeDrag) {
@@ -220,12 +220,6 @@ export default class ResizeCommand extends Command {
 
     mouseup(event) {
         // console.log('Command: mouseup', event, this)
-        this.isResizeDrag = false;
-        this.expectResize = -1;
-    }
-
-    mouseout(event) {
-        // console.log('Command: mouseout', event, this)
         this.isResizeDrag = false;
         this.expectResize = -1;
     }

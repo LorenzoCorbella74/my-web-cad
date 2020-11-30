@@ -1,4 +1,4 @@
-import { APP_VERSION } from '../constants';
+import { APP_VERSION, COLORS_CMD_PANEL } from '../constants';
 import { formatDate } from '../utils';
 
 export default class CommandsPanel {
@@ -11,10 +11,14 @@ export default class CommandsPanel {
         this.newY = this.newY || 0
         this.panel = document.querySelector('#panel')
         this.header = document.querySelector('#panel-header')
-        this.paletteBtn = document.querySelector('.right');
+        this.colors = document.querySelector('.colors');
+        this.fillBtn = document.querySelector('.right');
+
+        this.generateColors();
 
         this.choosenCommand = 'SELECT'; // default
         this.adjustSelection();
+        this.adjustColorSelection(this.main.selectedColorInPanel)
 
         // EVENTS
         this.header.onmousedown = this.dragMouseDown.bind(this);
@@ -25,9 +29,45 @@ export default class CommandsPanel {
             this.choosenCommand = passed.detail;
             this.adjustSelection()
         }, true);
+
+        document.body.addEventListener('SELECT-ITEM', (passed) => {
+            console.log(`Selected element: ${passed.detail}`);
+            if (passed.detail || passed.detail == 0) {
+                this.main.selectedColorInPanel = this.main.shapes[passed.detail].color;
+                this.adjustColorSelection(this.main.selectedColorInPanel)
+            }
+        }, true);
     }
 
-    adjustSelection () {
+
+    // http://clrs.cc/
+    generateColors() {
+        let li = COLORS_CMD_PANEL;
+        this.colors.innerHTML = '<ul>' + li.map((e) => `<li class="color-dot" data-color="${e}" style="background-color:${e}"></li>`)
+            .join('') + '</ul>';
+        this.colors.addEventListener('click', this.selectColor.bind(this))
+    }
+
+    selectColor(evt) {
+        let c = evt.target.dataset.color;
+        this.main.selectedColorInPanel = c;
+        this.adjustColorSelection(c);
+    }
+
+    adjustColorSelection(c) {
+        let items = this.colors.getElementsByTagName("li");
+        for (let i = 0; i < items.length; ++i) {
+            items[i].classList.remove('selected-color');
+            if (items[i].dataset.color === c) {
+                items[i].classList.add('selected-color');
+            }
+        }
+        if (this.main.selected || this.main.selected == 0) {
+            this.main.shapes[this.main.selected].color = this.main.selectedColorInPanel;
+        }
+    }
+
+    adjustSelection() {
         let all = this.panel.querySelectorAll('.cmd');
         for (let i = 0; i < all.length; i++) {
             const element = all[i];
@@ -39,7 +79,7 @@ export default class CommandsPanel {
         }
     }
 
-    click (e) {
+    click(e) {
         console.log(`Event from commands panel: ${e.target.dataset.cmd}`);
         this.choosenCommand = e.target.parentNode.dataset.cmd;
         if (this.choosenCommand) {
@@ -52,7 +92,7 @@ export default class CommandsPanel {
                 return;
             }
             if (this.choosenCommand === 'FILL') {
-                console.log('TODO: fill')
+                this.fillBtn.classList.toggle('hide')
                 return;
             }
             if (this.choosenCommand === 'CONFIG') {
@@ -72,7 +112,7 @@ export default class CommandsPanel {
                 return;
             }
             if (this.choosenCommand === 'PALETTE') {
-                this.paletteBtn.classList.toggle('hide')
+                this.switchTheme()
                 return;
             }
             if (!e.target.classList.contains('disabled')) {
@@ -82,8 +122,19 @@ export default class CommandsPanel {
             }
         }
     }
-    
-    dragMouseDown (e) {
+
+    switchTheme() {
+        let options = ['grey', 'white', 'blue'];
+        let index = options.findIndex(e => e === this.main.selectedTheme);
+        if (index < options.length - 1) {
+            index++;
+        } else {
+            index = 0;
+        }
+        this.main.selectedTheme = options[index];
+    }
+
+    dragMouseDown(e) {
         e = e || window.event;
         e.preventDefault();
         // get the mouse cursor position at startup:
@@ -94,7 +145,7 @@ export default class CommandsPanel {
         this.panel.onmousemove = this.elementDrag.bind(this);
     }
 
-    elementDrag (e) {
+    elementDrag(e) {
         e = e || window.event;
         e.preventDefault();
         // calculate the new cursor position:
@@ -107,13 +158,13 @@ export default class CommandsPanel {
         this.panel.style.left = (this.panel.offsetLeft - this.x) + "px";
     }
 
-    closeDragElement () {
+    closeDragElement() {
         /* stop moving when mouse button is released:*/
         this.panel.onmouseup = null;
         this.panel.onmousemove = null;
     }
 
-    import () {
+    import() {
         let input = document.getElementById('file-input');
         input.onchange = e => {
             // getting a hold of the file reference
@@ -134,11 +185,12 @@ export default class CommandsPanel {
         input.click();
     }
 
-    save () {
+    save() {
         let output = {
             ver: APP_VERSION,
             date: formatDate(new Date()),
-            shapes: this.main.HM.value
+            shapes: this.main.HM.value,
+            theme: this.main.selectedTheme
         }
         var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(output));
         var dlAnchorElem = document.getElementById('downloadAnchorElem');
@@ -147,10 +199,11 @@ export default class CommandsPanel {
         dlAnchorElem.click();
     }
 
-    createDrawingFromImportedFile (data) {
+    createDrawingFromImportedFile(data) {
+        this.main.selectedTheme = data.theme;
         this.main.HM.clean();
         this.main.shapes = data.shapes;
-        this.main.HM.set(this.main.shapes   );
+        this.main.HM.set(this.main.shapes);
     }
 
 }

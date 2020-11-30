@@ -31,7 +31,7 @@ export default class RectCommand extends Command {
                 start_y: this.y - this.main.netPanningY,
                 w: this.w,
                 h: this.h,
-                color: COLORS.shapes_fill_temp,
+                color: COLORS[this.main.selectedTheme].shapes_fill_temp,
             }]
         }
 
@@ -52,24 +52,8 @@ export default class RectCommand extends Command {
                 start_y: this.y - this.main.netPanningY,
                 w: this.w,
                 h: this.h,
-                color: COLORS.shapes_fill,
-                stroke: COLORS.shapes_stroke
-            }));
-            this.main.HM.set(this.main.shapes)
-        }
-    }
-
-    mouseout(event) {
-        if (this.started) {
-            this.started = false;
-            this.main.tempShape.length = 0;
-            this.main.shapes.push(trackSelection({
-                start_x: this.x - this.main.netPanningX,
-                start_y: this.y - this.main.netPanningY,
-                w: this.w,
-                h: this.h,
-                color: COLORS.shapes_fill,
-                stroke: COLORS.shapes_stroke
+                color: this.main.selectedColorInPanel/* COLORS[this.main.selectedTheme].shapes_fill */,
+                stroke: COLORS[this.main.selectedTheme].shapes_stroke
             }));
             this.main.HM.set(this.main.shapes)
         }

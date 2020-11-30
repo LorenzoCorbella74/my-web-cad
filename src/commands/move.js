@@ -9,7 +9,7 @@ export default class MoveCommand extends Command {
         this.start = {}
     }
 
-    mousemove (event) {
+    mousemove(event) {
         this.main.mouse.x = event._x;
         this.main.mouse.y = event._y;
         this.main.mouse.event = event;
@@ -22,12 +22,12 @@ export default class MoveCommand extends Command {
                 dashed: true,
                 end_x: event._x - this.main.netPanningX,
                 end_y: event._y - this.main.netPanningY,
-                stroke: COLORS.LINES
+                stroke: COLORS[this.main.selectedTheme].LINES
             }]
         }
     }
 
-    mousedown (event) {// get pixel under cursor
+    mousedown(event) {// get pixel under cursor
         const pixel = this.main.gctx.getImageData(event._x * this.main.zoomLevel, event._y * this.main.zoomLevel, 1, 1).data;
         // create rgb color for that pixel
         const color = `rgb(${pixel[0]},${pixel[1]},${pixel[2]})`;
@@ -50,7 +50,7 @@ export default class MoveCommand extends Command {
         }
     }
 
-    mouseup (event) {
+    mouseup(event) {
         if (this.started && (this.main.selected || this.main.selected === 0)) {
             this.started = false;
             this.main.tempShape.length = 0;
@@ -76,32 +76,6 @@ export default class MoveCommand extends Command {
                 sel.start_y = (event._y - this.main.netPanningY) - dy1;
                 sel.end_x = (event._x - this.main.netPanningX) - dx2;
                 sel.end_y = (event._y - this.main.netPanningY) - dy2;
-                this.main.HM.set(this.main.shapes)
-            }
-        }
-    }
-
-    mouseout (event) {
-        if (this.started && (this.main.selected || this.main.selected === 0)) {
-            this.started = false;
-            this.main.tempShape.length = 0;
-            // rect & circle
-            if (this.main.shapes[this.main.selected].w || this.main.shapes[this.main.selected].radius) {
-                let dx = this.start.x - this.main.shapes[this.main.selected].start_x;
-                let dy = this.start.y - this.main.shapes[this.main.selected].start_y;
-                this.main.shapes[this.main.selected].start_x = (event._x - this.main.netPanningX) - dx;
-                this.main.shapes[this.main.selected].start_y = (event._y - this.main.netPanningY) - dy;
-                this.main.HM.set(this.main.shapes)
-            } else {
-                // lines
-                let dx1 = this.start.x - this.main.shapes[this.main.selected].start_x;
-                let dy1 = this.start.y - this.main.shapes[this.main.selected].start_y;
-                let dx2 = this.start.x - this.main.shapes[this.main.selected].end_x;
-                let dy2 = this.start.y - this.main.shapes[this.main.selected].end_y;
-                this.main.shapes[this.main.selected].start_x = (event._x - this.main.netPanningX) - dx1;
-                this.main.shapes[this.main.selected].start_y = (event._y - this.main.netPanningY) - dy1;
-                this.main.shapes[this.main.selected].end_x = (event._x - this.main.netPanningX) - dx2;
-                this.main.shapes[this.main.selected].end_y = (event._y - this.main.netPanningY) - dy2;
                 this.main.HM.set(this.main.shapes)
             }
         }

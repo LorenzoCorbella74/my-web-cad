@@ -14,7 +14,7 @@ Release BETA 0.8
 - extend linea
 - cut linea
 - [x] UI to import/export JSON
-- [ ] UI to change colors & settings
+- [x] UI to change colors & settings
 - [ ] UI cambiare  u.m. (1pixel -> 2.5cm, 1m, inserito dall'utente)
 
 Release BETA 0.9

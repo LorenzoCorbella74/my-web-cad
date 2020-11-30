@@ -1,6 +1,6 @@
 import Command from './command';
 
-import {CANVAS_DIMENSIONS} from '../constants'
+import { CANVAS_DIMENSIONS } from '../constants'
 
 export default class PanCommand extends Command {
 
@@ -15,7 +15,7 @@ export default class PanCommand extends Command {
         this.main.netPanningY = 0;
     }
 
-    limitCamera (panx, pany) {
+    limitCamera(panx, pany) {
         let a, b;
         if (panx < 0) {
             a = Math.max(-CANVAS_DIMENSIONS.WIDTH, panx)
@@ -30,7 +30,7 @@ export default class PanCommand extends Command {
         return { a, b }
     }
 
-    mousemove (e) {
+    mousemove(e) {
         let x = e._x;
         let y = e._y;
 
@@ -59,21 +59,15 @@ export default class PanCommand extends Command {
         this.main.mouse.event = e;
     }
 
-    mousedown (e) {
+    mousedown(e) {
         // calc the starting this.mouse X,Y for the drag
         this.startX = e._x;
         this.startY = e._y;
-
         // set the isDragging flag
         this.isMouseDown = true;
     }
 
-    mouseup (e) {
-        // clear the isDragging flag
-        this.isMouseDown = false;
-    }
-
-    mouseout (e) {
+    mouseup(e) {
         // clear the isDragging flag
         this.isMouseDown = false;
     }
