@@ -66,6 +66,8 @@ export const COLORS_CMD_PANEL = [
     '#FFDC00',
     // ORANGE
     '#FF851B',
+    // BROWN
+   '#8B4513',
     // RED
     '#FF4136',
     // MAROON
@@ -74,7 +76,7 @@ export const COLORS_CMD_PANEL = [
     '#F012BE',
     // PURPLE
     '#B10DC9',
-    // BLACK
+    // BLACK-
     '#111111',
     // GRAY
     '#AAAAAA',
