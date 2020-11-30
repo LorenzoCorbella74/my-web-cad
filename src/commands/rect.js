@@ -33,6 +33,7 @@ export default class RectCommand extends Command {
                 h: this.h,
                 color: COLORS[this.main.selectedTheme].shapes_fill_temp,
             }]
+            this.main.info = `W: ${this.w}, H: ${this.h}`;
         }
 
     }
@@ -60,6 +61,7 @@ export default class RectCommand extends Command {
                 stroke: COLORS[this.main.selectedTheme].shapes_stroke
             }));
             this.main.HM.set(this.main.shapes)
+            this.main.info = ``;
         }
     }
 

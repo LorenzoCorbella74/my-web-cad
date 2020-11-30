@@ -71,6 +71,7 @@ export class WebCAD {
 
         this.zoomLevel = 1;
         this.choosenUnitSystem = 'ONE'
+        this.info = ''; // what is shown in cursor...
 
         this.shapes = [];
         this.tempShape = []

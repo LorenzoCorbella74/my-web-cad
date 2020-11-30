@@ -12,7 +12,7 @@ export default class CircleCommand extends Command {
         this.radius = 0
     }
 
-    mousemove(event) {
+    mousemove (event) {
         this.main.mouse.x = event._x;
         this.main.mouse.y = event._y;
         this.main.mouse.event = event;
@@ -27,17 +27,17 @@ export default class CircleCommand extends Command {
                 radius: this.radius,
                 color: COLORS[this.main.selectedTheme].shapes_fill_temp,
             }]
+            this.main.info = `Radius: ${Math.floor(this.radius)}`;
         }
     }
 
-    mousedown(event) {
-        /* this.main.ctx.beginPath(); */
+    mousedown (event) {
         this.start.x = event._x - this.main.netPanningX;
         this.start.y = event._y - this.main.netPanningY;
         this.started = true;
     }
 
-    mouseup(event) {
+    mouseup (event) {
         if (this.started) {
             this.started = false;
             this.main.tempShape.length = 0;
@@ -48,7 +48,7 @@ export default class CircleCommand extends Command {
                 final_radius: this.radius,
                 animationCreate: true,
                 counterCreate: 0,
-                color: this.main.selectedColorInPanel /* COLORS[this.main.selectedTheme].shapes_fill */,
+                color: this.main.selectedColorInPanel,
                 stroke: COLORS[this.main.selectedTheme].shapes_stroke
             }));
             this.main.HM.set(this.main.shapes)

@@ -24,6 +24,10 @@ export default class LineCommand extends Command {
                 end_y: event._y - this.main.netPanningY,
                 stroke: COLORS[this.main.selectedTheme].LINES
             }]
+
+            let dx = this.start.x - (event._x - this.main.netPanningX);
+            let dy = this.start.y - (event._y - this.main.netPanningY);
+            this.main.info = `Dist: ${Math.floor(Math.sqrt(dx * dx + dy * dy))}`;
         }
     }
 
@@ -49,6 +53,7 @@ export default class LineCommand extends Command {
                 stroke: COLORS[this.main.selectedTheme].shapes_stroke
             }));
             this.main.HM.set(this.main.shapes)
+            this.main.info = '';
         }
     }
 

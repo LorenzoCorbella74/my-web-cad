@@ -19,6 +19,7 @@ export function renderPointer(scope) {
     scope.ctx.fillStyle = COLORS[scope.selectedTheme].LINES;
     scope.ctx.fillText(`${scope.keys.choosenCommand.toUpperCase()}`, scope.mouse.x + 12.5 - scope.netPanningX, scope.mouse.y - 4.5 - scope.netPanningY)
     scope.ctx.fillText(`x: ${scope.getValueAccordingToUnitSystem(scope.mouse.x - scope.netPanningX)} - y: ${scope.getValueAccordingToUnitSystem(scope.mouse.y - scope.netPanningY)}`, scope.mouse.x + 12.5 - scope.netPanningX, scope.mouse.y + 12.5 - scope.netPanningY)
+    scope.ctx.fillText(`${scope.info}`, scope.mouse.x + 12.5 - scope.netPanningX, scope.mouse.y + 27.5 - scope.netPanningY)
     scope.ctx.closePath();
     scope.ctx.setLineDash([]);
 }
