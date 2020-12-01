@@ -113,11 +113,18 @@ export default class ResizeCommand extends Command {
 
             this.selectionHandles[7].x = choosen.start_x + choosen.radius - half;
             this.selectionHandles[7].y = choosen.start_y + choosen.radius - half;
+        } else {
+            this.selectionHandles[0].x = choosen.start_x - half;
+            this.selectionHandles[0].y = choosen.start_y - half;
+
+            this.selectionHandles[1].x = choosen.end_x - half;
+            this.selectionHandles[1].y = choosen.end_y - half;
         }
 
 
         let anchors = []
-        for (let i = 0; i < 8; i++) {
+        let numberOfAnchors = choosen.end_x ? 2 : 8
+        for (let i = 0; i < numberOfAnchors; i++) {
             let ret = this.selectionHandles[i];
             anchors.push({
                 start_x: this.selectionHandles[i].x /* - this.main.netPanningX */,
@@ -187,10 +194,23 @@ export default class ResizeCommand extends Command {
                         break;
                 }
             } else if (mySel.radius) {
+                // circle resize
                 let dx = oldx - mx;
                 let dy = oldy - my;
                 let dr = Math.sqrt(dx * dx + dy * dy);
                 mySel.radius = dr; // updating radius
+            } else {
+                // edit line
+                switch (this.expectResize) {
+                    case 0:
+                        mySel.start_x = mx;
+                        mySel.start_y = my;
+                        break;
+                    case 1:
+                        mySel.end_x = mx;
+                        mySel.end_y = my;
+                        break;
+                }
             }
             this.createBoxes()
         }
@@ -211,31 +231,35 @@ export default class ResizeCommand extends Command {
                     // we found one!
                     this.expectResize = i;
 
-                    switch (i) {
-                        case 0:
-                            this.main.canvas.style.cursor = 'nw-resize';
-                            break;
-                        case 1:
-                            this.main.canvas.style.cursor = 'n-resize';
-                            break;
-                        case 2:
-                            this.main.canvas.style.cursor = 'ne-resize';
-                            break;
-                        case 3:
-                            this.main.canvas.style.cursor = 'w-resize';
-                            break;
-                        case 4:
-                            this.main.canvas.style.cursor = 'e-resize';
-                            break;
-                        case 5:
-                            this.main.canvas.style.cursor = 'sw-resize';
-                            break;
-                        case 6:
-                            this.main.canvas.style.cursor = 's-resize';
-                            break;
-                        case 7:
-                            this.main.canvas.style.cursor = 'se-resize';
-                            break;
+                    if(!mySel.end_x){
+                        switch (i) {
+                            case 0:
+                                this.main.canvas.style.cursor = 'nw-resize';
+                                break;
+                            case 1:
+                                this.main.canvas.style.cursor = 'n-resize';
+                                break;
+                            case 2:
+                                this.main.canvas.style.cursor = 'ne-resize';
+                                break;
+                            case 3:
+                                this.main.canvas.style.cursor = 'w-resize';
+                                break;
+                            case 4:
+                                this.main.canvas.style.cursor = 'e-resize';
+                                break;
+                            case 5:
+                                this.main.canvas.style.cursor = 'sw-resize';
+                                break;
+                            case 6:
+                                this.main.canvas.style.cursor = 's-resize';
+                                break;
+                            case 7:
+                                this.main.canvas.style.cursor = 'se-resize';
+                                break;
+                        }
+                    } else {
+                        this.main.canvas.style.cursor = 'all-scroll';
                     }
                     return;
                 }
@@ -244,9 +268,7 @@ export default class ResizeCommand extends Command {
             this.isResizeDrag = false;
             this.expectResize = -1;
             this.main.canvas.style.cursor = 'auto';
-
         }
-
     }
 
     mousedown (e) {
