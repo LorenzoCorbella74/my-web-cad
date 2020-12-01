@@ -34,9 +34,9 @@ export default class KeyboardEvents {
                     } else if (e.key == 'r') {
                         this.choosenCommand = OPERATIONS.ROTATE;
                     } else if (e.key == 'a') {
-                        this.choosenCommand = OPERATIONS.ARC;
-                    } else if (e.key == 'f') {
-                        this.choosenCommand = OPERATIONS.FILL; */
+                        this.choosenCommand = OPERATIONS.ARC;*/
+                } else if (e.key == 'f') {
+                    this.choosenCommand = OPERATIONS.MEASURES;
                 } else if (e.key == 'e') {
                     this.choosenCommand = OPERATIONS.RESIZE;
                 } else if (e.key == 'c') {

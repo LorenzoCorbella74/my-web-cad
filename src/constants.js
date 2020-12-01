@@ -1,5 +1,4 @@
-export const APP_VERSION = '0.6.0';
-
+export const APP_VERSION = '0.7.0';
 
 export const CANVAS_DIMENSIONS = {
     WIDTH: 4000,
@@ -24,17 +23,16 @@ export const UNITS = {
 };
 
 export const OPERATIONS = {
-    // view
+    // VIEW
     PAN: "PAN",
     ZOOM: "ZOOM",
     SELECT: "SELECT",
     DELETE: "DELETE",
-    // MODIFICA
+    // EDIT
     MOVE: 'MOVE',
     ROTATE: "ROTATE",
     COPY: 'COPY',
     RESIZE: "RESIZE",
-    // SCALE: 'SCALE',
     // SHAPES
     LINE: 'LINE',
     RECT: 'RECT',
@@ -118,7 +116,6 @@ export const COLORS = {
         LINES_BIG: "#D1D3D4",
         LINES_SMALL: "#E8E9E9"
     }
-
 }
 
 export const TEXT = {
