@@ -89,8 +89,8 @@ export default class ResizeCommand extends Command {
         for (let i = 0; i < 8; i++) {
             let ret = this.selectionHandles[i];
             anchors.push({
-                start_x: this.selectionHandles[i].x - this.main.netPanningX,
-                start_y: this.selectionHandles[i].y - this.main.netPanningY,
+                start_x: this.selectionHandles[i].x /* - this.main.netPanningX */,
+                start_y: this.selectionHandles[i].y /* - this.main.netPanningY */,
                 w: this.mySelWidth,
                 h: this.mySelWidth,
                 color: this.mySelColor,
