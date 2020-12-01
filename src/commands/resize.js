@@ -17,7 +17,7 @@ export default class ResizeCommand extends Command {
         this.mySelBoxSize = 10;
     }
 
-    click (e) {
+    click(e) {
         // get pixel under cursor
         const pixel = this.main.gctx.getImageData(e._x * this.main.zoomLevel, e._y * this.main.zoomLevel, 1, 1).data;
         // create rgb color for that pixel
@@ -44,12 +44,12 @@ export default class ResizeCommand extends Command {
         }
     }
 
-    removeBoxes () {
+    removeBoxes() {
         this.main.tempShape.length = 0;
         this.selectionHandles = [{}, {}, {}, {}, {}, {}, {}, {}];
     }
 
-    createBoxes () {
+    createBoxes() {
         let half = this.mySelBoxSize / 2;
         let choosen = this.main.shapes[this.main.selected]
 
@@ -138,7 +138,7 @@ export default class ResizeCommand extends Command {
         this.main.tempShape = [...anchors]
     }
 
-    mousemove (e) {
+    mousemove(e) {
         this.main.mouse.x = e._x;
         this.main.mouse.y = e._y;
         this.main.mouse.event = e;
@@ -231,7 +231,7 @@ export default class ResizeCommand extends Command {
                     // we found one!
                     this.expectResize = i;
 
-                    if(!mySel.end_x){
+                    if (!mySel.end_x) {
                         switch (i) {
                             case 0:
                                 this.main.canvas.style.cursor = 'nw-resize';
@@ -271,7 +271,7 @@ export default class ResizeCommand extends Command {
         }
     }
 
-    mousedown (e) {
+    mousedown(e) {
         // console.log('Command: mousedown', e, this)
         //we are over a selection box
         if (this.expectResize !== -1) {
@@ -280,10 +280,11 @@ export default class ResizeCommand extends Command {
         }
     }
 
-    mouseup (event) {
+    mouseup(event) {
         // console.log('Command: mouseup', event, this)
         this.isResizeDrag = false;
         this.expectResize = -1;
+        this.main.canvas.style.cursor = "none"
     }
 
 }

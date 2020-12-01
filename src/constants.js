@@ -65,7 +65,7 @@ export const COLORS_CMD_PANEL = [
     // ORANGE
     '#FF851B',
     // BROWN
-   '#8B4513',
+    '#8B4513',
     // RED
     '#FF4136',
     // MAROON
@@ -89,7 +89,7 @@ export const COLORS = {
         shapes_stroke: 'white',
         shapes_stroke_selected: 'salmon',
         LINES: 'grey',
-        CURSOR: 'rgb(1, 255, 112)',
+        CURSOR: 'orange',
         CANVAS: "rgb(31,40,49)",
         LINES_BIG: "rgb(48,55,71)",
         LINES_SMALL: "rgb(36,45,56)"

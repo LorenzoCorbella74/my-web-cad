@@ -133,6 +133,7 @@ export function renderShapes(scope, ctx, hit) {
 
 function drawLine(scope, ctx, item, hit) {
     let aWidth = 5, aLength = 8;
+    ctx.setLineDash([0, 0]);
     let dx = item.end_x - item.start_x;
     let dy = item.end_y - item.start_y;
     let angle = Math.atan2(dy, dx);
