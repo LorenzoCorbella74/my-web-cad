@@ -13,7 +13,7 @@ export default class RectCommand extends Command {
         this.width, this.height
     }
 
-    mousemove (event) {
+    mousemove(event) {
         this.main.mouse.x = event._x;
         this.main.mouse.y = event._y;
         this.main.mouse.event = event;
@@ -38,13 +38,13 @@ export default class RectCommand extends Command {
 
     }
 
-    mousedown (event) {
+    mousedown(event) {
         this.start.x = event._x;
         this.start.y = event._y;
         this.started = true;
     }
 
-    mouseup (event) {
+    mouseup(event) {
         if (this.started) {
             this.started = false;
             this.main.tempShape.length = 0;
@@ -55,6 +55,7 @@ export default class RectCommand extends Command {
                 final_h: this.h,
                 w: 0,
                 h: 0,
+                angle: 0,
                 animationCreate: true,
                 counterCreate: 0,
                 color: this.main.selectedColorInPanel,

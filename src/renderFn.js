@@ -110,7 +110,11 @@ export function renderShapes(scope, ctx, hit) {
             ctx.fillStyle = item.selected ? COLORS[scope.selectedTheme].shapes_fill_selected : (hit ? item.colorKey : hexToRGB(item.color))
             ctx.strokeStyle = item.selected ? COLORS[scope.selectedTheme].shapes_stroke_selected : (hit ? item.colorKey : item.stroke)
             ctx.beginPath()
-            ctx.rect(item.start_x, item.start_y, item.w, item.h)
+            ctx.translate(item.start_x + item.w / 2, item.start_y + item.h / 2);
+            if (item.angle) {
+                ctx.rotate(item.angle);
+            }
+            ctx.rect(-item.w / 2, -item.h / 2, item.w, item.h)
             ctx.fill()
             ctx.stroke()
             ctx.restore()

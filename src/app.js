@@ -25,6 +25,7 @@ import CopyCommand from './commands/copy'
 import ResizeCommand from './commands/resize'
 import TextCommand from './commands/text';
 import MeasuresCommand from './commands/measures';
+import RotateCommand from './commands/rotate';
 
 window.onload = () => {
     const cad = new WebCAD();
@@ -59,7 +60,8 @@ export class WebCAD {
             'RECT': new RectCommand(this),
             'CIRCLE': new CircleCommand(this),
             'TEXT': new TextCommand(this),
-            'MEASURES': new MeasuresCommand(this)
+            'MEASURES': new MeasuresCommand(this),
+            'ROTATE': new RotateCommand(this)
         }
 
         this.textModal = new InputDialogue(this)

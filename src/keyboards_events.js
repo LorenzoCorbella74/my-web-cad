@@ -18,7 +18,7 @@ export default class KeyboardEvents {
         }, false);
     }
 
-    startListenDocumentKeyup () {
+    startListenDocumentKeyup() {
         document.onkeyup = (e) => {
 
             // track keyboard events only if the text input modal is not open
@@ -31,10 +31,10 @@ export default class KeyboardEvents {
                     });
                     this.main.selected = null;
                     /* 
-                    } else if (e.key == 'r') {
-                        this.choosenCommand = OPERATIONS.ROTATE;
-                    } else if (e.key == 'a') {
-                        this.choosenCommand = OPERATIONS.ARC;*/
+                } else if (e.key == 'a') {
+                    this.choosenCommand = OPERATIONS.ARC;*/
+                } else if (e.key == 'w') {
+                    this.choosenCommand = OPERATIONS.ROTATE;
                 } else if (e.key == 'f') {
                     this.choosenCommand = OPERATIONS.MEASURES;
                 } else if (e.key == 'e') {
@@ -98,7 +98,7 @@ export default class KeyboardEvents {
         }
     }
 
-    sendCustomEvent (key, payload) {
+    sendCustomEvent(key, payload) {
         const event = new CustomEvent(key, { bubbles: true, detail: payload });
         document.body.dispatchEvent(event);
     }
