@@ -17,7 +17,7 @@ export default class ResizeCommand extends Command {
         this.mySelBoxSize = 10;
     }
 
-    click(e) {
+    click (e) {
         // get pixel under cursor
         const pixel = this.main.gctx.getImageData(e._x * this.main.zoomLevel, e._y * this.main.zoomLevel, 1, 1).data;
         // create rgb color for that pixel
@@ -37,19 +37,19 @@ export default class ResizeCommand extends Command {
         }
 
         // if there is a selected and is a rectangle
-        if ((this.main.selected || this.main.selected === 0) && this.main.shapes[this.main.selected].w) {
+        if ((this.main.selected || this.main.selected === 0) /* && this.main.shapes[this.main.selected].w */) {
             this.createBoxes();
         } else {
             this.removeBoxes();
         }
     }
 
-    removeBoxes() {
+    removeBoxes () {
         this.main.tempShape.length = 0;
         this.selectionHandles = [{}, {}, {}, {}, {}, {}, {}, {}];
     }
 
-    createBoxes() {
+    createBoxes () {
         let half = this.mySelBoxSize / 2;
         let choosen = this.main.shapes[this.main.selected]
 
@@ -57,33 +57,64 @@ export default class ResizeCommand extends Command {
         // 3     4
         // 5  6  7
 
-        // top left, middle, right
-        this.selectionHandles[0].x = choosen.start_x - half;
-        this.selectionHandles[0].y = choosen.start_y - half;
+        if (choosen.w && choosen.h) {
+            // top left, middle, right
+            this.selectionHandles[0].x = choosen.start_x - half;
+            this.selectionHandles[0].y = choosen.start_y - half;
 
-        this.selectionHandles[1].x = choosen.start_x + choosen.w / 2 - half;
-        this.selectionHandles[1].y = choosen.start_y - half;
+            this.selectionHandles[1].x = choosen.start_x + choosen.w / 2 - half;
+            this.selectionHandles[1].y = choosen.start_y - half;
 
-        this.selectionHandles[2].x = choosen.start_x + choosen.w - half;
-        this.selectionHandles[2].y = choosen.start_y - half;
+            this.selectionHandles[2].x = choosen.start_x + choosen.w - half;
+            this.selectionHandles[2].y = choosen.start_y - half;
 
-        //middle left
-        this.selectionHandles[3].x = choosen.start_x - half;
-        this.selectionHandles[3].y = choosen.start_y + choosen.h / 2 - half;
+            //middle left
+            this.selectionHandles[3].x = choosen.start_x - half;
+            this.selectionHandles[3].y = choosen.start_y + choosen.h / 2 - half;
 
-        //middle right
-        this.selectionHandles[4].x = choosen.start_x + choosen.w - half;
-        this.selectionHandles[4].y = choosen.start_y + choosen.h / 2 - half;
+            //middle right
+            this.selectionHandles[4].x = choosen.start_x + choosen.w - half;
+            this.selectionHandles[4].y = choosen.start_y + choosen.h / 2 - half;
 
-        //bottom left, middle, right
-        this.selectionHandles[6].x = choosen.start_x + choosen.w / 2 - half;
-        this.selectionHandles[6].y = choosen.start_y + choosen.h - half;
+            //bottom left, middle, right
+            this.selectionHandles[6].x = choosen.start_x + choosen.w / 2 - half;
+            this.selectionHandles[6].y = choosen.start_y + choosen.h - half;
 
-        this.selectionHandles[5].x = choosen.start_x - half;
-        this.selectionHandles[5].y = choosen.start_y + choosen.h - half;
+            this.selectionHandles[5].x = choosen.start_x - half;
+            this.selectionHandles[5].y = choosen.start_y + choosen.h - half;
 
-        this.selectionHandles[7].x = choosen.start_x + choosen.w - half;
-        this.selectionHandles[7].y = choosen.start_y + choosen.h - half;
+            this.selectionHandles[7].x = choosen.start_x + choosen.w - half;
+            this.selectionHandles[7].y = choosen.start_y + choosen.h - half;
+        } else if (choosen.radius) {
+            // top left, middle, right
+            this.selectionHandles[0].x = choosen.start_x - choosen.radius - half;
+            this.selectionHandles[0].y = choosen.start_y - choosen.radius - half;
+
+            this.selectionHandles[1].x = choosen.start_x - half;
+            this.selectionHandles[1].y = choosen.start_y - choosen.radius - half;
+
+            this.selectionHandles[2].x = choosen.start_x + choosen.radius - half;
+            this.selectionHandles[2].y = choosen.start_y - choosen.radius - half;
+
+            //middle left
+            this.selectionHandles[3].x = choosen.start_x - choosen.radius - half;
+            this.selectionHandles[3].y = choosen.start_y - half;
+
+            //middle right
+            this.selectionHandles[4].x = choosen.start_x + choosen.radius - half;
+            this.selectionHandles[4].y = choosen.start_y - half;
+
+            //bottom left, middle, right
+            this.selectionHandles[6].x = choosen.start_x - half;
+            this.selectionHandles[6].y = choosen.start_y + choosen.radius - half;
+
+            this.selectionHandles[5].x = choosen.start_x - choosen.radius - half;
+            this.selectionHandles[5].y = choosen.start_y + choosen.radius - half;
+
+            this.selectionHandles[7].x = choosen.start_x + choosen.radius - half;
+            this.selectionHandles[7].y = choosen.start_y + choosen.radius - half;
+        }
+
 
         let anchors = []
         for (let i = 0; i < 8; i++) {
@@ -100,7 +131,7 @@ export default class ResizeCommand extends Command {
         this.main.tempShape = [...anchors]
     }
 
-    mousemove(e) {
+    mousemove (e) {
         this.main.mouse.x = e._x;
         this.main.mouse.y = e._y;
         this.main.mouse.event = e;
@@ -110,51 +141,60 @@ export default class ResizeCommand extends Command {
         let my = this.main.mouse.y - this.main.netPanningY
 
         if (this.isResizeDrag && mySel) {
-            // time ro resize!
+
             let oldx = mySel.start_x;
             let oldy = mySel.start_y;
 
             // 0  1  2
             // 3     4
             // 5  6  7
-            switch (this.expectResize) {
-                case 0:
-                    mySel.start_x = mx;
-                    mySel.start_y = my;
-                    mySel.w += oldx - mx;
-                    mySel.h += oldy - my;
-                    break;
-                case 1:
-                    mySel.start_y = my;
-                    mySel.h += oldy - my;
-                    break;
-                case 2:
-                    mySel.start_y = my;
-                    mySel.w = mx - oldx;
-                    mySel.h += oldy - my;
-                    break;
-                case 3:
-                    mySel.start_x = mx;
-                    mySel.w += oldx - mx;
-                    break;
-                case 4:
-                    mySel.w = mx - oldx;
-                    break;
-                case 5:
-                    mySel.start_x = mx;
-                    mySel.w += oldx - mx;
-                    mySel.h = my - oldy;
-                    break;
-                case 6:
-                    mySel.h = my - oldy;
-                    break;
-                case 7:
-                    mySel.w = mx - oldx;
-                    mySel.h = my - oldy;
-                    break;
+            if (mySel.w && mySel.h) {
+
+                switch (this.expectResize) {
+                    case 0:
+                        mySel.start_x = mx;
+                        mySel.start_y = my;
+                        mySel.w += oldx - mx;
+                        mySel.h += oldy - my;
+                        break;
+                    case 1:
+                        mySel.start_y = my;
+                        mySel.h += oldy - my;
+                        break;
+                    case 2:
+                        mySel.start_y = my;
+                        mySel.w = mx - oldx;
+                        mySel.h += oldy - my;
+                        break;
+                    case 3:
+                        mySel.start_x = mx;
+                        mySel.w += oldx - mx;
+                        break;
+                    case 4:
+                        mySel.w = mx - oldx;
+                        break;
+                    case 5:
+                        mySel.start_x = mx;
+                        mySel.w += oldx - mx;
+                        mySel.h = my - oldy;
+                        break;
+                    case 6:
+                        mySel.h = my - oldy;
+                        break;
+                    case 7:
+                        mySel.w = mx - oldx;
+                        mySel.h = my - oldy;
+                        break;
+                }
+            } else if (mySel.radius) {
+                let dx = oldx - mx;
+                let dy = oldy - my;
+                let dr = Math.sqrt(dx * dx + dy * dy);
+                mySel.radius = dr; // updating radius
             }
             this.createBoxes()
         }
+
 
         if (mySel !== null && !this.isResizeDrag) {
             for (var i = 0; i < 8; i++) {
@@ -209,7 +249,7 @@ export default class ResizeCommand extends Command {
 
     }
 
-    mousedown(e) {
+    mousedown (e) {
         // console.log('Command: mousedown', e, this)
         //we are over a selection box
         if (this.expectResize !== -1) {
@@ -218,7 +258,7 @@ export default class ResizeCommand extends Command {
         }
     }
 
-    mouseup(event) {
+    mouseup (event) {
         // console.log('Command: mouseup', event, this)
         this.isResizeDrag = false;
         this.expectResize = -1;
