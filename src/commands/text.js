@@ -52,6 +52,7 @@ export default class TextCommand extends Command {
             start_x: this.start.x,
             start_y: this.start.y,
             dashed: true,
+            arrowStart: true,
             end_x: x - this.main.netPanningX,
             end_y: y - this.main.netPanningY,
             stroke: COLORS[this.main.selectedTheme].LINES

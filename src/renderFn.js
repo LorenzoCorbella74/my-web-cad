@@ -1,7 +1,7 @@
 import { CANVAS_DIMENSIONS, COLORS, TEXT } from './constants';
 import { hexToRGB } from './utils';
 
-export function renderPointer (scope) {
+export function renderPointer(scope) {
     scope.ctx.strokeStyle = COLORS[scope.selectedTheme].CURSOR; // green
     scope.ctx.strokeRect(scope.mouse.x - 5 - scope.netPanningX, scope.mouse.y - 5 - scope.netPanningY, 10, 10);
     scope.ctx.lineWidth = 0.5;
@@ -24,7 +24,7 @@ export function renderPointer (scope) {
     scope.ctx.setLineDash([]);
 }
 
-export function renderCanvas (scope) {
+export function renderCanvas(scope) {
     scope.ctx.fillStyle = COLORS[scope.selectedTheme].CANVAS;
     scope.ctx.fillRect(0, 0, CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT);
     // colonne
@@ -77,7 +77,7 @@ export function renderCanvas (scope) {
     }
 }
 
-export function renderShapes (scope, ctx, hit) {
+export function renderShapes(scope, ctx, hit) {
     [...scope.HM.value, ...scope.tempShape].forEach(item => {
         if (hit) {
             ctx.lineWidth = 10 // to select lines or sides of rect...
@@ -89,7 +89,9 @@ export function renderShapes (scope, ctx, hit) {
                 ctx.save()
                 ctx.fillStyle = item.colorKey
                 ctx.beginPath()
-                ctx.rect(item.start_x, item.start_y - 13, 9 * item.text.length, 20) /* 9px for each char */
+                let textLength = ctx.measureText(item.text).width;
+                // console.log(textLength, 9 * item.text.length) /* 9px for each char */
+                ctx.rect(item.start_x - textLength / 2, item.start_y - 13, textLength, 20)
                 ctx.fill()
                 ctx.stroke()
                 ctx.restore()
@@ -98,15 +100,10 @@ export function renderShapes (scope, ctx, hit) {
                 ctx.fillStyle = item.selected ? COLORS[scope.selectedTheme].shapes_fill_selected : (hit ? item.colorKey : item.color)
                 ctx.beginPath()
                 ctx.font = item.font;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle'
                 ctx.fillText(item.text, item.start_x, item.start_y);
                 ctx.restore()
-            }
-        } else if (item.textMidLine) {
-            if (hit) {
-                // TODO
-            } else {
-                drawLineWithArrows(ctx, item.start_x, item.start_y, item.end_x, item.end_y, 5, 8, true, true)
-                textAtMidLine(scope, ctx, item, hit)
             }
         } else if (item.w && item.h) {
             ctx.save()
@@ -128,77 +125,38 @@ export function renderShapes (scope, ctx, hit) {
             ctx.stroke()
             ctx.restore()
         } else {
-            ctx.save()
-            ctx.strokeStyle = item.selected ? COLORS[scope.selectedTheme].shapes_stroke_selected : (hit ? item.colorKey : item.stroke)
-            ctx.beginPath()
-            if (item.dashed) {
-                ctx.setLineDash([3.5, 10]);
-            }
-            ctx.moveTo(item.start_x, item.start_y)
-            ctx.lineTo(item.end_x, item.end_y)
-            ctx.closePath()
-            ctx.stroke()
-            ctx.restore()
+            drawLine(scope, ctx, item, hit);
         }
     });
+
 }
 
-// SOURCE: https://stackoverflow.com/questions/34402883/finding-the-midway-between-two-points
-function textAtMidLine (scope, ctx, line, hit) {
+function drawLine(scope, ctx, item, hit) {
+    let aWidth = 5, aLength = 8;
+    let dx = item.end_x - item.start_x;
+    let dy = item.end_y - item.start_y;
+    let angle = Math.atan2(dy, dx);
+    let length = Math.sqrt(dx * dx + dy * dy);
 
-    // save the unmodified context state
-    ctx.save();
-
-    // calc line's midpoint
-    var midX = line.start_x + (line.end_x - line.start_x) * 0.50;
-    var midY = line.start_y + (line.end_y - line.start_y) * 0.50;
-
-    // calc width of text
-    ctx.font = line.font;
-    var textwidth = ctx.measureText(line.textMidLine).width;
-
-    // clear the line at the midpoint
-    ctx.globalCompositeOperation = 'destination-out'; // "erases" 
-    // ctx.fillStyle = COLORS[scope.selectedTheme].CANVAS;
-    ctx.fillRect(midX - textwidth / 2, midY - 13 / 2, textwidth, 13 * 1.286);
-    ctx.globalCompositeOperation = 'source-over';  // reset to default
-
-    // tell canvas to horizontally & vertically center text around an [x,y]
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle'
-
-    // ctx.fillStyle = 'black';
-    // draw text at the midpoint
-    ctx.fillText(line.textMidLine, midX, midY);
-
-    // restore the unmodified context state
-    ctx.restore();
-}
-
-
-function drawLineWithArrows (ctx, x0, y0, x1, y1, aWidth, aLength, arrowStart, arrowEnd, hit) {
-    var dx = x1 - x0;
-    var dy = y1 - y0;
-    var angle = Math.atan2(dy, dx);
-    var length = Math.sqrt(dx * dx + dy * dy);
-
-    ctx.strokeStyle = 'grey';
-    ctx.translate(x0, y0);
+    ctx.strokeStyle = item.selected ? COLORS[scope.selectedTheme].shapes_stroke_selected : (hit ? item.colorKey : item.stroke);
+    ctx.translate(item.start_x, item.start_y);
     ctx.rotate(angle);
     ctx.beginPath();
+    if (item.dashed) {
+        ctx.setLineDash([3.5, 10]);
+    }
     ctx.moveTo(0, 0);
     ctx.lineTo(length, 0);
-    if (arrowStart) {
+    if (!hit && item.arrowStart) {
         ctx.moveTo(aLength, -aWidth);
         ctx.lineTo(0, 0);
         ctx.lineTo(aLength, aWidth);
     }
-    if (arrowEnd) {
+    if (!hit && item.arrowEnd) {
         ctx.moveTo(length - aLength, -aWidth);
         ctx.lineTo(length, 0);
         ctx.lineTo(length - aLength, aWidth);
     }
-    //
     ctx.stroke();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
