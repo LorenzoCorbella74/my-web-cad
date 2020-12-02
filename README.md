@@ -17,9 +17,30 @@ I've always been fascinated by 2D and 3D CAD Software and WEB-CAD is my effort i
 - [x] "Snap to Grid" System (with 6 steps)
 - [x] Text and Measures 
 - [x] Draggable Commands panel with Color palette
+- [x] Shortcut Keys
 - [x] Import and export drawings in .json format
 - [x] Grey/White/Blue themes
 - [x] Multiple Unit System (simple switch among units, tens and hundreds) 
+
+## Shortcut Keys
+| s                      | Keys                                                                          |
+|------------------------|-------------------------------------------------------------------------------|
+| Select                 | ESC / s                                                                       |
+| Copy                   | c                                                                             |
+| Move                   | m                                                                             |
+| Delete                 | d                                                                             |
+| Pan                    | p                                                                             |
+| Zoom                   | x  \(alt \+/\- to zoom in/out 10%, ctrl \+ x to restore the zero zoom level\) |
+| Rotate                 | w                                                                             |
+| Edit \(scale, resize\) | e                                                                             |
+| Line                   | l                                                                             |
+| Rectangle              | r                                                                             |
+| Circle                 | a                                                                             |
+| Undo                   | ctrl \+ z                                                                     |
+| Redo                   | ctrl \+ y                                                                     |
+| Text                   | t                                                                             |
+| Measure                | f                                                                             |
+
 
 ## Todos
 - [ ] Multiple selection
@@ -31,7 +52,7 @@ I've always been fascinated by 2D and 3D CAD Software and WEB-CAD is my effort i
 [check the app online](https://web-cad-2020.netlify.app/) or test things locally by just installing dependancies with `npm i`and running the local development environment with `npm start`.  SVG Icons courtesy from [materialdesignicons.com](https://materialdesignicons.com/).
 
 ## Bugs
-- Uhm, please help me know...!
+- Uhm, please let me know...!
 
 ## License
 This project is licensed under the ISC License.
