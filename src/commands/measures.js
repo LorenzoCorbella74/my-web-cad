@@ -12,7 +12,7 @@ export default class MeasuresCommand extends Command {
         this.d = 0
     }
 
-    mousemove(event) {
+    mousemove (event) {
         this.main.mouse.x = event._x;
         this.main.mouse.y = event._y;
         this.main.mouse.event = event;
@@ -30,17 +30,21 @@ export default class MeasuresCommand extends Command {
             let dx = this.start.x - (event._x - this.main.netPanningX);
             let dy = this.start.y - (event._y - this.main.netPanningY);
             this.d = Math.floor(Math.sqrt(dx * dx + dy * dy));
-            this.main.info = `Dist: ${this.d}`;
+            this.main.info = {
+                key: 'Dist: ',
+                value1: this.d,
+                value2: ''
+            };
         }
     }
 
-    mousedown(event) {
+    mousedown (event) {
         this.start.x = event._x - this.main.netPanningX;
         this.start.y = event._y - this.main.netPanningY;
         this.first = true;
     }
 
-    mouseup(event) {
+    mouseup (event) {
         if (this.first) {
             this.first = false;
             this.main.tempShape.length = 0;
@@ -66,7 +70,11 @@ export default class MeasuresCommand extends Command {
                 colorKey: dashed_line.colorKey
             });
             this.main.HM.set(this.main.shapes)
-            this.main.info = '';
+            this.main.info = {
+                key: '',
+                value1: '',
+                value2: ''
+            };
             this.d = 0;
         }
     }
