@@ -1,10 +1,5 @@
 Release BETA 0.6
-- [x] resize rect and circle (pull & scale) and move vertices for lines
-- [x] measures (in grigio, <- xxcm -> clicco su punto iniziale, punto finale, drag su un lato
-- [x] lines, line with one arrow, line with two arrows 
 - [ ] Lines with arrows(and UI command pannel updates)
-
-Release BETA 0.7
 - [ ] metadata in html header
 
 Release BETA 0.8

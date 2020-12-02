@@ -1,7 +1,7 @@
 import { CANVAS_DIMENSIONS, COLORS, TEXT } from './constants';
 import { hexToRGB } from './utils';
 
-export function renderPointer(scope) {
+export function renderPointer (scope) {
     scope.ctx.strokeStyle = COLORS[scope.selectedTheme].CURSOR; // green
     scope.ctx.strokeRect(scope.mouse.x - 5 - scope.netPanningX, scope.mouse.y - 5 - scope.netPanningY, 10, 10);
     scope.ctx.lineWidth = 0.5;
@@ -19,12 +19,14 @@ export function renderPointer(scope) {
     scope.ctx.fillStyle = COLORS[scope.selectedTheme].LINES;
     scope.ctx.fillText(`${scope.keys.choosenCommand.toUpperCase()}`, scope.mouse.x + 12.5 - scope.netPanningX, scope.mouse.y - 4.5 - scope.netPanningY)
     scope.ctx.fillText(`x: ${scope.getValueAccordingToUnitSystem(scope.mouse.x - scope.netPanningX)} - y: ${scope.getValueAccordingToUnitSystem(scope.mouse.y - scope.netPanningY)}`, scope.mouse.x + 12.5 - scope.netPanningX, scope.mouse.y + 12.5 - scope.netPanningY)
-    scope.ctx.fillText(`${scope.info}`, scope.mouse.x + 12.5 - scope.netPanningX, scope.mouse.y + 27.5 - scope.netPanningY)
+    scope.ctx.fillText(`${scope.info.key} ${scope.getValueAccordingToUnitSystem(scope.info.value1)} ${scope.getValueAccordingToUnitSystem(scope.info.value2)}`, 
+    scope.mouse.x + 12.5 - scope.netPanningX, 
+    scope.mouse.y + 27.5 - scope.netPanningY)
     scope.ctx.closePath();
     scope.ctx.setLineDash([]);
 }
 
-export function renderCanvas(scope) {
+export function renderCanvas (scope) {
     scope.ctx.fillStyle = COLORS[scope.selectedTheme].CANVAS;
     scope.ctx.fillRect(0, 0, CANVAS_DIMENSIONS.WIDTH, CANVAS_DIMENSIONS.HEIGHT);
     // colonne
@@ -77,14 +79,14 @@ export function renderCanvas(scope) {
     }
 }
 
-export function renderShapes(scope, ctx, hit) {
+export function renderShapes (scope, ctx, hit) {
     [...scope.HM.value, ...scope.tempShape].forEach(item => {
         if (hit) {
             ctx.lineWidth = 10 // to select lines or sides of rect...
         } else {
             ctx.lineWidth = 0.5
         }
-        if (item.text) {
+        if (item.text || item.measure) {
             if (hit) {
                 ctx.save()
                 ctx.fillStyle = item.colorKey
@@ -101,8 +103,16 @@ export function renderShapes(scope, ctx, hit) {
                 ctx.beginPath()
                 ctx.font = item.font;
                 ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle'
-                ctx.fillText(item.text, item.start_x, item.start_y);
+                ctx.textBaseline = 'middle';
+                if (item.text) {
+                    ctx.fillText(item.text, item.start_x, item.start_y);
+                } else if (item.measure) {
+                    ctx.fillText(
+                        scope.getValueAccordingToUnitSystem(item.measure).toString(),
+                        item.start_x,
+                        item.start_y
+                    );
+                }
                 ctx.restore()
             }
         } else if (item.w && item.h) {
@@ -135,7 +145,7 @@ export function renderShapes(scope, ctx, hit) {
 
 }
 
-function drawLine(scope, ctx, item, hit) {
+function drawLine (scope, ctx, item, hit) {
     let aWidth = 5, aLength = 8;
     ctx.setLineDash([0, 0]);
     let dx = item.end_x - item.start_x;

@@ -1,4 +1,4 @@
-import { APP_VERSION, COLORS_CMD_PANEL, SNAP_GRID } from '../constants';
+import { APP_VERSION, COLORS_CMD_PANEL, SNAP_GRID, UNITS } from '../constants';
 import { formatDate } from '../utils';
 
 export default class CommandsPanel {
@@ -136,7 +136,7 @@ export default class CommandsPanel {
                 return;
             }
             if (this.choosenCommand === 'CONFIG') {
-                console.log('TODO: config')
+                this.switchUnitSystem()
                 return;
             }
             if (this.choosenCommand === 'SAVE') {
@@ -148,7 +148,7 @@ export default class CommandsPanel {
                 return;
             }
             if (this.choosenCommand === 'HELP') {
-                console.log('TODO: help')
+                window.open("https://github.com/LorenzoCorbella74/my-web-cad");
                 return;
             }
             if (this.choosenCommand === 'PALETTE') {
@@ -163,6 +163,16 @@ export default class CommandsPanel {
         }
     }
 
+    switchUnitSystem () {
+        let options = Object.keys(UNITS);
+        let index = options.findIndex(e => e === this.main.choosenUnitSystem);
+        if (index < options.length - 1) {
+            index++;
+        } else {
+            index = 0;
+        }
+        this.main.choosenUnitSystem = options[index];
+    }
     switchTheme () {
         let options = ['grey', 'white', 'blue'];
         let index = options.findIndex(e => e === this.main.selectedTheme);

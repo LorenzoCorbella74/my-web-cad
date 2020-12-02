@@ -26,8 +26,12 @@ export default class CircleCommand extends Command {
                 start_y: this.start.y,
                 radius: this.radius,
                 color: COLORS[this.main.selectedTheme].shapes_fill_temp,
-            }]
-            this.main.info = `Radius: ${Math.floor(this.radius)}`;
+            }];
+            this.main.info = {
+                key: 'Radius: ',
+                value1: Math.floor(this.radius),
+                value2: ''
+            };
         }
     }
 
@@ -53,6 +57,11 @@ export default class CircleCommand extends Command {
             }));
             this.main.HM.set(this.main.shapes)
             this.radius = 0;
+            this.main.info = {
+                key: '',
+                value1: '',
+                value2: ''
+            };
         }
     }
 }

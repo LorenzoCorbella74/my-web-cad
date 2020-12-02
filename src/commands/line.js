@@ -11,7 +11,7 @@ export default class LineCommand extends Command {
         this.start = {}
     }
 
-    mousemove(event) {
+    mousemove (event) {
         this.main.mouse.x = event._x;
         this.main.mouse.y = event._y;
         this.main.mouse.event = event;
@@ -27,17 +27,20 @@ export default class LineCommand extends Command {
 
             let dx = this.start.x - (event._x - this.main.netPanningX);
             let dy = this.start.y - (event._y - this.main.netPanningY);
-            this.main.info = `Dist: ${Math.floor(Math.sqrt(dx * dx + dy * dy))}`;
+            this.main.info = {
+                key: 'Dist: ',
+                value1: Math.floor(Math.sqrt(dx * dx + dy * dy))
+            };
         }
     }
 
-    mousedown(event) {
+    mousedown (event) {
         this.start.x = event._x - this.main.netPanningX;
         this.start.y = event._y - this.main.netPanningY;
         this.started = true;
     }
 
-    mouseup(event) {
+    mouseup (event) {
         if (this.started) {
             this.started = false;
             this.main.tempShape.length = 0;
@@ -53,7 +56,11 @@ export default class LineCommand extends Command {
                 stroke: COLORS[this.main.selectedTheme].shapes_stroke
             }));
             this.main.HM.set(this.main.shapes)
-            this.main.info = '';
+            this.main.info = {
+                key: '',
+                value1: '',
+                value2: ''
+            };
         }
     }
 

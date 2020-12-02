@@ -60,7 +60,7 @@ export default class MeasuresCommand extends Command {
             this.main.shapes.push({
                 start_x: (midX - this.main.netPanningX),
                 start_y: (midY - this.main.netPanningY),
-                text: this.d,
+                measure: this.d,
                 font: TEXT.FONT,
                 fill: COLORS[this.main.selectedTheme].shapes_stroke,
                 colorKey: dashed_line.colorKey
