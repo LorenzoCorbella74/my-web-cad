@@ -12,7 +12,6 @@ body {
     font: 1rem Arial;
 }
 
-
 /* The Modal (background) */
 .modal {
     display: none;
@@ -101,6 +100,11 @@ body {
 .panel-body {
     width: 120px;
     display: flex;
+    z-index: 50;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
 }
 
 .left {
@@ -108,18 +112,23 @@ body {
     background-color: rgb(23, 29, 49);
     border: 1px solid grey;
     border-radius: 4px;
+    z-index: 49;
 }
 
 .right {
+    display: inline-block;
     width: 30px;
     background-color: rgb(23, 29, 49);
     border: 1px solid grey;
     border-radius: 4px;
+    z-index: 48;
     color: rgb(252, 233, 79);
+    transition: all 300ms;
+    transform: translateX(-30px);
 }
 
 .hide {
-    display: none;
+    transform: translateX(0px);
 }
 
 .row {
@@ -240,8 +249,8 @@ ul {
     background: #e3e3e3;
     outline: none;
     opacity: 0.6;
-    -webkit-transition: .2s;
-    transition: opacity .2s;
+    -webkit-transition: 0.2s;
+    transition: opacity 0.2s;
 }
 
 .slider:hover {
