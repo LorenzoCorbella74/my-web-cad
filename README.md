@@ -8,6 +8,8 @@
 
 I've always been fascinated by 2D and 3D CAD Software and WEB-CAD is my effort in Vanilla ES6 Javascript and HTML5 CANVAS API to make my own (...ultra ligth...) version.
 
+For the 3D version check the repo [my-web-cad-3d](https://github.com/LorenzoCorbella74/my-web-cad-3d)
+
 ## Features
 - [x] Lines, circles and rectangle and square shapes 
 - [x] Select, move, copy, delete, resize and rotate operations on shapes
